@@ -1,13 +1,13 @@
-package com.brihaspathee.template;
+package com.brihaspathee.sapphire;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringTemplateApplication {
+public class ProviderManagementApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringTemplateApplication.class, args);
+        SpringApplication.run(ProviderManagementApplication.class, args);
     }
 
 }
