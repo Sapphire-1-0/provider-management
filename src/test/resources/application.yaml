@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: provider-management
+  neo4j:
+    uri: bolt://localhost:7688
+    authentication:
+      username: neo4j
+      password: password
+  data:
+    neo4j:
+      database: sapphire.provider
+  cloud:
+    config:
+      enabled: false
+  profiles:
+    active: unit-test
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false

@@ -1,5 +1,13 @@
 spring:
   application:
     name: provider-management
-  config:
-    import: optional:configserver:${CONFIG_SERVER_URL}
+  cloud:
+    config:
+      enabled: false
+  jmx:
+    enabled: false
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
