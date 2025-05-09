@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.brihaspathee.template</groupId>
     <artifactId>provider-management</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>provider-management</name>
     <description>spring_template</description>
     <url/>
