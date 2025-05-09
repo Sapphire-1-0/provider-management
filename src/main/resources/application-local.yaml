@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: provider-management
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL}
