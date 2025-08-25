@@ -75,4 +75,28 @@ public class OrganizationAPIImpl implements OrganizationAPI {
                         .build();
         return ResponseEntity.ok(apiResponse);
     }
+
+    /**
+     * Retrieves the details of a specific organization based on the provided organization ID.
+     *
+     * @param id the unique identifier of the organization to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates an OrganizationDto,
+     * which represents the details of the retrieved organization
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationById(String id) {
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization matched with id" + id +" was Retrieved successfully")
+                        .response(OrganizationDto.builder()
+                                .organizationName("Test Organization")
+                                .build())
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization matched with id" + id +" was Retrieved successfully")
+                        .developerMessage("Organization matched with id" + id +" was Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
 }

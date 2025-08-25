@@ -36,6 +36,24 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseWelcomeDto"
+  /api/v1/sapphire/provider/private/organization/{organizationId}:
+    get:
+      tags:
+      - organization-api-impl
+      operationId: getOrganizationById
+      parameters:
+      - name: organizationId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
   /api/v1/sapphire/provider/private/get-orgs:
     get:
       tags:

@@ -4,10 +4,7 @@ import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.model.OrganizationList;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created in Intellij IDEA
@@ -39,4 +36,14 @@ public interface OrganizationAPI {
      */
     @GetMapping("/get-orgs")
     ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizations();
+
+    /**
+     * Retrieves the details of a specific organization based on the provided organization ID.
+     *
+     * @param id the unique identifier of the organization to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates an OrganizationDto,
+     * which represents the details of the retrieved organization
+     */
+    @GetMapping("/organization/{organizationId}")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationById(@PathVariable("organizationId") String id);
 }
