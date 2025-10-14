@@ -1,8 +1,10 @@
 package com.brihaspathee.sapphire.controller.impl;
 
 import com.brihaspathee.sapphire.controller.interfaces.OrganizationAPI;
+import com.brihaspathee.sapphire.domain.entity.Organization;
 import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.model.OrganizationList;
+import com.brihaspathee.sapphire.service.interfaces.IOrganizationService;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,13 @@ import java.util.List;
 public class OrganizationAPIImpl implements OrganizationAPI {
 
     /**
+     * Service instance that provides operations related to organizations.
+     * This variable is used to invoke business logic for handling organization-specific tasks such
+     * as retrieving, creating, or managing organization details.
+     */
+    private final IOrganizationService organizationService;
+
+    /**
      * Creates a new organization based on the provided organization details.
      *
      * @param organizationDto the DTO containing organization details to be created
@@ -42,7 +51,7 @@ public class OrganizationAPIImpl implements OrganizationAPI {
                         .status(HttpStatus.CREATED)
                         .message("Organization created successfully")
                         .response(OrganizationDto.builder()
-                                .organizationName("Test Organization")
+                                .name("Test Organization")
                                 .build())
                         .timestamp(LocalDateTime.now())
                         .reason("Organization created successfully")
@@ -59,6 +68,8 @@ public class OrganizationAPIImpl implements OrganizationAPI {
      */
     @Override
     public ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizations() {
+        List<Organization> organizationList = organizationService.getAllOrganizations();
+
         SapphireAPIResponse<OrganizationList> apiResponse =
                 SapphireAPIResponse.<OrganizationList>builder()
                         .statusCode(200)
@@ -66,7 +77,7 @@ public class OrganizationAPIImpl implements OrganizationAPI {
                         .message("Organization Retrieved successfully")
                         .response(OrganizationList.builder()
                                 .organizationList(List.of(OrganizationDto.builder()
-                                                .organizationName("Test Organization")
+                                        .name("Test Organization")
                                         .build()))
                                 .build())
                         .timestamp(LocalDateTime.now())
@@ -91,7 +102,7 @@ public class OrganizationAPIImpl implements OrganizationAPI {
                         .status(HttpStatus.OK)
                         .message("Organization matched with id" + id +" was Retrieved successfully")
                         .response(OrganizationDto.builder()
-                                .organizationName("Test Organization")
+                                .name("Test Organization")
                                 .build())
                         .timestamp(LocalDateTime.now())
                         .reason("Organization matched with id" + id +" was Retrieved successfully")
