@@ -2,6 +2,8 @@ package com.brihaspathee.sapphire.service.impl;
 
 import com.brihaspathee.sapphire.domain.entity.Organization;
 import com.brihaspathee.sapphire.domain.repository.OrganizationRepository;
+import com.brihaspathee.sapphire.mapper.interfaces.IOrganizationMapper;
+import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.service.interfaces.IOrganizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,14 +33,27 @@ public class OrganizationService implements IOrganizationService {
      */
     private final OrganizationRepository organizationRepository;
 
+    /**
+     * Maps Organization entities to their corresponding DTOs and vice versa.
+     * This mapper is responsible for converting between the database entity
+     * representations of organizations and their data transfer object (DTO) representations.
+     */
+    private final IOrganizationMapper organizationMapper;
 
+
+    /**
+     * Retrieves all organizations and converts them to a list of OrganizationDto objects.
+     * Logs the name of each organization during the retrieval process.
+     *
+     * @return a list of OrganizationDto objects representing all the organizations
+     */
     @Override
-    public List<Organization> getAllOrganizations() {
+    public List<OrganizationDto> getAllOrganizations() {
         log.info("Fetching all organizations");
         List<Organization> organizations = organizationRepository.findAll();
         for (Organization organization : organizations) {
             log.info("Organization name: {}", organization.getName());
         }
-        return organizations;
+        return organizationMapper.toOrganizationDtoList(organizations);
     }
 }

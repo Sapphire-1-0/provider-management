@@ -1,6 +1,7 @@
 package com.brihaspathee.sapphire.service.interfaces;
 
 import com.brihaspathee.sapphire.domain.entity.Organization;
+import com.brihaspathee.sapphire.model.OrganizationDto;
 
 import java.util.List;
 
@@ -15,5 +16,5 @@ import java.util.List;
  */
 public interface IOrganizationService {
 
-    List<Organization> getAllOrganizations();
+    List<OrganizationDto> getAllOrganizations();
 }

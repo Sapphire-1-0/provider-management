@@ -68,7 +68,7 @@ public class OrganizationAPIImpl implements OrganizationAPI {
      */
     @Override
     public ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizations() {
-        List<Organization> organizationList = organizationService.getAllOrganizations();
+        List<OrganizationDto> organizations = organizationService.getAllOrganizations();
 
         SapphireAPIResponse<OrganizationList> apiResponse =
                 SapphireAPIResponse.<OrganizationList>builder()
@@ -76,9 +76,7 @@ public class OrganizationAPIImpl implements OrganizationAPI {
                         .status(HttpStatus.OK)
                         .message("Organization Retrieved successfully")
                         .response(OrganizationList.builder()
-                                .organizationList(List.of(OrganizationDto.builder()
-                                        .name("Test Organization")
-                                        .build()))
+                                .organizationList(organizations)
                                 .build())
                         .timestamp(LocalDateTime.now())
                         .reason("Organization Retrieved successfully")

@@ -48,14 +48,14 @@ public class OrganizationDto {
      * or operate outside of traditional structures. This variable provides a way to distinguish
      * such organizations in specific contexts.
      */
-    private String atypical;
+    private Boolean atypical;
 
     /**
      * Identifies whether the organization is operating on a capitated payment model.
      * It indicates if the organization receives a fixed amount per patient for services,
      * regardless of the actual amount or type of service provided.
      */
-    private String capitated;
+    private Boolean capitated;
 
     /**
      * Indicates whether a Primary Care Provider (PCP) practitioner
@@ -63,6 +63,6 @@ public class OrganizationDto {
      * attribute that determines the necessity of associating a PCP practitioner
      * with the organization in certain contexts.
      */
-    private String pcpPractitionerRequired;
+    private Boolean pcpPractitionerRequired;
 
 }
