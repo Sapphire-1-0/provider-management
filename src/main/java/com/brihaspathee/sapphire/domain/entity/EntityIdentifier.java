@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Property;
 
+import java.time.LocalDate;
+
 /**
  * Created in Intellij IDEA
  * User: Balaji Varadharajan
@@ -27,4 +29,10 @@ public abstract class EntityIdentifier {
 
     @Property("value")
     private String value;
+
+    @Property
+    private LocalDate startDate;
+
+    @Property
+    private LocalDate endDate;
 }

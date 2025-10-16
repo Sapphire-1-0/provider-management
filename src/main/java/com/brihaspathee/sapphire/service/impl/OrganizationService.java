@@ -50,9 +50,10 @@ public class OrganizationService implements IOrganizationService {
     @Override
     public List<OrganizationDto> getAllOrganizations() {
         log.info("Fetching all organizations");
-        List<Organization> organizations = organizationRepository.findAll();
+        List<Organization> organizations = organizationRepository.findAllWithElementId();
         for (Organization organization : organizations) {
             log.info("Organization name: {}", organization.getName());
+            log.info("Element id of the Org:{}", organization.getElementId());
         }
         return organizationMapper.toOrganizationDtoList(organizations);
     }
