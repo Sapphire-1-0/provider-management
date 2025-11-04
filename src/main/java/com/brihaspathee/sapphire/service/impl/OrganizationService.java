@@ -1,15 +1,18 @@
 package com.brihaspathee.sapphire.service.impl;
 
-import com.brihaspathee.sapphire.domain.entity.Organization;
-import com.brihaspathee.sapphire.domain.repository.OrganizationRepository;
+import com.brihaspathee.sapphire.domain.entity.*;
+import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
 import com.brihaspathee.sapphire.mapper.interfaces.IOrganizationMapper;
+import com.brihaspathee.sapphire.model.IdentifierDto;
 import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.service.interfaces.IOrganizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created in Intellij IDEA
@@ -50,11 +53,54 @@ public class OrganizationService implements IOrganizationService {
     @Override
     public List<OrganizationDto> getAllOrganizations() {
         log.info("Fetching all organizations");
-        List<Organization> organizations = organizationRepository.findAllWithElementId();
+        List<Organization> organizations = organizationRepository.findAllWithIdentifiers();
         for (Organization organization : organizations) {
             log.info("Organization name: {}", organization.getName());
+            log.info("Organization Alias Name:{}", organization.getAliasName());
             log.info("Element id of the Org:{}", organization.getElementId());
+            for (Identifier identifier : organization.getIdentifiers()) {
+                log.info("Identifier value: {}", identifier.getValue());
+                if (identifier instanceof NPI){
+                    log.info("NPI value: {}", identifier.getValue());
+                } else if (identifier instanceof MedicaidID) {
+                    log.info("MedicaidID value: {}", ((MedicaidID) identifier).getState());
+                }else if (identifier instanceof TIN){
+                    log.info("TIN legal name: {}", ((TIN) identifier).getLegalName());
+                }
+
+            }
         }
-        return organizationMapper.toOrganizationDtoList(organizations);
+        return organizations.stream().map(this::toOrganizationDto).toList();
+    }
+
+    private OrganizationDto toOrganizationDto(Organization organization) {
+        List<IdentifierDto> identifierDtos = organization.getIdentifiers().stream().map(identifier -> {
+           return IdentifierDto.builder()
+                   .elementId(identifier.getElementId())
+                   .value(identifier.getValue())
+                   .type(identifier.getClass().getSimpleName())
+                   .startDate(identifier.getStartDate())
+                   .endDate(identifier.getEndDate())
+                   .additionalProperties(getAdditionalProperties(identifier))
+                   .build();
+        }).toList();
+        OrganizationDto organizationDto = OrganizationDto.builder()
+                .elementId(organization.getElementId())
+                .name(organization.getName())
+                .aliasName(organization.getAliasName())
+                .identifiers(identifierDtos)
+                .build();
+        return organizationDto;
+    }
+
+    private Map<String, Object> getAdditionalProperties(Identifier identifier) {
+        Map<String, Object> additionalProperties = new HashMap<>();
+        if (identifier instanceof MedicaidID medicaidID) {
+            additionalProperties.put("state",medicaidID.getState());
+        }
+        if (identifier instanceof TIN tin) {
+            additionalProperties.put("legalName", tin.getLegalName());
+        }
+        return additionalProperties;
     }
 }

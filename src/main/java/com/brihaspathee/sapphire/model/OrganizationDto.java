@@ -65,4 +65,13 @@ public class OrganizationDto {
      */
     private Boolean pcpPractitionerRequired;
 
+    /**
+     * Represents a list of identifiers associated with the organization.
+     * Each identifier is represented by an instance of IdentifierDto,
+     * which contains attributes such as value, type, and date range.
+     * These identifiers are used to uniquely recognize or describe
+     * the organization in different contexts or systems.
+     */
+    private List<IdentifierDto> identifiers;
+
 }

@@ -40,6 +40,7 @@ public class OrganizationMapperImpl implements IOrganizationMapper {
             return null;
         }
         OrganizationDto organizationDto = OrganizationDto.builder()
+                .elementId(organization.getElementId())
                 .name(organization.getName())
                 .type(organization.getType())
                 .aliasName(organization.getAliasName())
