@@ -4,6 +4,7 @@ import com.brihaspathee.sapphire.domain.entity.Organization;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created in Intellij IDEA
@@ -18,4 +19,5 @@ import java.util.List;
 public interface OrganizationRepository {
     List<Organization> findAll();
     List<Organization> findAllWithIdentifiers();
+    List<Organization> findAllByIdentifier(Map<String, String> identifiers, boolean matchAll);
 }

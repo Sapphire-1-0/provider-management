@@ -54,22 +54,26 @@ public class OrganizationService implements IOrganizationService {
     public List<OrganizationDto> getAllOrganizations() {
         log.info("Fetching all organizations");
         List<Organization> organizations = organizationRepository.findAllWithIdentifiers();
-        for (Organization organization : organizations) {
-            log.info("Organization name: {}", organization.getName());
-            log.info("Organization Alias Name:{}", organization.getAliasName());
-            log.info("Element id of the Org:{}", organization.getElementId());
-            for (Identifier identifier : organization.getIdentifiers()) {
-                log.info("Identifier value: {}", identifier.getValue());
-                if (identifier instanceof NPI){
-                    log.info("NPI value: {}", identifier.getValue());
-                } else if (identifier instanceof MedicaidID) {
-                    log.info("MedicaidID value: {}", ((MedicaidID) identifier).getState());
-                }else if (identifier instanceof TIN){
-                    log.info("TIN legal name: {}", ((TIN) identifier).getLegalName());
-                }
-
-            }
-        }
+        Map<String, String> identifiers = new HashMap<>();
+        identifiers.put("PPG_ID", "MS_200");
+        identifiers.put("NPI", "34234");
+        organizationRepository.findAllByIdentifier(identifiers, true);
+//        for (Organization organization : organizations) {
+//            log.info("Organization name: {}", organization.getName());
+//            log.info("Organization Alias Name:{}", organization.getAliasName());
+//            log.info("Element id of the Org:{}", organization.getElementId());
+//            for (Identifier identifier : organization.getIdentifiers()) {
+//                log.info("Identifier value: {}", identifier.getValue());
+//                if (identifier instanceof NPI){
+//                    log.info("NPI value: {}", identifier.getValue());
+//                } else if (identifier instanceof MedicaidID) {
+//                    log.info("MedicaidID value: {}", ((MedicaidID) identifier).getState());
+//                }else if (identifier instanceof TIN){
+//                    log.info("TIN legal name: {}", ((TIN) identifier).getLegalName());
+//                }
+//
+//            }
+//        }
         return organizations.stream().map(this::toOrganizationDto).toList();
     }
 

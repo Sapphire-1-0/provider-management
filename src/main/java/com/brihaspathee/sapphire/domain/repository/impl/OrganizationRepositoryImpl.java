@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +63,7 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
                                    Organization.builder()
                                         .elementId(orgNode.elementId())
                                         .name(orgNode.get("name").asString())
-                                           .aliasName(orgNode.get("alias").asString());
+                                        .aliasName(orgNode.get("alias").asString());
                            List<Identifier> identifiers = new ArrayList<>();
                            List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
                            for (Map<String, Object> idMap : idList) {
@@ -104,5 +105,36 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
                            return builder.build();
                         });
         return organizations;
+    }
+
+    public List<Organization> findAllByIdentifier(Map<String, String> identifiers, boolean matchAll) {
+        if (identifiers == null || identifiers.isEmpty()) {
+            return findAll();
+        }
+        Map<String, Object> params = new HashMap<>();
+        List<String> whereClauses = new ArrayList<>();
+        int idx = 0;
+        for (var entry : identifiers.entrySet()) {
+            String relType = entry.getKey();
+            String paramName = "val" + idx;
+            String alias = "id" + idx;
+
+            params.put(paramName, entry.getValue());
+
+            whereClauses.add(String.format(
+                    "EXISTS { MATCH (org) -[:HAS_%s]->(%s:Identifier) WHERE %s.value = $%s }",
+                    relType, alias, alias, paramName));
+            idx++;
+        }
+
+        String operator = matchAll ? " AND " : " OR ";
+        String cypher = """
+                MATCH (org:Organization)
+                WHERE %s
+                RETURN DISTINCT org
+                """.formatted(String.join(operator, whereClauses));
+        log.info("Cypher query to match orgs by identifiers: {}", cypher);
+        log.info("Parameters for the cypher query: {}", params);
+        return null;
     }
 }
