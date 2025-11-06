@@ -3,6 +3,7 @@ package com.brihaspathee.sapphire.domain.repository.impl;
 import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
+import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.util.CypherLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +11,6 @@ import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,9 +43,8 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
                         Node node = record.get("n").asNode();
                         log.info("Organization name: {}", node.get("name").asString());
                         log.info("Element id of the Org:{}", node.elementId());
-                        return Organization.builder()
-                                .elementId(node.elementId())
-                                .name(node.get("name").asString())
+                        Organization.OrganizationBuilder builder = BuilderUtil.buildOrganization(node);
+                        return builder
                                 .build();
                 });
         return organizations;
@@ -60,53 +59,30 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
                         record -> {
                            Node orgNode = record.get("o").asNode();
                            Organization.OrganizationBuilder builder =
-                                   Organization.builder()
-                                        .elementId(orgNode.elementId())
-                                        .name(orgNode.get("name").asString())
-                                        .aliasName(orgNode.get("alias").asString());
-                           List<Identifier> identifiers = new ArrayList<>();
+                                   BuilderUtil.buildOrganization(orgNode);
                            List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
-                           for (Map<String, Object> idMap : idList) {
-                               String relType = (String) idMap.get("relType");
-                               Node idNode = (Node) idMap.get("node");
-                               Identifier identifier = switch (relType) {
-                                   case "HAS_NPI" -> new NPI();
-                                   case "HAS_TIN" -> {
-                                       TIN tin = new TIN();
-                                       if (idNode.containsKey("legalName")){
-                                           tin.setLegalName(idNode.get("legalName").asString());
-                                       }
-                                       yield tin;
-                                   }
-                                   case "HAS_MEDICARE_ID" -> new MedicareID();
-                                   case "HAS_MEDICAID_ID" -> {
-                                       MedicaidID medicaidId = new MedicaidID();
-                                       if (idNode.containsKey("state")){
-                                           medicaidId.setState(idNode.get("state").asString());
-                                       }
-                                       yield medicaidId;
-                                   }
-                                   default -> null;
-                               };
-                               if (identifier != null){
-                                   identifier.setElementId(idNode.elementId());
-                                   identifier.setValue(idNode.get("value").asString());
-                                   if (idNode.containsKey("startDate")){
-                                       log.info("Start date: {}", idNode.get("startDate"));
-                                       identifier.setStartDate(idNode.get("startDate").asLocalDate());
-                                   }
-                                   if (idNode.containsKey("endDate")){
-                                       identifier.setEndDate(idNode.get("endDate").asLocalDate());
-                                   }
-                                   identifiers.add(identifier);
-                               }
-                           }
+                           List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
                            builder.identifiers(identifiers);
                            return builder.build();
                         });
         return organizations;
     }
 
+
+
+
+    /**
+     * Retrieves a list of organizations based on the given identifiers.
+     * If the identifiers map is null or empty, returns all organizations.
+     * The method builds a query to match organizations in the database
+     * based on the provided identifiers and whether all identifiers must match.
+     *
+     * @param identifiers a map of identifier keys and their corresponding values
+     *                    used to filter the organizations
+     * @param matchAll    a boolean indicating whether all identifiers must match
+     *                    (true for AND condition, false for OR condition)
+     * @return a list of matching Organization objects
+     */
     public List<Organization> findAllByIdentifier(Map<String, String> identifiers, boolean matchAll) {
         if (identifiers == null || identifiers.isEmpty()) {
             return findAll();
@@ -131,10 +107,36 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         String cypher = """
                 MATCH (org:Organization)
                 WHERE %s
-                RETURN DISTINCT org
+                OPTIONAL MATCH (org)-[r]->(id:Identifier)
+                RETURN DISTINCT org, collect(DISTINCT {relType: type(r), node: id}) AS identifiers
                 """.formatted(String.join(operator, whereClauses));
         log.info("Cypher query to match orgs by identifiers: {}", cypher);
         log.info("Parameters for the cypher query: {}", params);
-        return null;
+        return mapResults(cypher, params);
     }
+
+    /**
+     * Maps the results of a Neo4j Cypher query to a list of Organization objects.
+     *
+     * @param cypher the Cypher query string to be executed in the Neo4j database
+     * @param params a map containing the parameters to be used in the Cypher query
+     * @return a list of Organization objects created from the query results
+     */
+    private List<Organization> mapResults(String cypher, Map<String, Object> params) {
+        return queryExecutor.executeReadQuery(cypher, params, record -> {
+            Node node = record.get("org").asNode();
+            List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
+            List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
+            return Organization.builder()
+                    .elementId(node.elementId())
+                    .name(node.get("name").asString())
+                    .aliasName(node.get("alias").asString())
+                    .identifiers(identifiers)
+                    .build();
+        });
+    }
+
+
+
+
 }

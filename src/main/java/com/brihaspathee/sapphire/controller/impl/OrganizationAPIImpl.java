@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created in Intellij IDEA
@@ -105,6 +106,32 @@ public class OrganizationAPIImpl implements OrganizationAPI {
                         .timestamp(LocalDateTime.now())
                         .reason("Organization matched with id" + id +" was Retrieved successfully")
                         .developerMessage("Organization matched with id" + id +" was Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Retrieves a list of organizations based on the provided set of identifiers.
+     *
+     * @param identifiers a map containing key-value pairs representing the identifiers used to filter organizations
+     *                     (e.g., organization IDs, names, or codes)
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates an OrganizationList,
+     *         which includes the organizations matching the provided identifiers
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizationsByIdentifiers(Map<String, String> identifiers) {
+        List<OrganizationDto> organizations = organizationService.getOrganizationsByIdentifiers(identifiers);
+        SapphireAPIResponse<OrganizationList> apiResponse =
+                SapphireAPIResponse.<OrganizationList>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization Retrieved successfully")
+                        .response(OrganizationList.builder()
+                                .organizationList(organizations)
+                                .build())
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization Retrieved successfully")
+                        .developerMessage("Organization Retrieved successfully")
                         .build();
         return ResponseEntity.ok(apiResponse);
     }

@@ -6,6 +6,8 @@ import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * Created in Intellij IDEA
  * User: Balaji Varadharajan
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * Package Name: com.brihaspathee.sapphire.controller.interfaces
  * To change this template use File | Settings | File and Code Template
  */
-@RequestMapping("/api/v1/sapphire/provider/private")
+@RequestMapping("/api/v1/sapphire/organization/private")
 public interface OrganizationAPI {
 
     /**
@@ -44,6 +46,18 @@ public interface OrganizationAPI {
      * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates an OrganizationDto,
      * which represents the details of the retrieved organization
      */
-    @GetMapping("/organization/{organizationId}")
+    @GetMapping("/{organizationId}")
     ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationById(@PathVariable("organizationId") String id);
+
+    /**
+     * Retrieves a list of organizations based on the specified identifiers.
+     *
+     * @param identifiers a map where the key represents the type of identifier
+     *                    and the value represents the specific identifier value
+     *                    to filter organizations by
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating
+     *         an OrganizationList, which represents a list of matching organizations
+     */
+    @PostMapping("/_search")
+    ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizationsByIdentifiers(@RequestBody Map<String, String> identifiers);
 }

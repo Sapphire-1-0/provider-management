@@ -54,40 +54,45 @@ public class OrganizationService implements IOrganizationService {
     public List<OrganizationDto> getAllOrganizations() {
         log.info("Fetching all organizations");
         List<Organization> organizations = organizationRepository.findAllWithIdentifiers();
-        Map<String, String> identifiers = new HashMap<>();
-        identifiers.put("PPG_ID", "MS_200");
-        identifiers.put("NPI", "34234");
-        organizationRepository.findAllByIdentifier(identifiers, true);
-//        for (Organization organization : organizations) {
-//            log.info("Organization name: {}", organization.getName());
-//            log.info("Organization Alias Name:{}", organization.getAliasName());
-//            log.info("Element id of the Org:{}", organization.getElementId());
-//            for (Identifier identifier : organization.getIdentifiers()) {
-//                log.info("Identifier value: {}", identifier.getValue());
-//                if (identifier instanceof NPI){
-//                    log.info("NPI value: {}", identifier.getValue());
-//                } else if (identifier instanceof MedicaidID) {
-//                    log.info("MedicaidID value: {}", ((MedicaidID) identifier).getState());
-//                }else if (identifier instanceof TIN){
-//                    log.info("TIN legal name: {}", ((TIN) identifier).getLegalName());
-//                }
-//
-//            }
-//        }
         return organizations.stream().map(this::toOrganizationDto).toList();
     }
 
+    /**
+     * Retrieves a list of organizations based on the provided identifiers.
+     * The identifiers are used to filter and find the matching organizations.
+     *
+     * @param identifiers a map where the key represents the type of identifier (e.g., "NPI", "PPG_ID")
+     *                    and the value represents the corresponding identifier value.
+     * @return a list of OrganizationDto objects representing the organizations
+     *         that match the provided identifiers.
+     */
+    @Override
+    public List<OrganizationDto> getOrganizationsByIdentifiers(Map<String, String> identifiers) {
+        List<Organization> organizations = organizationRepository.findAllByIdentifier(identifiers, true);
+        return organizations.stream().map(this::toOrganizationDto).toList();
+    }
+
+
+    /**
+     * Converts an {@link Organization} entity into an {@link OrganizationDto} object.
+     *
+     * @param organization the {@link Organization} entity that needs to be transformed into a DTO
+     * @return the resulting {@link OrganizationDto} containing all necessary details of the organization
+     */
     private OrganizationDto toOrganizationDto(Organization organization) {
-        List<IdentifierDto> identifierDtos = organization.getIdentifiers().stream().map(identifier -> {
-           return IdentifierDto.builder()
-                   .elementId(identifier.getElementId())
-                   .value(identifier.getValue())
-                   .type(identifier.getClass().getSimpleName())
-                   .startDate(identifier.getStartDate())
-                   .endDate(identifier.getEndDate())
-                   .additionalProperties(getAdditionalProperties(identifier))
-                   .build();
-        }).toList();
+        List<IdentifierDto> identifierDtos = null;
+        if (organization.getIdentifiers() != null && !organization.getIdentifiers().isEmpty()){
+            identifierDtos = organization.getIdentifiers().stream().map(identifier -> {
+                return IdentifierDto.builder()
+                        .elementId(identifier.getElementId())
+                        .value(identifier.getValue())
+                        .type(identifier.getClass().getSimpleName())
+                        .startDate(identifier.getStartDate())
+                        .endDate(identifier.getEndDate())
+                        .additionalProperties(getAdditionalProperties(identifier))
+                        .build();
+            }).toList();
+        }
         OrganizationDto organizationDto = OrganizationDto.builder()
                 .elementId(organization.getElementId())
                 .name(organization.getName())
@@ -97,6 +102,14 @@ public class OrganizationService implements IOrganizationService {
         return organizationDto;
     }
 
+    /**
+     * Constructs a map of additional properties based on the type of the provided identifier.
+     * If the identifier is of type {@code MedicaidID}, its state is added to the map.
+     * If the identifier is of type {@code TIN}, its legal name is added to the map.
+     *
+     * @param identifier the identifier whose additional properties need to be collected
+     * @return a map containing additional properties specific to the identifier type
+     */
     private Map<String, Object> getAdditionalProperties(Identifier identifier) {
         Map<String, Object> additionalProperties = new HashMap<>();
         if (identifier instanceof MedicaidID medicaidID) {
