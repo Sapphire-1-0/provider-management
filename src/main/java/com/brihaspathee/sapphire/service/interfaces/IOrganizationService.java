@@ -36,4 +36,7 @@ public interface IOrganizationService {
      * @return a list of OrganizationDto instances that match the given identifiers
      */
     List<OrganizationDto> getOrganizationsByIdentifiers(Map<String, String> identifiers);
+
+
+    OrganizationDto getOrganizationAndNetworks(String elementId);
 }

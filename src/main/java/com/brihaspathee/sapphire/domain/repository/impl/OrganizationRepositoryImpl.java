@@ -2,6 +2,7 @@ package com.brihaspathee.sapphire.domain.repository.impl;
 
 import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
+import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
 import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.util.CypherLoader;
@@ -33,6 +34,8 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
     private final Neo4jQueryExecutor queryExecutor;
 
     private final CypherLoader cypherLoader;
+
+    private final NetworkRepository networkRepository;
 
     @Override
     public List<Organization> findAll() {
@@ -67,9 +70,6 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
                         });
         return organizations;
     }
-
-
-
 
     /**
      * Retrieves a list of organizations based on the given identifiers.
@@ -113,6 +113,10 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         log.info("Cypher query to match orgs by identifiers: {}", cypher);
         log.info("Parameters for the cypher query: {}", params);
         return mapResults(cypher, params);
+    }
+
+    public Organization findAllOrganizationNetworks(String elementId){
+        return networkRepository.findNetworksByOrganization(elementId);
     }
 
     /**

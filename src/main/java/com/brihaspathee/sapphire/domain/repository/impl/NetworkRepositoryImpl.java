@@ -12,6 +12,7 @@ import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -65,12 +66,14 @@ public class NetworkRepositoryImpl implements NetworkRepository {
      * @return a list of {@link Organization} objects representing the organizations associated with the given element ID
      */
     @Override
-    public List<Organization> findNetworksByOrganizations(String elementId) {
+    public Organization findNetworksByOrganization(String elementId) {
         log.info("Fetching networks for organization:");
-        String cypher = cypherLoader.load("get_all_organizations.cypher");
+        String cypher = cypherLoader.load("get_networks_by_org.cypher");
+        log.info("Cypher query: {}", cypher);
+        log.info("Parameter elementId: {}", elementId);
         List<Organization> organizations = queryExecutor.executeReadQuery(cypher, Map.of("orgId", elementId),
                 NetworkRepositoryImpl::getOrganization);
-        return organizations;
+        return organizations.isEmpty() ? null : organizations.getFirst();
     }
 
     /**
@@ -87,10 +90,14 @@ public class NetworkRepositoryImpl implements NetworkRepository {
         log.info("Element id of the Org:{}", node.elementId());
         Organization.OrganizationBuilder builder = BuilderUtil.buildOrganization(node);
         List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
-        List<Value> networkList = record.get("networks").asList(v -> v);
+        List<Node> networkList = record.get("networks").asList(Value::asNode);
+        List<Network> networks = new ArrayList<>();
+        for (Node networkNode: networkList){
+            networks.add(BuilderUtil.buildNetwork(networkNode));
+        }
         return builder
                 .identifiers(BuilderUtil.buildIdentifiers(idList))
-                .networks(null)
+                .networks(networks)
                 .build();
     }
 }

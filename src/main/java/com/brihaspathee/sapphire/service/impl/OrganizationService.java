@@ -72,6 +72,12 @@ public class OrganizationService implements IOrganizationService {
         return organizations.stream().map(this::toOrganizationDto).toList();
     }
 
+    @Override
+    public OrganizationDto getOrganizationAndNetworks(String elementId) {
+        Organization organization = organizationRepository.findAllOrganizationNetworks(elementId);
+        return toOrganizationDto(organization);
+    }
+
 
     /**
      * Converts an {@link Organization} entity into an {@link OrganizationDto} object.

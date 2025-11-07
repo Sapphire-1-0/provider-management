@@ -60,4 +60,7 @@ public interface OrganizationAPI {
      */
     @PostMapping("/_search")
     ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizationsByIdentifiers(@RequestBody Map<String, String> identifiers);
+
+    @PostMapping("/{organizationId}/network/_search")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationNetworks(@PathVariable("organizationId") String organizationId);
 }

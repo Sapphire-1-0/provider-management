@@ -135,4 +135,20 @@ public class OrganizationAPIImpl implements OrganizationAPI {
                         .build();
         return ResponseEntity.ok(apiResponse);
     }
+
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationNetworks(String organizationId) {
+        OrganizationDto organizationDto = organizationService.getOrganizationAndNetworks(organizationId);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization Retrieved successfully")
+                        .developerMessage("Organization Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
 }

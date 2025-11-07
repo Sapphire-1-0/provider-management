@@ -20,4 +20,5 @@ public interface OrganizationRepository {
     List<Organization> findAll();
     List<Organization> findAllWithIdentifiers();
     List<Organization> findAllByIdentifier(Map<String, String> identifiers, boolean matchAll);
+    Organization findAllOrganizationNetworks(String elementId);
 }

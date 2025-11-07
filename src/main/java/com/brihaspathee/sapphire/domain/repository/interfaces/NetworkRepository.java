@@ -25,10 +25,10 @@ public interface NetworkRepository {
 
 
     /**
-     * Retrieves a list of organizations associated with the given network identifier.
+     * Retrieves all the networks associated with the organization
      *
      * @param elementId the unique identifier of the network used to find the associated organizations
-     * @return a list of Organization objects associated with the specified network
+     * @return the Organization object and its associated network
      */
-    List<Organization> findNetworksByOrganizations(String elementId);
+    Organization findNetworksByOrganization(String elementId);
 }

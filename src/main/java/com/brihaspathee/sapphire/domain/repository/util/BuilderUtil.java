@@ -28,6 +28,9 @@ public class BuilderUtil {
      * @return an {@link Organization.OrganizationBuilder} initialized with the extracted data
      */
     public static Organization.OrganizationBuilder buildOrganization(Node orgNode) {
+        if (orgNode == null) {
+            return null;
+        }
         return Organization.builder()
                 .elementId(orgNode.elementId())
                 .name(orgNode.get("name").asString())
@@ -36,6 +39,19 @@ public class BuilderUtil {
                 .atypical(orgNode.get("atypical").asBoolean())
                 .capitated(orgNode.get("capitated").asBoolean())
                 .pcpPractitionerRequired(orgNode.get("pcpPractitionerRequired").asBoolean());
+    }
+
+
+    public static Network buildNetwork(Node networkNode) {
+        if (networkNode == null) {
+            return null;
+        }
+        return Network.builder()
+                .code(networkNode.get("code").asString())
+                .name(networkNode.get("name").asString())
+//                .isHNETNetwork(networkNode.get("isHNETNetwork").asBoolean())
+//                .isVendorNetwork(networkNode.get("isVendorNetwork").asBoolean())
+                .build();
     }
 
     /**
@@ -49,10 +65,13 @@ public class BuilderUtil {
         if (idList == null || idList.isEmpty()) {
             return null;
         }
+        log.info("Building identifiers: {}", idList);
         List<Identifier> identifiers = new ArrayList<>();
         for (Map<String, Object> idMap : idList) {
             String relType = (String) idMap.get("relType");
             Node idNode = (Node) idMap.get("node");
+            log.info("relType: {}", relType);
+            log.info("idNode: {}", idNode);
             Identifier identifier = switch (relType) {
                 case "HAS_NPI" -> new NPI();
                 case "HAS_TIN" -> {
