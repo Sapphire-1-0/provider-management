@@ -14,6 +14,14 @@ import com.brihaspathee.sapphire.domain.entity.Organization;
 public interface LocationRepository {
 
     /**
+     * Retrieves the organization and all its associated locations based on the provided organization ID.
+     *
+     * @param organizationId the unique identifier of the organization
+     * @return an Organization object containing the organization details and its associated locations
+     */
+    Organization findLocationsByOrganization(String organizationId);
+
+    /**
      * Retrieves the organization and its associated locations based on the provided organization ID and network ID.
      *
      * @param orgId the unique identifier of the organization
