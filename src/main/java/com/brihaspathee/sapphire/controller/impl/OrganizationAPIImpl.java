@@ -136,9 +136,87 @@ public class OrganizationAPIImpl implements OrganizationAPI {
         return ResponseEntity.ok(apiResponse);
     }
 
+    /**
+     * Retrieves the organization and its associated networks based on the provided organization ID.
+     *
+     * @param organizationId the unique identifier of the organization whose networks are to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     *         which includes the organization details along with its networks
+     */
     @Override
     public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationNetworks(String organizationId) {
         OrganizationDto organizationDto = organizationService.getOrganizationAndNetworks(organizationId);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization Retrieved successfully")
+                        .developerMessage("Organization Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Retrieves the locations associated with a specific organization and network.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param netId the unique identifier of the network under the organization
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates an OrganizationDto,
+     *         which includes the locations associated with the specified organization and network
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getLocationsForOrgAndNet(String orgId, String netId) {
+        OrganizationDto organizationDto = organizationService.getOrganizationNetworkLocations(orgId, netId);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization Retrieved successfully")
+                        .developerMessage("Organization Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Retrieves a list of locations associated with a specific organization based on the provided organization ID.
+     *
+     * @param organizationId the unique identifier of the organization whose locations are to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     * which includes the list of locations related to the specified organization
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationLocations(String organizationId) {
+        OrganizationDto organizationDto = organizationService.getOrganizationAndLocations(organizationId);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization Retrieved successfully")
+                        .developerMessage("Organization Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Retrieves network details for a specific organization and location.
+     *
+     * @param orgId the unique identifier of the organization for which the networks need to be retrieved
+     * @param netId
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     * representing the network details for the specified organization and location
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getNetworksForOrgAndLoc(String orgId, String netId) {
+        OrganizationDto organizationDto = organizationService.getOrganizationLocationNetworks(orgId, netId);
         SapphireAPIResponse<OrganizationDto> apiResponse =
                 SapphireAPIResponse.<OrganizationDto>builder()
                         .statusCode(200)

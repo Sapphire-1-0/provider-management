@@ -95,6 +95,7 @@ public class NetworkRepositoryImpl implements NetworkRepository {
         for (Node networkNode: networkList){
             networks.add(BuilderUtil.buildNetwork(networkNode));
         }
+        log.info("Networks: {}", networks);
         return builder
                 .identifiers(BuilderUtil.buildIdentifiers(idList))
                 .networks(networks)

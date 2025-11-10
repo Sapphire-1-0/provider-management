@@ -38,5 +38,47 @@ public interface IOrganizationService {
     List<OrganizationDto> getOrganizationsByIdentifiers(Map<String, String> identifiers);
 
 
+    /**
+     * Retrieves the organization details along with its associated networks
+     * based on the provided element ID.
+     *
+     * @param elementId the unique identifier of the organization for which the
+     *                  details and associated networks are being fetched
+     * @return an instance of {@code OrganizationDto} containing the details of
+     *         the organization along with its associated networks
+     */
     OrganizationDto getOrganizationAndNetworks(String elementId);
+
+    /**
+     * Retrieves the network-specific location details of an organization
+     * based on the provided organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization whose network locations are being retrieved
+     * @param netId the unique identifier of the network associated with the specified organization
+     * @return an instance of {@code OrganizationDto} containing the details of the organization,
+     *         including its associated network locations
+     */
+    OrganizationDto getOrganizationNetworkLocations(String orgId, String netId);
+
+    /**
+     * Retrieves the organization details along with its associated locations
+     * based on the provided element ID.
+     *
+     * @param elementId the unique identifier of the organization for which the
+     *                  details and associated locations are being fetched
+     * @return an instance of {@code OrganizationDto} containing the details of
+     *         the organization along with its associated locations
+     */
+    OrganizationDto getOrganizationAndLocations(String elementId);
+
+    /**
+     * Retrieves the organization details, including its location and network information,
+     * based on the provided organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization for which the details are being fetched
+     * @param locId the unique identifier of the location associated with the specified organization
+     * @return an instance of {@code OrganizationDto} containing the details of the organization,
+     *         including its associated locations and networks
+     */
+    OrganizationDto getOrganizationLocationNetworks(String orgId, String locId);
 }

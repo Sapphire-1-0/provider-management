@@ -84,4 +84,12 @@ public class Organization {
      */
     private List<Network> networks;
 
+    /**
+     * Represents the list of locations associated with the organization.
+     * Each location captures details such as name, address, city, state, ZIP code,
+     * county, and FIPS code, providing comprehensive geographic information
+     * related to the organization.
+     */
+    private List<Location> locations;
+
 }

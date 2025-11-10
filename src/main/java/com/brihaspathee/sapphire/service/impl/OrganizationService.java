@@ -1,15 +1,17 @@
 package com.brihaspathee.sapphire.service.impl;
 
 import com.brihaspathee.sapphire.domain.entity.*;
+import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
+import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
 import com.brihaspathee.sapphire.mapper.interfaces.IOrganizationMapper;
-import com.brihaspathee.sapphire.model.IdentifierDto;
-import com.brihaspathee.sapphire.model.OrganizationDto;
+import com.brihaspathee.sapphire.model.*;
 import com.brihaspathee.sapphire.service.interfaces.IOrganizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,9 +74,59 @@ public class OrganizationService implements IOrganizationService {
         return organizations.stream().map(this::toOrganizationDto).toList();
     }
 
+    /**
+     * Retrieves an organization's details along with its associated networks based on the given element ID.
+     *
+     * @param elementId the unique identifier of the element to fetch the organization and network details.
+     * @return an OrganizationDto object containing the organization's information and its associated networks.
+     */
     @Override
     public OrganizationDto getOrganizationAndNetworks(String elementId) {
         Organization organization = organizationRepository.findAllOrganizationNetworks(elementId);
+        return toOrganizationDto(organization);
+    }
+
+    /**
+     * Retrieves the network locations for a specific organization and network based on
+     * the provided organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param netId the unique identifier of the network
+     * @return an OrganizationDto object containing the organization network location details
+     */
+    @Override
+    public OrganizationDto getOrganizationNetworkLocations(String orgId, String netId) {
+        Organization organization = organizationRepository.findLocationsByOrgAndNet(orgId, netId);
+        return toOrganizationDto(organization);
+    }
+
+    /**
+     * Retrieves the organization details along with its associated locations
+     * based on the provided element ID.
+     *
+     * @param elementId the unique identifier of the organization for which the
+     *                  details and associated locations are being fetched
+     * @return an instance of {@code OrganizationDto} containing the details of
+     * the organization along with its associated locations
+     */
+    @Override
+    public OrganizationDto getOrganizationAndLocations(String elementId) {
+        Organization organization = organizationRepository.findAllOrganizationLocations(elementId);
+        return toOrganizationDto(organization);
+    }
+
+    /**
+     * Retrieves the organization details, including its location and network information,
+     * based on the provided organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization for which the details are being fetched
+     * @param locId the unique identifier of the location associated with the specified organization
+     * @return an instance of {@code OrganizationDto} containing the details of the organization,
+     * including its associated locations and networks
+     */
+    @Override
+    public OrganizationDto getOrganizationLocationNetworks(String orgId, String locId) {
+        Organization organization = organizationRepository.findNetworksByOrgAndLoc(orgId, locId);
         return toOrganizationDto(organization);
     }
 
@@ -87,6 +139,7 @@ public class OrganizationService implements IOrganizationService {
      */
     private OrganizationDto toOrganizationDto(Organization organization) {
         List<IdentifierDto> identifierDtos = null;
+        List<NetworkDto> networkDtos = null;
         if (organization.getIdentifiers() != null && !organization.getIdentifiers().isEmpty()){
             identifierDtos = organization.getIdentifiers().stream().map(identifier -> {
                 return IdentifierDto.builder()
@@ -99,11 +152,70 @@ public class OrganizationService implements IOrganizationService {
                         .build();
             }).toList();
         }
+        if (organization.getNetworks() != null && !organization.getNetworks().isEmpty()) {
+            networkDtos = organization.getNetworks().stream().map(network -> {
+                NetworkDto networkDto = NetworkDto.builder()
+                        .elementId(network.getElementId())
+                        .name(network.getName())
+                        .code(network.getCode())
+                        .isHNETNetwork(network.getIsHNETNetwork())
+                        .isVendorNetwork(network.getIsVendorNetwork())
+                        .build();
+                if (network.getLocations() != null && !network.getLocations().isEmpty()) {
+                    networkDto.setLocations(network.getLocations().stream().map(location -> {
+                        LocationDto locationDto =  LocationDto.builder()
+                                .elementId(location.getElementId())
+                                .name(location.getName())
+                                .streetAddress(location.getStreetAddress())
+                                .secondaryAddress(location.getSecondaryAddress())
+                                .city(location.getCity())
+                                .state(location.getState())
+                                .zipCode(location.getZipCode())
+                                .build();
+                        if (location.getNetworkServiceInfo() != null){
+                            LocationNetworkDto locationNetworkDto = LocationNetworkDto.builder().build();
+                            LocationNetworkServiceInfo locationNetworkServiceInfo = location.getNetworkServiceInfo();
+                            HasPanel hasPanel = locationNetworkServiceInfo.getHasPanel();
+                            List<RoleLocationServes> roleLocationServesList = locationNetworkServiceInfo.getRoleLocationServes();
+                            if (hasPanel != null) {
+                                PanelDto panelDto = PanelDto.builder()
+                                        .genderLimitation(hasPanel.getGenderLimitation())
+                                        .ageLimitation(hasPanel.getAgeLimitation())
+                                        .highestAgeMonths(hasPanel.getHighestAgeMonths())
+                                        .lowestAgeMonths(hasPanel.getLowestAgeMonths())
+                                        .highestAgeYears(hasPanel.getHighestAgeYears())
+                                        .lowestAgeYears(hasPanel.getLowestAgeYears())
+                                        .status(hasPanel.getStatus())
+                                        .build();
+                                locationNetworkDto.setPanel(panelDto);
+                            }
+                            if (roleLocationServesList != null && !roleLocationServesList.isEmpty()) {
+                                List<LocationNetworkSpanDto> spanDtos = new ArrayList<>();
+                                for (RoleLocationServes roleLocationServes : roleLocationServesList) {
+                                    LocationNetworkSpanDto spanDto = LocationNetworkSpanDto.builder()
+                                            .startDate(roleLocationServes.getStartDate())
+                                            .endDate(roleLocationServes.getEndDate())
+                                            .termReason(roleLocationServes.getTermReason())
+                                            .build();
+                                    spanDtos.add(spanDto);
+                                }
+                                locationNetworkDto.setSpans(spanDtos);
+                            }
+                            locationNetworkDto.setIsPCP(locationNetworkServiceInfo.getIsPCP());
+                            locationDto.setLocationNetwork(locationNetworkDto);
+                        }
+                        return locationDto;
+                    }).toList());
+                }
+                return networkDto;
+            }).toList();
+        }
         OrganizationDto organizationDto = OrganizationDto.builder()
                 .elementId(organization.getElementId())
                 .name(organization.getName())
                 .aliasName(organization.getAliasName())
                 .identifiers(identifierDtos)
+                .networks(networkDtos)
                 .build();
         return organizationDto;
     }

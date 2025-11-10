@@ -2,6 +2,7 @@ package com.brihaspathee.sapphire.domain.repository.impl;
 
 import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
+import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository;
 import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
 import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
@@ -36,6 +37,8 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
     private final CypherLoader cypherLoader;
 
     private final NetworkRepository networkRepository;
+
+    private final LocationRepository locationRepository;
 
     @Override
     public List<Organization> findAll() {
@@ -117,6 +120,34 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
 
     public Organization findAllOrganizationNetworks(String elementId){
         return networkRepository.findNetworksByOrganization(elementId);
+    }
+
+    @Override
+    public Organization findLocationsByOrgAndNet(String orgId, String netId) {
+        return locationRepository.findLocationsByOrgAndNet(orgId, netId);
+    }
+
+    /**
+     * Retrieves an organization along with all its associated locations based on the provided element ID.
+     *
+     * @param elementId the unique identifier of the organization element to find associated locations
+     * @return an Organization object containing the organization details and its associated locations
+     */
+    @Override
+    public Organization findAllOrganizationLocations(String elementId) {
+        return null;
+    }
+
+    /**
+     * Retrieves the details of networks associated with a specific organization and location.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param locId the unique identifier of the location
+     * @return an Organization object containing the organization details and associated networks for the specified location
+     */
+    @Override
+    public Organization findNetworksByOrgAndLoc(String orgId, String locId) {
+        return null;
     }
 
     /**

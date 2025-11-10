@@ -61,6 +61,46 @@ public interface OrganizationAPI {
     @PostMapping("/_search")
     ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizationsByIdentifiers(@RequestBody Map<String, String> identifiers);
 
+    /**
+     * Retrieves network details associated with a specific organization based on the provided organization ID.
+     *
+     * @param organizationId the unique identifier of the organization whose networks are to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     *         which includes the network details related to the specified organization
+     */
     @PostMapping("/{organizationId}/network/_search")
     ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationNetworks(@PathVariable("organizationId") String organizationId);
+
+    /**
+     * Retrieves a list of locations associated with a specific organization and network
+     * based on the provided organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization for which locations are to be retrieved
+     * @param netId the unique identifier of the network associated with the organization whose locations are to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates an OrganizationDto,
+     *         which includes the list of locations related to the specified organization and network
+     */
+    @PostMapping("/{orgId}/network/{netId}/location/_search")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getLocationsForOrgAndNet(@PathVariable("orgId") String orgId, @PathVariable("netId") String netId);
+
+    /**
+     * Retrieves a list of locations associated with a specific organization based on the provided organization ID.
+     *
+     * @param organizationId the unique identifier of the organization whose locations are to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     *         which includes the list of locations related to the specified organization
+     */
+    @PostMapping("/{organizationId}/location/_search")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationLocations(@PathVariable("organizationId") String organizationId);
+
+    /**
+     * Retrieves network details for a specific organization and location.
+     *
+     * @param orgId the unique identifier of the organization for which the networks need to be retrieved
+     * @param locId the unique identifier of the location associated with the organization
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     *         representing the network details for the specified organization and location
+     */
+    @PostMapping("/{orgId}/location/{locId}/network/_search")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getNetworksForOrgAndLoc(@PathVariable("orgId") String orgId, @PathVariable("locId") String netId);
 }

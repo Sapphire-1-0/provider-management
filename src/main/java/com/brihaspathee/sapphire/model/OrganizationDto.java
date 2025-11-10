@@ -76,4 +76,22 @@ public class OrganizationDto {
      */
     private List<IdentifierDto> identifiers;
 
+    /**
+     * Represents a list of network information associated with an organization.
+     * Each network is represented by an instance of NetworkDto, which contains attributes
+     * such as the network's name, code, and specific classifications or properties.
+     * This variable is used to store and manage a collection of networks related
+     * to the organization in various contexts.
+     */
+    private List<NetworkDto> networks;
+
+    /**
+     * Represents a list of locations associated with an organization.
+     * Each location is represented by an instance of LocationDto, which contains attributes
+     * such as name, address details, and geographic identifiers.
+     * This variable is used to store and manage a collection of locations
+     * that belong to or are related to the organization in various contexts.
+     */
+    private List<LocationDto> locations;
+
 }
