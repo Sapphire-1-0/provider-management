@@ -14,20 +14,25 @@ OPTIONAL MATCH (rn)<-[rls:ROLE_LOCATION_SERVES]-(rl:RoleLocation)
 OPTIONAL MATCH (rn)<-[has_panel:HAS_PANEL]-(rl)
 OPTIONAL MATCH (rn)<-[is_pcp:IS_PCP]-(rl)
 
-// Org identifiers
-OPTIONAL MATCH (org)-[r]->(identifier:Identifier)
 
 // Collect all SERVES relationships for each RoleLocation
-WITH org, net, identifier, r, loc, rl, has_panel, is_pcp,
+WITH org, net, loc, rl, has_panel, is_pcp,
      collect(DISTINCT rls) AS servesRels
 
 // Now aggregate by location (each location has one rl)
-WITH org, net, identifier, r, loc,
+WITH org, net, loc,
      collect(DISTINCT {
        servesRels: servesRels,
        hasPanelRel: has_panel,
        isPcpRel: is_pcp
      }) AS roleLocationData
+
+// Org identifiers
+CALL {
+WITH org
+OPTIONAL MATCH (org)-[r]->(identifier:Identifier)
+RETURN collect(DISTINCT { relType: type(r), node: identifier }) AS identifiers
+}
 
 RETURN
   org,
@@ -35,5 +40,4 @@ RETURN
   collect(DISTINCT {
     location: loc,
     roleLocationData: roleLocationData
-  }) AS locations,
-  collect({ relType: type(r), node: identifier }) AS identifiers
+  }) AS locations, identifiers

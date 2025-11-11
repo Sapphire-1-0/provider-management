@@ -1,7 +1,11 @@
 package com.brihaspathee.sapphire.domain.repository.impl;
 
+import com.brihaspathee.sapphire.domain.entity.Location;
+import com.brihaspathee.sapphire.domain.entity.LocationNetworkServiceInfo;
 import com.brihaspathee.sapphire.domain.entity.Network;
 import com.brihaspathee.sapphire.domain.entity.Organization;
+import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
+import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
@@ -10,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
+import org.neo4j.driver.types.Relationship;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -72,7 +77,30 @@ public class NetworkRepositoryImpl implements NetworkRepository {
         log.info("Cypher query: {}", cypher);
         log.info("Parameter elementId: {}", elementId);
         List<Organization> organizations = queryExecutor.executeReadQuery(cypher, Map.of("orgId", elementId),
-                NetworkRepositoryImpl::getOrganization);
+                NetworkRepositoryImpl::getOrganizationWithNetworks);
+        return organizations.isEmpty() ? null : organizations.getFirst();
+    }
+
+    /**
+     * Retrieves an {@link Organization} entity based on the provided organization ID and location ID.
+     * This method fetches data related to an organization and its associated networks, filtered
+     * by the specific organization and location identifiers.
+     *
+     * @param orgId the unique identifier of the organization to retrieve
+     * @param locId the unique identifier of the location associated with the organization
+     * @return an {@link Organization} object containing details of the organization and its associated
+     *         networks based on the specified organization and location IDs
+     */
+    @Override
+    public Organization findNetworksByOrgAndLoc(String orgId, String locId) {
+        log.debug("Fetching locations for organization and network:");
+        String cypher = cypherLoader.load("get_networks_by_loc_org.cypher");
+        log.debug("Cypher query: {}", cypher);
+        log.debug("Org elementId: {}", orgId);
+        log.debug("Loc elementId: {}", locId);
+        Map<String, Object> params = Map.of("orgId", orgId, "locId", locId);
+        List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params,
+                NetworkRepositoryImpl::getOrganizationWithLocAndNet);
         return organizations.isEmpty() ? null : organizations.getFirst();
     }
 
@@ -84,21 +112,83 @@ public class NetworkRepositoryImpl implements NetworkRepository {
      *               data, identifiers, and associated networks
      * @return an {@link Organization} object populated with the data from the specified record
      */
-    private static Organization getOrganization(org.neo4j.driver.Record record) {
-        Node node = record.get("org").asNode();
-        log.info("Organization name: {}", node.get("name").asString());
-        log.info("Element id of the Org:{}", node.elementId());
-        Organization.OrganizationBuilder builder = BuilderUtil.buildOrganization(node);
-        List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
+    private static Organization getOrganizationWithNetworks(org.neo4j.driver.Record record) {
+        Organization organization = getOrganization(record);
         List<Node> networkList = record.get("networks").asList(Value::asNode);
         List<Network> networks = new ArrayList<>();
         for (Node networkNode: networkList){
             networks.add(BuilderUtil.buildNetwork(networkNode));
         }
         log.info("Networks: {}", networks);
-        return builder
-                .identifiers(BuilderUtil.buildIdentifiers(idList))
-                .networks(networks)
-                .build();
+        organization.setNetworks(networks);
+        return organization;
+    }
+
+    private static Organization getOrganizationWithLocAndNet(org.neo4j.driver.Record record) {
+        Organization organization = getOrganization(record);
+        Node locationNode = record.get("loc").asNode();
+        Location location = BuilderUtil.buildLocation(locationNode);
+        List<Network> networks = new ArrayList<>();
+        List<Map<String, Object>> locationNetworkInfoList = record.get("networks").asList(Value::asMap);
+        for (Map<String, Object> locNetInfo : locationNetworkInfoList) {
+            log.debug("LocationNetworkInfo: {}", locNetInfo.get("network"));
+            Node networkNode = (Node) (locNetInfo).get("network");
+            Network network = BuilderUtil.buildNetwork(networkNode);
+            log.debug("Role Network Data: {}", locNetInfo.get("roleNetworkData"));
+            List<Map<String, Object>> rnDataList = (List<Map<String, Object>>) locNetInfo.get("roleNetworkData");
+            for (Map<String, Object> rnData : rnDataList) {
+                LocationNetworkServiceInfo lnsi = LocationNetworkServiceInfo.builder().build();
+                log.debug("rlData: {}", rnData);
+                Relationship hasPanelRel = rnData.get("hasPanelRel") instanceof Relationship r ? r : null;
+                log.debug("Has Panel Relationship Object: {}", hasPanelRel);
+                Relationship isPCPRel = rnData.get("isPcpRel") instanceof Relationship r ? r : null;
+                log.debug("Is PCP Relationship Object: {}", isPCPRel);
+                Object obj = rnData.get("servesRels");
+                List<RoleLocationServes> roleLocationServesList = BuilderUtil.buildRoleLocationServesRels(obj);
+                if (roleLocationServesList != null) {
+                    lnsi.setRoleLocationServes(roleLocationServesList);
+                }
+                if (hasPanelRel != null) {
+                    HasPanel hasPanel = BuilderUtil.buildHasPanelRel(hasPanelRel);
+                    lnsi.setHasPanel(hasPanel);
+                }
+                if (isPCPRel != null) {
+                    log.debug("IsPCP Panel Rel: {}", isPCPRel);
+                    log.debug("IsPCP Panel  Type: {}", isPCPRel.type());
+                    log.debug("IsPCP Panel  Start Node: {}", isPCPRel.startNodeElementId());
+                    log.debug("IsPCP Panel  End Node: {}", isPCPRel.endNodeElementId());
+                    log.debug("IsPCP Panel  Properties: {}", isPCPRel.asMap());
+                    lnsi.setIsPCP(true);
+                }
+                network.setNetworkServiceInfo(lnsi);
+                networks.add(network);
+            }
+
+
+        }
+//        log.debug("Locations: {}", locations);
+        location.setNetworks(networks);
+        organization.setLocations(List.of(location));
+        return organization;
+    }
+
+    /**
+     * Extracts organization details from a Neo4j database record and constructs an
+     * {@link Organization} object using the provided data. The method retrieves
+     * the organization node, processes its attributes, builds a list of identifiers,
+     * and returns a complete {@link Organization} object.
+     *
+     * @param record the Neo4j {@link org.neo4j.driver.Record} containing the organization node,
+     *               its attributes, and associated identifiers
+     * @return an {@link Organization} object populated with the data from the specified record
+     */
+    private static Organization getOrganization(org.neo4j.driver.Record record){
+        Node node = record.get("org").asNode();
+        log.debug("Organization name: {}", node.get("name").asString());
+        log.debug("Element id of the Org:{}", node.elementId());
+        Organization.OrganizationBuilder orgBuilder = BuilderUtil.buildOrganization(node);
+        List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
+        return orgBuilder.identifiers(BuilderUtil.buildIdentifiers(idList)).build();
+
     }
 }

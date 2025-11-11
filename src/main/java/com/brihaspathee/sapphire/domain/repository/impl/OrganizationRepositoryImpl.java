@@ -135,7 +135,7 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
      */
     @Override
     public Organization findAllOrganizationLocations(String elementId) {
-        return null;
+        return locationRepository.findLocationsByOrganization(elementId);
     }
 
     /**
@@ -147,7 +147,8 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
      */
     @Override
     public Organization findNetworksByOrgAndLoc(String orgId, String locId) {
-        return null;
+
+        return networkRepository.findNetworksByOrgAndLoc(orgId, locId);
     }
 
     /**

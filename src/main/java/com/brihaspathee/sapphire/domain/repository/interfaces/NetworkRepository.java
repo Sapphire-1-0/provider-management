@@ -31,4 +31,6 @@ public interface NetworkRepository {
      * @return the Organization object and its associated network
      */
     Organization findNetworksByOrganization(String elementId);
+
+    Organization findNetworksByOrgAndLoc(String orgId, String locId);
 }

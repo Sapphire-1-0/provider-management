@@ -140,6 +140,7 @@ public class OrganizationService implements IOrganizationService {
     private OrganizationDto toOrganizationDto(Organization organization) {
         List<IdentifierDto> identifierDtos = null;
         List<NetworkDto> networkDtos = null;
+        List<LocationDto> locationDtos = null;
         if (organization.getIdentifiers() != null && !organization.getIdentifiers().isEmpty()){
             identifierDtos = organization.getIdentifiers().stream().map(identifier -> {
                 return IdentifierDto.builder()
@@ -173,35 +174,7 @@ public class OrganizationService implements IOrganizationService {
                                 .zipCode(location.getZipCode())
                                 .build();
                         if (location.getNetworkServiceInfo() != null){
-                            LocationNetworkDto locationNetworkDto = LocationNetworkDto.builder().build();
-                            LocationNetworkServiceInfo locationNetworkServiceInfo = location.getNetworkServiceInfo();
-                            HasPanel hasPanel = locationNetworkServiceInfo.getHasPanel();
-                            List<RoleLocationServes> roleLocationServesList = locationNetworkServiceInfo.getRoleLocationServes();
-                            if (hasPanel != null) {
-                                PanelDto panelDto = PanelDto.builder()
-                                        .genderLimitation(hasPanel.getGenderLimitation())
-                                        .ageLimitation(hasPanel.getAgeLimitation())
-                                        .highestAgeMonths(hasPanel.getHighestAgeMonths())
-                                        .lowestAgeMonths(hasPanel.getLowestAgeMonths())
-                                        .highestAgeYears(hasPanel.getHighestAgeYears())
-                                        .lowestAgeYears(hasPanel.getLowestAgeYears())
-                                        .status(hasPanel.getStatus())
-                                        .build();
-                                locationNetworkDto.setPanel(panelDto);
-                            }
-                            if (roleLocationServesList != null && !roleLocationServesList.isEmpty()) {
-                                List<LocationNetworkSpanDto> spanDtos = new ArrayList<>();
-                                for (RoleLocationServes roleLocationServes : roleLocationServesList) {
-                                    LocationNetworkSpanDto spanDto = LocationNetworkSpanDto.builder()
-                                            .startDate(roleLocationServes.getStartDate())
-                                            .endDate(roleLocationServes.getEndDate())
-                                            .termReason(roleLocationServes.getTermReason())
-                                            .build();
-                                    spanDtos.add(spanDto);
-                                }
-                                locationNetworkDto.setSpans(spanDtos);
-                            }
-                            locationNetworkDto.setIsPCP(locationNetworkServiceInfo.getIsPCP());
+                            LocationNetworkDto locationNetworkDto = toLocationNetworkDto(location.getNetworkServiceInfo());
                             locationDto.setLocationNetwork(locationNetworkDto);
                         }
                         return locationDto;
@@ -210,14 +183,89 @@ public class OrganizationService implements IOrganizationService {
                 return networkDto;
             }).toList();
         }
+        if(organization.getLocations() != null && !organization.getLocations().isEmpty()){
+            locationDtos = organization.getLocations().stream().map(location -> {
+                LocationDto locationDto = LocationDto.builder()
+                        .elementId(location.getElementId())
+                        .name(location.getName())
+                        .streetAddress(location.getStreetAddress())
+                        .secondaryAddress(location.getSecondaryAddress())
+                        .city(location.getCity())
+                        .state(location.getState())
+                        .zipCode(location.getZipCode())
+                        .county(location.getCounty())
+                        .countyFIPS(location.getCountyFIPS())
+                        .build();
+                if (location.getNetworks() != null && !location.getNetworks().isEmpty()) {
+                    locationDto.setNetworks(location.getNetworks().stream().map(network -> {
+                        NetworkDto networkDto =  NetworkDto.builder()
+                                .elementId(network.getElementId())
+                                .name(network.getName())
+                                .code(network.getCode())
+                                .build();
+                        if (network.getNetworkServiceInfo() != null){
+                            LocationNetworkDto locationNetworkDto = toLocationNetworkDto(network.getNetworkServiceInfo());
+                            networkDto.setLocationNetwork(locationNetworkDto);
+                        }
+                        return networkDto;
+                    }).toList());
+                }
+                return locationDto;
+            }).toList();
+        }
         OrganizationDto organizationDto = OrganizationDto.builder()
                 .elementId(organization.getElementId())
                 .name(organization.getName())
                 .aliasName(organization.getAliasName())
                 .identifiers(identifierDtos)
                 .networks(networkDtos)
+                .locations(locationDtos)
                 .build();
         return organizationDto;
+    }
+
+    /**
+     * Converts a {@code LocationNetworkServiceInfo} object to a {@code LocationNetworkDto}.
+     * Extracts and maps relevant data from the input object, including panel details,
+     * location network spans, and PCP status.
+     *
+     * @param locationNetworkServiceInfo an object containing information about the location network services
+     *                                   to be converted into a {@code LocationNetworkDto}
+     * @return a {@code LocationNetworkDto} object populated with data extracted from
+     *         the given {@code LocationNetworkServiceInfo}
+     */
+    private static LocationNetworkDto toLocationNetworkDto(LocationNetworkServiceInfo locationNetworkServiceInfo) {
+        LocationNetworkDto locationNetworkDto = LocationNetworkDto.builder().build();
+//        LocationNetworkServiceInfo locationNetworkServiceInfo = network.getNetworkServiceInfo();
+        HasPanel hasPanel = locationNetworkServiceInfo.getHasPanel();
+        List<RoleLocationServes> roleLocationServesList = locationNetworkServiceInfo.getRoleLocationServes();
+        if (hasPanel != null) {
+            PanelDto panelDto = PanelDto.builder()
+                    .genderLimitation(hasPanel.getGenderLimitation())
+                    .ageLimitation(hasPanel.getAgeLimitation())
+                    .highestAgeMonths(hasPanel.getHighestAgeMonths())
+                    .lowestAgeMonths(hasPanel.getLowestAgeMonths())
+                    .highestAgeYears(hasPanel.getHighestAgeYears())
+                    .lowestAgeYears(hasPanel.getLowestAgeYears())
+                    .status(hasPanel.getStatus())
+                    .build();
+            locationNetworkDto.setPanel(panelDto);
+        }
+        if (roleLocationServesList != null && !roleLocationServesList.isEmpty()) {
+            List<LocationNetworkSpanDto> spanDtos = new ArrayList<>();
+            for (RoleLocationServes roleLocationServes : roleLocationServesList) {
+                LocationNetworkSpanDto spanDto = LocationNetworkSpanDto.builder()
+                        .startDate(roleLocationServes.getStartDate())
+                        .endDate(roleLocationServes.getEndDate())
+                        .termReason(roleLocationServes.getTermReason())
+                        .build();
+                spanDtos.add(spanDto);
+            }
+            locationNetworkDto.setSpans(spanDtos);
+        }
+        locationNetworkDto.setIsPCP(locationNetworkServiceInfo.getIsPCP());
+        return locationNetworkDto;
+//        networkDto.setLocationNetwork(locationNetworkDto);
     }
 
     /**

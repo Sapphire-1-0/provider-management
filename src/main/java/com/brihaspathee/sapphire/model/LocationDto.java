@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * Created in Intellij IDEA
  * User: Balaji Varadharajan
@@ -87,6 +89,24 @@ public class LocationDto {
      */
     private String countyFIPS;
 
+    /**
+     * Represents a collection of networks associated with a specific location.
+     * This variable is used to store a list of {@link NetworkDto} objects, each
+     * representing details about an individual network, such as its name, code,
+     * and specific characteristics like whether it is part of an HNET or vendor network.
+     * These networks provide context and structure for managing associated network data
+     * within the system.
+     */
+    private List<NetworkDto> networks;
+
+    /**
+     * Represents the network-related information associated with a specific location.
+     * This variable is used to store an instance of {@link LocationNetworkDto}, which
+     * contains details such as panel criteria, network categorizations (e.g., PCP, specialist,
+     * behavioral health), and network span data. The location network encapsulates
+     * attributes defining the characteristics and classifications of the network or
+     * provider associated with the location.
+     */
     private LocationNetworkDto locationNetwork;
 
 }

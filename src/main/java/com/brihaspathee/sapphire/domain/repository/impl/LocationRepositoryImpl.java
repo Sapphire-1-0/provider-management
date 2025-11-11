@@ -110,12 +110,6 @@ public class LocationRepositoryImpl implements LocationRepository {
      * @return an Organization object constructed using the data extracted from the record.
      */
     private static Organization getOrganizationWithLocAndNet(org.neo4j.driver.Record record) {
-//        Node node = record.get("org").asNode();
-//        log.debug("Organization name: {}", node.get("name").asString());
-//        log.debug("Element id of the Org:{}", node.elementId());
-//        Node networkNode = record.get("net").asNode();
-//        Organization.OrganizationBuilder builder = BuilderUtil.buildOrganization(node);
-//        List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
         Organization organization = getOrganization(record);
         Node networkNode = record.get("net").asNode();
         Network network = BuilderUtil.buildNetwork(networkNode);
@@ -175,11 +169,6 @@ public class LocationRepositoryImpl implements LocationRepository {
      *         its identifiers and associated locations.
      */
     private static Organization getOrganizationWithLocations(org.neo4j.driver.Record record){
-//        Node node = record.get("org").asNode();
-//        log.debug("Organization name: {}", node.get("name").asString());
-//        log.debug("Element id of the Org:{}", node.elementId());
-//        Organization.OrganizationBuilder orgBuilder = BuilderUtil.buildOrganization(node);
-//        List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
         Organization organization = getOrganization(record);
         List<Location> locations = new ArrayList<>();
         List<Value> locationList = record.get("locations").asList(value -> value);

@@ -66,4 +66,13 @@ public class NetworkDto {
      * attributes such as address, city, state, and other geographic details.
      */
     private List<LocationDto> locations;
+
+    /**
+     * Represents the network details associated with a specific location.
+     * This variable is used to store information encapsulated in the {@link LocationNetworkDto} class.
+     * It provides details such as panel information, categorization of the network as a primary care
+     * provider, specialist, or behavioral health, and any associated spans that define
+     * durations or additional attributes related to the location's network.
+     */
+    private LocationNetworkDto locationNetwork;
 }
