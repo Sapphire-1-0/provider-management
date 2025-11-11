@@ -6,6 +6,8 @@ import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
 import com.brihaspathee.sapphire.mapper.interfaces.IOrganizationMapper;
 import com.brihaspathee.sapphire.model.*;
+import com.brihaspathee.sapphire.model.web.IdentifierInfo;
+import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
 import com.brihaspathee.sapphire.service.interfaces.IOrganizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,13 +65,16 @@ public class OrganizationService implements IOrganizationService {
      * Retrieves a list of organizations based on the provided identifiers.
      * The identifiers are used to filter and find the matching organizations.
      *
-     * @param identifiers a map where the key represents the type of identifier (e.g., "NPI", "PPG_ID")
-     *                    and the value represents the corresponding identifier value.
+     * @param organizationSearchRequest Request containing the identifiers to be used for filtering.
      * @return a list of OrganizationDto objects representing the organizations
      *         that match the provided identifiers.
      */
     @Override
-    public List<OrganizationDto> getOrganizationsByIdentifiers(Map<String, String> identifiers) {
+    public List<OrganizationDto> getOrganizationsByIdentifiers(OrganizationSearchRequest organizationSearchRequest) {
+        Map<String, String> identifiers = new HashMap<>();
+        for (IdentifierInfo identifierInfo : organizationSearchRequest.getIdentifiers()) {
+            identifiers.put(identifierInfo.getIdentifierType(), identifierInfo.getIdentifierValue());
+        }
         List<Organization> organizations = organizationRepository.findAllByIdentifier(identifiers, true);
         return organizations.stream().map(this::toOrganizationDto).toList();
     }

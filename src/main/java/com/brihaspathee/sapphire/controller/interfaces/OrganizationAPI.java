@@ -2,6 +2,7 @@ package com.brihaspathee.sapphire.controller.interfaces;
 
 import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.model.OrganizationList;
+import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,14 +53,12 @@ public interface OrganizationAPI {
     /**
      * Retrieves a list of organizations based on the specified identifiers.
      *
-     * @param identifiers a map where the key represents the type of identifier
-     *                    and the value represents the specific identifier value
-     *                    to filter organizations by
+     * @param organizationSearchRequest The organization search request.
      * @return a ResponseEntity containing a SapphireAPIResponse encapsulating
      *         an OrganizationList, which represents a list of matching organizations
      */
     @PostMapping("/_search")
-    ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizationsByIdentifiers(@RequestBody Map<String, String> identifiers);
+    ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizationsByIdentifiers(@RequestBody OrganizationSearchRequest organizationSearchRequest);
 
     /**
      * Retrieves network details associated with a specific organization based on the provided organization ID.

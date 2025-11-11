@@ -2,6 +2,7 @@ package com.brihaspathee.sapphire.service.interfaces;
 
 import com.brihaspathee.sapphire.domain.entity.Organization;
 import com.brihaspathee.sapphire.model.OrganizationDto;
+import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,11 @@ public interface IOrganizationService {
      * represents the type of identifier and the value represents the corresponding
      * identifier value.
      *
-     * @param identifiers a map of identifiers where the key is the type of identifier
+     * @param organizationSearchRequest a map of identifiers where the key is the type of identifier
      *                    and the value is the identifier value
      * @return a list of OrganizationDto instances that match the given identifiers
      */
-    List<OrganizationDto> getOrganizationsByIdentifiers(Map<String, String> identifiers);
+    List<OrganizationDto> getOrganizationsByIdentifiers(OrganizationSearchRequest organizationSearchRequest);
 
 
     /**

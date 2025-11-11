@@ -1,0 +1,33 @@
+{
+  "testClassName": "OrganizationReadAPIIntTest",
+  "testMethods": [
+    {
+      "testMethodName": "testGetOrganizationById",
+      "testData": [
+        {
+          "testData": {
+            "testCaseId": "SAPPHIRE-PM-ORG-READ-01",
+            "testCaseDescription": "Find organization by PPG id",
+            "exceptionExpected": false,
+            "httpStatusCode": "200",
+            "orgSearchRequest": {
+              "identifiers": [
+                {
+                  "identifierType": "PPG_ID",
+                  "identifierValue": "MS0912"
+                },
+                {
+                  "identifierType": "NPI",
+                  "identifierValue": "235625546"
+                }
+              ]
+            },
+            "expectedOrganizationDto" : {
+              "name": "St.Joseph Hospital"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

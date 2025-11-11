@@ -1,19 +1,24 @@
 spring:
   application:
     name: provider-management
-  neo4j:
-    uri: bolt://localhost:7688
-    authentication:
-      username: neo4j
-      password: password
-  data:
-    neo4j:
-      database: sapphire.provider
-  cloud:
-    config:
-      enabled: false
+#  neo4j:
+#    uri: bolt://localhost:7688
+#    authentication:
+#      username: neo4j
+#      password: password
+#  data:
+#    neo4j:
+#      database: sapphire.provider
+#  cloud:
+#    config:
+#      enabled: false
   profiles:
     active: unit-test
+neo4j:
+  uri: ${NEO4J_URI:bolt://localhost:7687}
+  username: ${NEO4J_USERNAME:neo4j}
+  password: ${NEO4J_PASSWORD:password}
+  database: aton
 eureka:
   client:
     enabled: false

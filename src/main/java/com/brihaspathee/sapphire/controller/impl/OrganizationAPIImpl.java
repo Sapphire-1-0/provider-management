@@ -4,6 +4,7 @@ import com.brihaspathee.sapphire.controller.interfaces.OrganizationAPI;
 import com.brihaspathee.sapphire.domain.entity.Organization;
 import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.model.OrganizationList;
+import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
 import com.brihaspathee.sapphire.service.interfaces.IOrganizationService;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import lombok.RequiredArgsConstructor;
@@ -119,8 +120,8 @@ public class OrganizationAPIImpl implements OrganizationAPI {
      *         which includes the organizations matching the provided identifiers
      */
     @Override
-    public ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizationsByIdentifiers(Map<String, String> identifiers) {
-        List<OrganizationDto> organizations = organizationService.getOrganizationsByIdentifiers(identifiers);
+    public ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizationsByIdentifiers(OrganizationSearchRequest organizationSearchRequest) {
+        List<OrganizationDto> organizations = organizationService.getOrganizationsByIdentifiers(organizationSearchRequest);
         SapphireAPIResponse<OrganizationList> apiResponse =
                 SapphireAPIResponse.<OrganizationList>builder()
                         .statusCode(200)
