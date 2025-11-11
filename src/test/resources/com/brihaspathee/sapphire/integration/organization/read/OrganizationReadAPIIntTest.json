@@ -22,8 +22,34 @@
                 }
               ]
             },
-            "expectedOrganizationDto" : {
-              "name": "St.Joseph Hospital"
+            "expectedOrganizationList" : {
+              "organizationList": [
+                {
+                  "name": "St.Joseph Hospital",
+                  "aliasName": "St.Joseph Hospital",
+                  "description": "St.Joseph Hospital",
+                  "type": "PPG",
+                  "atypical": false,
+                  "capitated": false,
+                  "pcpPractitionerRequired": true,
+                  "identifiers": [
+                    {
+                      "value": "235625546",
+                      "type": "NPI",
+                      "startDate": "2019-01-01"
+                    },
+                    {
+                      "value": "43-5343234",
+                      "type": "TIN",
+                      "legalName": "Kaptured Inc"
+                    },
+                    {
+                      "value": "FL34634359",
+                      "type": "MEDICARE_ID"
+                    }
+                  ]
+                }
+              ]
             }
           }
         }

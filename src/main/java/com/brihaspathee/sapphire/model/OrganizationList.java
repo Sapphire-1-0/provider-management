@@ -26,4 +26,18 @@ public class OrganizationList {
      * where each organization is represented by an instance of OrganizationDto.
      */
     private List<OrganizationDto> organizationList;
+
+    /**
+     * Provides a string representation of the OrganizationList object.
+     * The string includes the organizationList field, which contains the list
+     * of organizations encapsulated in the OrganizationList instance.
+     *
+     * @return a string representation of the OrganizationList object
+     */
+    @Override
+    public String toString() {
+        return "OrganizationList{" +
+                "organizationList=" + organizationList +
+                '}';
+    }
 }

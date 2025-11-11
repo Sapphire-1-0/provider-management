@@ -4,6 +4,7 @@ import com.brihaspathee.sapphire.model.IdentifierDto;
 import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.model.OrganizationList;
 import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
+import com.brihaspathee.sapphire.validator.OrganizationValidator;
 import com.brihaspathee.sapphire.web.model.TestOrganizationSearchRequest;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import com.brihaspathee.test.BuildTestData;
@@ -83,14 +84,10 @@ public class OrganizationReadAPIIntTest {
                 .postForEntity(uri,httpEntity, SapphireAPIResponse.class);
         SapphireAPIResponse apiResponse = responseEntity.getBody();
         OrganizationList actualOrganizationList = objectMapper.convertValue(apiResponse.getResponse(), OrganizationList.class);
-        for (OrganizationDto organizationDto : actualOrganizationList.getOrganizationList()) {
-            log.info("Organization Id:{}", organizationDto.getElementId());
-            log.info("Organization Name:{}", organizationDto.getName());
-            for (IdentifierDto identifierDto : organizationDto.getIdentifiers()) {
-                log.info("Identifier Type:{}", identifierDto.getType());
-                log.info("Identifier Value:{}", identifierDto.getValue());
-            }
-        }
+        OrganizationList expectedOrganizationList = testOrganizationSearchRequest.getExpectedOrganizationList();
+        log.info("Actual Organization List:{}", actualOrganizationList);
+        log.info("Expected Organization List:{}", expectedOrganizationList);
+//        OrganizationValidator.assertOrganizationList(actualOrganizationList, expectedOrganizationList);
     }
 
 

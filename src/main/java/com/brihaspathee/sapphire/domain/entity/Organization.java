@@ -92,4 +92,22 @@ public class Organization {
      */
     private List<Location> locations;
 
+    /**
+     * Provides a string representation of the Organization object, including key attributes
+     * such as elementId, name, aliasName, type, atypical, capitated, and pcpPractitionerRequired.
+     *
+     * @return a string representation of the Organization object, describing its attributes and their values.
+     */
+    @Override
+    public String toString() {
+        return "Organization{" +
+                "elementId='" + elementId + '\'' +
+                ", name='" + name + '\'' +
+                ", aliasName='" + aliasName + '\'' +
+                ", type='" + type + '\'' +
+                ", atypical=" + atypical +
+                ", capitated=" + capitated +
+                ", pcpPractitionerRequired=" + pcpPractitionerRequired +
+                '}';
+    }
 }

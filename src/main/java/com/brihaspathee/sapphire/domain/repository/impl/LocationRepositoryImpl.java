@@ -171,7 +171,7 @@ public class LocationRepositoryImpl implements LocationRepository {
     private static Organization getOrganizationWithLocations(org.neo4j.driver.Record record){
         Organization organization = getOrganization(record);
         List<Location> locations = new ArrayList<>();
-        List<Value> locationList = record.get("locations").asList(value -> value);
+        List<Value> locationList = record.get("locations").asList(v->v);
         for (Value location: locationList){
             Node locNode = location.asNode();
             Location loc = BuilderUtil.buildLocation(locNode);

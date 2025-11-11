@@ -143,6 +143,7 @@ public class OrganizationService implements IOrganizationService {
      * @return the resulting {@link OrganizationDto} containing all necessary details of the organization
      */
     private OrganizationDto toOrganizationDto(Organization organization) {
+        log.info("Organization in service: {}", organization);
         List<IdentifierDto> identifierDtos = null;
         List<NetworkDto> networkDtos = null;
         List<LocationDto> locationDtos = null;
@@ -222,10 +223,15 @@ public class OrganizationService implements IOrganizationService {
                 .elementId(organization.getElementId())
                 .name(organization.getName())
                 .aliasName(organization.getAliasName())
+                .type(organization.getType())
+                .atypical(organization.getAtypical())
+                .capitated(organization.getCapitated())
+                .pcpPractitionerRequired(organization.getPcpPractitionerRequired())
                 .identifiers(identifierDtos)
                 .networks(networkDtos)
                 .locations(locationDtos)
                 .build();
+        log.info("Organization DTO in service: {}", organizationDto);
         return organizationDto;
     }
 

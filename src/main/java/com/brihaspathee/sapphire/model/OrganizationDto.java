@@ -94,4 +94,16 @@ public class OrganizationDto {
      */
     private List<LocationDto> locations;
 
+    @Override
+    public String toString() {
+        return "OrganizationDto{" +
+                "elementId='" + elementId + '\'' +
+                ", name='" + name + '\'' +
+                ", aliasName='" + aliasName + '\'' +
+                ", type='" + type + '\'' +
+                ", atypical=" + atypical +
+                ", capitated=" + capitated +
+                ", pcpPractitionerRequired=" + pcpPractitionerRequired +
+                '}';
+    }
 }

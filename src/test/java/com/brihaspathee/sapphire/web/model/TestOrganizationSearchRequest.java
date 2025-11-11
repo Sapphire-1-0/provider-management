@@ -1,6 +1,7 @@
 package com.brihaspathee.sapphire.web.model;
 
 import com.brihaspathee.sapphire.model.OrganizationDto;
+import com.brihaspathee.sapphire.model.OrganizationList;
 import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
 import lombok.*;
 
@@ -57,7 +58,7 @@ public class TestOrganizationSearchRequest {
      * It serves as a reference point to confirm the correctness and accuracy
      * of organization-related information during testing.
      */
-    private OrganizationDto expectedOrganizationDto;
+    private OrganizationList expectedOrganizationList;
 
     /**
      * Generates a string representation of the TestOrganizationSearchRequest object.
@@ -75,7 +76,7 @@ public class TestOrganizationSearchRequest {
                 ", exceptionMessage='" + exceptionMessage + '\'' +
                 ", httpStatusCode='" + httpStatusCode + '\'' +
                 ", orgSearchRequest=" + orgSearchRequest +
-                ", expectedOrganizationDto=" + expectedOrganizationDto +
+                ", expectedOrganizationList=" + expectedOrganizationList +
                 '}';
     }
 }
