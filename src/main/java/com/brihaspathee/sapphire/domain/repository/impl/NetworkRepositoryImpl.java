@@ -1,9 +1,6 @@
 package com.brihaspathee.sapphire.domain.repository.impl;
 
-import com.brihaspathee.sapphire.domain.entity.Location;
-import com.brihaspathee.sapphire.domain.entity.LocationNetworkServiceInfo;
-import com.brihaspathee.sapphire.domain.entity.Network;
-import com.brihaspathee.sapphire.domain.entity.Organization;
+import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
@@ -58,6 +55,11 @@ public class NetworkRepositoryImpl implements NetworkRepository {
      */
     @Override
     public List<Network> findAll() {
+        log.info("Fetching all networks in ATON:");
+        String cypher = cypherLoader.load("get_all_networks.cypher");
+        log.info("Cypher query: {}", cypher);
+        List<Network> networks = queryExecutor.executeReadQuery(cypher, Map.of(),
+                NetworkRepositoryImpl::getNetworks);
         return List.of();
     }
 
@@ -190,5 +192,26 @@ public class NetworkRepositoryImpl implements NetworkRepository {
         List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
         return orgBuilder.identifiers(BuilderUtil.buildIdentifiers(idList)).build();
 
+    }
+
+    /**
+     * Extracts network details from a Neo4j database record and constructs a {@link Network} object.
+     * This method retrieves the network node and its associated product nodes, processes the data,
+     * and returns a populated {@link Network} object with its relationships to products.
+     *
+     * @param record the Neo4j {@link org.neo4j.driver.Record} containing the network node and its associated product nodes
+     * @return a {@link Network} object populated with the data from the given record, including associated products
+     */
+    private static Network getNetworks(org.neo4j.driver.Record record){
+        Node networkNode = record.get("net").asNode();
+        List<Node> productNodes = record.get("products").asList(Value::asNode);
+        Network network = BuilderUtil.buildNetwork(networkNode);
+        List<Product> products = new ArrayList<>();
+        for (Node productNode : productNodes) {
+            Product product = BuilderUtil.buildProduct(productNode);
+            products.add(product);
+        }
+        network.setPartOfProducts(products);
+        return network  ;
     }
 }

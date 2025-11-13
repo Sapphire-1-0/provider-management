@@ -57,6 +57,13 @@ public class NetworkDto {
      */
     private Boolean isVendorNetwork;
 
+    /**
+     * Represents a list of products that the network is part of.
+     * This variable is used to store a collection of {@link ProductDto} objects
+     * that detail the products associated with the network.
+     */
+    private List<ProductDto> partOfProducts;
+
 
     /**
      * Represents a list of location details.

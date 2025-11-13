@@ -6,7 +6,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created in Intellij IDEA
@@ -44,7 +45,7 @@ public class OrganizationValidator {
                             .name("Random Organization")
                             .build());
             try {
-                assertAccount(expectedOrganization, actualOrganization);
+                assertOrganization(expectedOrganization, actualOrganization);
             } catch (JsonProcessingException e) {
                 log.info(e.getMessage());
                 throw new RuntimeException(e);
@@ -60,10 +61,13 @@ public class OrganizationValidator {
      * @param actual the actual {@link OrganizationDto} object to be compared against the expected values
      * @throws JsonProcessingException if an error occurs during JSON processing (not used in the current logic)
      */
-    public static void assertAccount(OrganizationDto expected, OrganizationDto actual)
+    public static void assertOrganization(OrganizationDto expected, OrganizationDto actual)
             throws JsonProcessingException {
+        assertNotNull(actual.getName());
         assert expected.getName().equals(actual.getName());
+        assertNotNull(expected.getAliasName());
         assert expected.getAliasName().equals(actual.getAliasName());
+        assertNotNull(actual.getName());
         assert expected.getType().equals(actual.getType());
         assert expected.getAtypical() == actual.getAtypical();
         assert expected.getCapitated() == actual.getCapitated();

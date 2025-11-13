@@ -40,8 +40,17 @@ public class CypherLoader {
     public String loadFromFile(String fileName) {
         try {
             log.info("Not available in memory hence loading cypher file:{}", fileName);
-            var resource = new ClassPathResource("cypher/" + fileName);
-            return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(resourceLoader);
+            Resource[] resources = resolver.getResources("classpath:cypher/**/*.cypher");
+            for (Resource resource : resources) {
+                String resourceFileName = resource.getFilename();
+                if(resourceFileName != null && resourceFileName.equals(fileName)){
+                    return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+                }
+            }
+            throw new RuntimeException("Cypher file not found: " + fileName);
+//            var resource = new ClassPathResource("cypher/" + fileName);
+//            return new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         }catch (IOException e){
             throw new RuntimeException("Failed to load cypher file:" + fileName, e);
         }
@@ -51,7 +60,7 @@ public class CypherLoader {
     public void preload(){
         try{
             var resolver = new PathMatchingResourcePatternResolver(resourceLoader);
-            Resource[] resources = resolver.getResources("classpath:cypher/*.cypher");
+            Resource[] resources = resolver.getResources("classpath:cypher/**/*.cypher");
             for (Resource resource : resources) {
                 String fileName = resource.getFilename();
                 if(fileName != null && fileName.endsWith(".cypher")){

@@ -61,6 +61,15 @@ public class Network {
     private Boolean isVendorNetwork;
 
     /**
+     * Represents a list of products associated with the network.
+     * Each product in this collection provides detailed information
+     * about the specific offerings or services that are part of the network.
+     * This property allows the network to manage and categorize its affiliated
+     * products effectively within the system.
+     */
+    private List<Product> partOfProducts;
+
+    /**
      * Represents a list of locations associated with the network.
      * Each location in the list contains detailed information
      * such as the name, address, city, state, ZIP code, county,

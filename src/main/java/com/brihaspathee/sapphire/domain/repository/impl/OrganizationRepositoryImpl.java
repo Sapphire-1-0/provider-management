@@ -161,12 +161,10 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
     private List<Organization> mapResults(String cypher, Map<String, Object> params) {
         return queryExecutor.executeReadQuery(cypher, params, record -> {
             Node node = record.get("org").asNode();
+            Organization.OrganizationBuilder builder = BuilderUtil.buildOrganization(node);
             List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
             List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
-            return Organization.builder()
-                    .elementId(node.elementId())
-                    .name(node.get("name").asString())
-                    .aliasName(node.get("alias").asString())
+            return builder
                     .identifiers(identifiers)
                     .build();
         });

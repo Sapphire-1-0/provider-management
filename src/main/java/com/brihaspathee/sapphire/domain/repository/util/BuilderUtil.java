@@ -75,6 +75,25 @@ public class BuilderUtil {
     }
 
     /**
+     * Constructs and returns a {@link Product} instance populated with data extracted from the provided Neo4j {@link Node}.
+     * This method uses the builder pattern to create a Product object and sets key properties based on the Node's content.
+     *
+     * @param productNode the Neo4j {@link Node} containing product data. If null, the method returns null.
+     *                    It is expected that the Node provides values for keys such as "elementId" and "name".
+     * @return a {@link Product} object constructed from the given {@link Node}'s data, or null if the input {@link Node} is null.
+     */
+    public static Product buildProduct(Node productNode){
+        if (productNode == null) {
+            return null;
+        }
+        Product product = Product.builder()
+                .elementId(productNode.elementId())
+                .name(productNode.get("name").asString())
+                .build();
+        return product;
+    }
+
+    /**
      * Constructs and returns a {@link Location} object populated with data extracted from the provided Neo4j {@link Node}.
      * This method builds a Location instance using the builder pattern and sets additional properties
      * if the corresponding keys exist within the {@link Node}.

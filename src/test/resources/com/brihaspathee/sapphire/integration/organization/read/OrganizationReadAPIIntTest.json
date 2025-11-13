@@ -54,6 +54,222 @@
           }
         }
       ]
+    },
+    {
+      "testMethodName": "testGetNetworksForOrg",
+      "testData": [
+        {
+          "testData": {
+            "testCaseId": "SAPPHIRE-NET-BY-ORG-READ-01",
+            "testCaseDescription": "Find networks for organization",
+            "exceptionExpected": false,
+            "httpStatusCode": "200",
+            "orgSearchRequest": {
+              "identifiers": [
+                {
+                  "identifierType": "PPG_ID",
+                  "identifierValue": "MS0912"
+                },
+                {
+                  "identifierType": "NPI",
+                  "identifierValue": "235625546"
+                }
+              ]
+            },
+            "expectedOrganizationList" : {
+              "organizationList": [
+                {
+                  "name": "St.Joseph Hospital",
+                  "aliasName": "St.Joseph Hospital",
+                  "description": "St.Joseph Hospital",
+                  "type": "PPG",
+                  "atypical": false,
+                  "capitated": false,
+                  "pcpPractitionerRequired": true,
+                  "identifiers": [
+                    {
+                      "value": "235625546",
+                      "type": "NPI",
+                      "startDate": "2019-01-01"
+                    },
+                    {
+                      "value": "43-5343234",
+                      "type": "TIN",
+                      "legalName": "Kaptured Inc"
+                    },
+                    {
+                      "value": "FL34634359",
+                      "type": "MEDICARE_ID"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "testMethodName": "testGetNetworkLocationsForOrg",
+      "testData": [
+        {
+          "testData": {
+            "testCaseId": "SAPPHIRE-NET-LOC-BY-ORG-READ-01",
+            "testCaseDescription": "Find network and locations for organization",
+            "exceptionExpected": false,
+            "httpStatusCode": "200",
+            "orgSearchRequest": {
+              "identifiers": [
+                {
+                  "identifierType": "PPG_ID",
+                  "identifierValue": "MS0912"
+                },
+                {
+                  "identifierType": "NPI",
+                  "identifierValue": "235625546"
+                }
+              ]
+            },
+            "expectedOrganizationList" : {
+              "organizationList": [
+                {
+                  "name": "St.Joseph Hospital",
+                  "aliasName": "St.Joseph Hospital",
+                  "description": "St.Joseph Hospital",
+                  "type": "PPG",
+                  "atypical": false,
+                  "capitated": false,
+                  "pcpPractitionerRequired": true,
+                  "identifiers": [
+                    {
+                      "value": "235625546",
+                      "type": "NPI",
+                      "startDate": "2019-01-01"
+                    },
+                    {
+                      "value": "43-5343234",
+                      "type": "TIN",
+                      "legalName": "Kaptured Inc"
+                    },
+                    {
+                      "value": "FL34634359",
+                      "type": "MEDICARE_ID"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "testMethodName": "testGetLocationsForOrg",
+      "testData": [
+        {
+          "testData": {
+            "testCaseId": "SAPPHIRE-NET-BY-ORG-READ-01",
+            "testCaseDescription": "Find networks for organization",
+            "exceptionExpected": false,
+            "httpStatusCode": "200",
+            "orgSearchRequest": {
+              "identifiers": [
+                {
+                  "identifierType": "PPG_ID",
+                  "identifierValue": "MS0912"
+                },
+                {
+                  "identifierType": "NPI",
+                  "identifierValue": "235625546"
+                }
+              ]
+            },
+            "expectedOrganizationList" : {
+              "organizationList": [
+                {
+                  "name": "St.Joseph Hospital",
+                  "aliasName": "St.Joseph Hospital",
+                  "description": "St.Joseph Hospital",
+                  "type": "PPG",
+                  "atypical": false,
+                  "capitated": false,
+                  "pcpPractitionerRequired": true,
+                  "identifiers": [
+                    {
+                      "value": "235625546",
+                      "type": "NPI",
+                      "startDate": "2019-01-01"
+                    },
+                    {
+                      "value": "43-5343234",
+                      "type": "TIN",
+                      "legalName": "Kaptured Inc"
+                    },
+                    {
+                      "value": "FL34634359",
+                      "type": "MEDICARE_ID"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "testMethodName": "testGetLocationNetworksForOrg",
+      "testData": [
+        {
+          "testData": {
+            "testCaseId": "SAPPHIRE-NET-LOC-BY-ORG-READ-01",
+            "testCaseDescription": "Find network and locations for organization",
+            "exceptionExpected": false,
+            "httpStatusCode": "200",
+            "orgSearchRequest": {
+              "identifiers": [
+                {
+                  "identifierType": "PPG_ID",
+                  "identifierValue": "MS0912"
+                },
+                {
+                  "identifierType": "NPI",
+                  "identifierValue": "235625546"
+                }
+              ]
+            },
+            "expectedOrganizationList" : {
+              "organizationList": [
+                {
+                  "name": "St.Joseph Hospital",
+                  "aliasName": "St.Joseph Hospital",
+                  "description": "St.Joseph Hospital",
+                  "type": "PPG",
+                  "atypical": false,
+                  "capitated": false,
+                  "pcpPractitionerRequired": true,
+                  "identifiers": [
+                    {
+                      "value": "235625546",
+                      "type": "NPI",
+                      "startDate": "2019-01-01"
+                    },
+                    {
+                      "value": "43-5343234",
+                      "type": "TIN",
+                      "legalName": "Kaptured Inc"
+                    },
+                    {
+                      "value": "FL34634359",
+                      "type": "MEDICARE_ID"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
     }
   ]
 }
