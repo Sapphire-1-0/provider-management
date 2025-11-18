@@ -49,9 +49,8 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
                         Node node = record.get("n").asNode();
                         log.info("Organization name: {}", node.get("name").asString());
                         log.info("Element id of the Org:{}", node.elementId());
-                        Organization.OrganizationBuilder builder = BuilderUtil.buildOrganization(node);
-                        return builder
-                                .build();
+                        Organization org = BuilderUtil.buildOrganization(node);
+                        return org;
                 });
         return organizations;
     }
@@ -64,12 +63,12 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
                         Map.of(),
                         record -> {
                            Node orgNode = record.get("o").asNode();
-                           Organization.OrganizationBuilder builder =
+                           Organization org =
                                    BuilderUtil.buildOrganization(orgNode);
                            List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
                            List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
-                           builder.identifiers(identifiers);
-                           return builder.build();
+                           org.setIdentifiers(identifiers);
+                           return org;
                         });
         return organizations;
     }
@@ -161,12 +160,11 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
     private List<Organization> mapResults(String cypher, Map<String, Object> params) {
         return queryExecutor.executeReadQuery(cypher, params, record -> {
             Node node = record.get("org").asNode();
-            Organization.OrganizationBuilder builder = BuilderUtil.buildOrganization(node);
+            Organization org = BuilderUtil.buildOrganization(node);
             List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
             List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
-            return builder
-                    .identifiers(identifiers)
-                    .build();
+            org.setIdentifiers(identifiers);
+            return org;
         });
     }
 

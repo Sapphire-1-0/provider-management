@@ -25,13 +25,13 @@ import java.util.Map;
 public class BuilderUtil {
 
     /**
-     * Constructs and returns an {@link Organization.OrganizationBuilder} instance populated with
+     * Constructs and returns an {@link Organization} instance populated with
      * data extracted from the provided Neo4j {@link Node}.
      *
      * @param orgNode the Neo4j {@link Node} containing organization data
-     * @return an {@link Organization.OrganizationBuilder} initialized with the extracted data
+     * @return an {@link Organization} initialized with the extracted data
      */
-    public static Organization.OrganizationBuilder buildOrganization(Node orgNode) {
+    public static Organization buildOrganization(Node orgNode) {
         if (orgNode == null) {
             return null;
         }
@@ -42,7 +42,8 @@ public class BuilderUtil {
                 .type(orgNode.get("type").asString())
                 .atypical(orgNode.get("atypical").asBoolean())
                 .capitated(orgNode.get("capitated").asBoolean())
-                .pcpPractitionerRequired(orgNode.get("pcpPractitionerRequired").asBoolean());
+                .pcpPractitionerRequired(orgNode.get("pcpPractitionerRequired").asBoolean())
+                .build();
     }
 
     /**
@@ -88,6 +89,7 @@ public class BuilderUtil {
         }
         Product product = Product.builder()
                 .elementId(productNode.elementId())
+                .code(productNode.get("code").asString())
                 .name(productNode.get("name").asString())
                 .build();
         return product;

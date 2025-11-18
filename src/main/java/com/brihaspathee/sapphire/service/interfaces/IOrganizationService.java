@@ -19,6 +19,15 @@ import java.util.Map;
 public interface IOrganizationService {
 
     /**
+     * Inserts a new organization or updates an existing one based on the provided organization details.
+     *
+     * @param organizationDto an instance of {@code OrganizationDto} containing the details of the organization
+     *                        to be inserted or updated, including its identifiers, name, type, and associated
+     *                        information such as locations and networks
+     */
+    void upsertOrganization(OrganizationDto organizationDto);
+
+    /**
      * Retrieves a list of all organizations.
      *
      * @return a list of OrganizationDto instances, where each instance represents

@@ -6,7 +6,89 @@ servers:
 - url: http://localhost:8080
   description: Generated server url
 paths:
-  /api/v1/sapphire/provider/private/create-org:
+  /api/v1/sapphire/organization/private/{organizationId}/network/_search:
+    post:
+      tags:
+      - organization-api-impl
+      operationId: getOrganizationNetworks
+      parameters:
+      - name: organizationId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/organization/private/{organizationId}/location/_search:
+    post:
+      tags:
+      - organization-api-impl
+      operationId: getOrganizationLocations
+      parameters:
+      - name: organizationId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/organization/private/{orgId}/network/{netId}/location/_search:
+    post:
+      tags:
+      - organization-api-impl
+      operationId: getLocationsForOrgAndNet
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: netId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/organization/private/{orgId}/location/{locId}/network/_search:
+    post:
+      tags:
+      - organization-api-impl
+      operationId: getNetworksForOrgAndLoc
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: locId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/organization/private/create-org:
     post:
       tags:
       - organization-api-impl
@@ -24,6 +106,59 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/organization/private/_search:
+    post:
+      tags:
+      - organization-api-impl
+      operationId: getOrganizationsByIdentifiers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrganizationSearchRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationList"
+  /api/v1/sapphire/network/_search:
+    post:
+      tags:
+      - network-api-impl
+      operationId: getNetworks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NetworkSearchRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseNetworkList"
+  /api/v1/sapphire/location/_search:
+    post:
+      tags:
+      - location-api-impl
+      operationId: getLocations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LocationSearchRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseLocationList"
   /api/v1/sapphire/provider/public/welcome:
     get:
       tags:
@@ -36,7 +171,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseWelcomeDto"
-  /api/v1/sapphire/provider/private/organization/{organizationId}:
+  /api/v1/sapphire/organization/private/{organizationId}:
     get:
       tags:
       - organization-api-impl
@@ -54,7 +189,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
-  /api/v1/sapphire/provider/private/get-orgs:
+  /api/v1/sapphire/organization/private/get-orgs:
     get:
       tags:
       - organization-api-impl
@@ -68,10 +203,155 @@ paths:
                 $ref: "#/components/schemas/SapphireAPIResponseOrganizationList"
 components:
   schemas:
+    IdentifierDto:
+      type: object
+      properties:
+        elementId:
+          type: string
+        value:
+          type: string
+        type:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        additionalProperties:
+          type: object
+          additionalProperties:
+            type: object
+    LocationDto:
+      type: object
+      properties:
+        elementId:
+          type: string
+        name:
+          type: string
+        streetAddress:
+          type: string
+        secondaryAddress:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        county:
+          type: string
+        countyFIPS:
+          type: string
+        locationNetwork:
+          $ref: "#/components/schemas/LocationNetworkDto"
+    LocationNetworkDto:
+      type: object
+      properties:
+        panel:
+          $ref: "#/components/schemas/PanelDto"
+        isPCP:
+          type: boolean
+        isSpecialist:
+          type: boolean
+        isBehavioralHealth:
+          type: boolean
+        spans:
+          type: array
+          items:
+            $ref: "#/components/schemas/LocationNetworkSpanDto"
+    LocationNetworkSpanDto:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        termReason:
+          type: string
+    NetworkDto:
+      type: object
+      properties:
+        elementId:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+        isHNETNetwork:
+          type: boolean
+        isVendorNetwork:
+          type: boolean
+        partOfProducts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductDto"
+        locations:
+          type: array
+          items:
+            $ref: "#/components/schemas/LocationDto"
+        locationNetwork:
+          $ref: "#/components/schemas/LocationNetworkDto"
     OrganizationDto:
       type: object
       properties:
-        organizationName:
+        elementId:
+          type: string
+        name:
+          type: string
+        aliasName:
+          type: string
+        type:
+          type: string
+        atypical:
+          type: boolean
+        capitated:
+          type: boolean
+        pcpPractitionerRequired:
+          type: boolean
+        identifiers:
+          type: array
+          items:
+            $ref: "#/components/schemas/IdentifierDto"
+        networks:
+          type: array
+          items:
+            $ref: "#/components/schemas/NetworkDto"
+        locations:
+          type: array
+          items:
+            $ref: "#/components/schemas/LocationDto"
+    PanelDto:
+      type: object
+      properties:
+        highestAgeYears:
+          type: integer
+          format: int32
+        lowestAgeYears:
+          type: integer
+          format: int32
+        highestAgeMonths:
+          type: integer
+          format: int32
+        lowestAgeMonths:
+          type: integer
+          format: int32
+        genderLimitation:
+          type: string
+        ageLimitation:
+          type: string
+        status:
+          type: string
+    ProductDto:
+      type: object
+      properties:
+        elementId:
+          type: string
+        name:
+          type: string
+        code:
           type: string
     SapphireAPIResponseOrganizationDto:
       type: object
@@ -162,100 +442,20 @@ components:
           type: string
         response:
           $ref: "#/components/schemas/OrganizationDto"
-    SapphireAPIResponseWelcomeDto:
+    IdentifierInfo:
       type: object
       properties:
-        timestamp:
+        identifierType:
           type: string
-          format: date-time
-        statusCode:
-          type: integer
-          format: int32
-        status:
+        identifierValue:
           type: string
-          enum:
-          - 100 CONTINUE
-          - 101 SWITCHING_PROTOCOLS
-          - 102 PROCESSING
-          - 103 EARLY_HINTS
-          - 103 CHECKPOINT
-          - 200 OK
-          - 201 CREATED
-          - 202 ACCEPTED
-          - 203 NON_AUTHORITATIVE_INFORMATION
-          - 204 NO_CONTENT
-          - 205 RESET_CONTENT
-          - 206 PARTIAL_CONTENT
-          - 207 MULTI_STATUS
-          - 208 ALREADY_REPORTED
-          - 226 IM_USED
-          - 300 MULTIPLE_CHOICES
-          - 301 MOVED_PERMANENTLY
-          - 302 FOUND
-          - 302 MOVED_TEMPORARILY
-          - 303 SEE_OTHER
-          - 304 NOT_MODIFIED
-          - 305 USE_PROXY
-          - 307 TEMPORARY_REDIRECT
-          - 308 PERMANENT_REDIRECT
-          - 400 BAD_REQUEST
-          - 401 UNAUTHORIZED
-          - 402 PAYMENT_REQUIRED
-          - 403 FORBIDDEN
-          - 404 NOT_FOUND
-          - 405 METHOD_NOT_ALLOWED
-          - 406 NOT_ACCEPTABLE
-          - 407 PROXY_AUTHENTICATION_REQUIRED
-          - 408 REQUEST_TIMEOUT
-          - 409 CONFLICT
-          - 410 GONE
-          - 411 LENGTH_REQUIRED
-          - 412 PRECONDITION_FAILED
-          - 413 PAYLOAD_TOO_LARGE
-          - 413 REQUEST_ENTITY_TOO_LARGE
-          - 414 URI_TOO_LONG
-          - 414 REQUEST_URI_TOO_LONG
-          - 415 UNSUPPORTED_MEDIA_TYPE
-          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
-          - 417 EXPECTATION_FAILED
-          - 418 I_AM_A_TEAPOT
-          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
-          - 420 METHOD_FAILURE
-          - 421 DESTINATION_LOCKED
-          - 422 UNPROCESSABLE_ENTITY
-          - 423 LOCKED
-          - 424 FAILED_DEPENDENCY
-          - 425 TOO_EARLY
-          - 426 UPGRADE_REQUIRED
-          - 428 PRECONDITION_REQUIRED
-          - 429 TOO_MANY_REQUESTS
-          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
-          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
-          - 500 INTERNAL_SERVER_ERROR
-          - 501 NOT_IMPLEMENTED
-          - 502 BAD_GATEWAY
-          - 503 SERVICE_UNAVAILABLE
-          - 504 GATEWAY_TIMEOUT
-          - 505 HTTP_VERSION_NOT_SUPPORTED
-          - 506 VARIANT_ALSO_NEGOTIATES
-          - 507 INSUFFICIENT_STORAGE
-          - 508 LOOP_DETECTED
-          - 509 BANDWIDTH_LIMIT_EXCEEDED
-          - 510 NOT_EXTENDED
-          - 511 NETWORK_AUTHENTICATION_REQUIRED
-        reason:
-          type: string
-        message:
-          type: string
-        developerMessage:
-          type: string
-        response:
-          $ref: "#/components/schemas/WelcomeDto"
-    WelcomeDto:
+    OrganizationSearchRequest:
       type: object
       properties:
-        welcomeMessage:
-          type: string
+        identifiers:
+          type: array
+          items:
+            $ref: "#/components/schemas/IdentifierInfo"
     OrganizationList:
       type: object
       properties:
@@ -352,3 +552,315 @@ components:
           type: string
         response:
           $ref: "#/components/schemas/OrganizationList"
+    NetworkSearchRequest:
+      type: object
+      properties:
+        productCode:
+          type: string
+        networkCode:
+          type: string
+        networkName:
+          type: string
+    NetworkList:
+      type: object
+      properties:
+        networks:
+          type: array
+          items:
+            $ref: "#/components/schemas/NetworkDto"
+    SapphireAPIResponseNetworkList:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        statusCode:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        reason:
+          type: string
+        message:
+          type: string
+        developerMessage:
+          type: string
+        response:
+          $ref: "#/components/schemas/NetworkList"
+    LocationSearchRequest:
+      type: object
+      properties:
+        locationName:
+          type: string
+        streetAddress:
+          type: string
+        secondaryAddress:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        countyFIPS:
+          type: string
+        zipCode:
+          type: string
+    LocationList:
+      type: object
+      properties:
+        locations:
+          type: array
+          items:
+            $ref: "#/components/schemas/LocationDto"
+    SapphireAPIResponseLocationList:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        statusCode:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        reason:
+          type: string
+        message:
+          type: string
+        developerMessage:
+          type: string
+        response:
+          $ref: "#/components/schemas/LocationList"
+    SapphireAPIResponseWelcomeDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        statusCode:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        reason:
+          type: string
+        message:
+          type: string
+        developerMessage:
+          type: string
+        response:
+          $ref: "#/components/schemas/WelcomeDto"
+    WelcomeDto:
+      type: object
+      properties:
+        welcomeMessage:
+          type: string

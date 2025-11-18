@@ -11,7 +11,11 @@ import lombok.*;
  * Package Name: com.brihaspathee.sapphire.domain.entity
  * To change this template use File | Settings | File and Code Template
  */
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TIN extends Identifier{
 
     private String legalName;

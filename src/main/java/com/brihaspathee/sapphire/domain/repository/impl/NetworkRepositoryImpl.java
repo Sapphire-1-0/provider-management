@@ -6,6 +6,7 @@ import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
+import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
 import com.brihaspathee.sapphire.util.CypherLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.neo4j.driver.types.Relationship;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,18 +51,25 @@ public class NetworkRepositoryImpl implements NetworkRepository {
     private final CypherLoader cypherLoader;
 
     /**
-     * Retrieves a list of all network entities.
+     * Retrieves a list of networks based on the specified search request.
+     * This method executes a Cypher query to fetch all networks from the database
+     * and returns a list of {@link Network} objects that match the criteria defined
+     * in the {@link NetworkSearchRequest}.
      *
-     * @return a list of Network objects representing all networks in the repository
+     * @param networkSearchRequest the search request containing criteria
+     *                             such as product code, network code, and network name
+     *                             for filtering the networks
+     * @return a list of {@link Network} objects matching the search criteria
      */
     @Override
-    public List<Network> findAll() {
+    public List<Network> findNetworks(NetworkSearchRequest networkSearchRequest) {
         log.info("Fetching all networks in ATON:");
+        Map<String, Object> params = getCypherParams(networkSearchRequest);
         String cypher = cypherLoader.load("get_all_networks.cypher");
         log.info("Cypher query: {}", cypher);
-        List<Network> networks = queryExecutor.executeReadQuery(cypher, Map.of(),
+        List<Network> networks = queryExecutor.executeReadQuery(cypher, params,
                 NetworkRepositoryImpl::getNetworks);
-        return List.of();
+        return networks;
     }
 
 
@@ -188,9 +197,10 @@ public class NetworkRepositoryImpl implements NetworkRepository {
         Node node = record.get("org").asNode();
         log.debug("Organization name: {}", node.get("name").asString());
         log.debug("Element id of the Org:{}", node.elementId());
-        Organization.OrganizationBuilder orgBuilder = BuilderUtil.buildOrganization(node);
+        Organization org = BuilderUtil.buildOrganization(node);
         List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
-        return orgBuilder.identifiers(BuilderUtil.buildIdentifiers(idList)).build();
+        org.setIdentifiers(BuilderUtil.buildIdentifiers(idList));
+        return org;
 
     }
 
@@ -213,5 +223,30 @@ public class NetworkRepositoryImpl implements NetworkRepository {
         }
         network.setPartOfProducts(products);
         return network  ;
+    }
+
+    /**
+     * Generates a Cypher query based on the given {@link NetworkSearchRequest}.
+     * If the network search request is null, a query to retrieve all networks is returned.
+     * If the product code within the network search request is not null, a query to retrieve
+     * networks by product is returned.
+     *
+     * @param networkSearchRequest the search request containing criteria such as
+     *                             product code for filtering the networks; can be null
+     * @return the Cypher query as a {@link String} to retrieve networks based on the given criteria,
+     *         or null if no criteria is provided
+     */
+    private Map<String,Object> getCypherParams(NetworkSearchRequest networkSearchRequest) {
+        Map<String, Object> params = new HashMap<>();
+        if (networkSearchRequest == null) {
+            params.put("productCode", null);
+            params.put("networkCode", null);
+            params.put("networkName", null);
+        }else{
+            params.put("productCode", networkSearchRequest.getProductCode());
+            params.put("networkCode", networkSearchRequest.getNetworkCode());
+            params.put("networkName", networkSearchRequest.getNetworkName());
+        }
+        return params;
     }
 }

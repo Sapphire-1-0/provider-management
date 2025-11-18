@@ -114,7 +114,7 @@ public class OrganizationAPIImpl implements OrganizationAPI {
     /**
      * Retrieves a list of organizations based on the provided set of identifiers.
      *
-     * @param identifiers a map containing key-value pairs representing the identifiers used to filter organizations
+     * @param organizationSearchRequest a map containing key-value pairs representing the identifiers used to filter organizations
      *                     (e.g., organization IDs, names, or codes)
      * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates an OrganizationList,
      *         which includes the organizations matching the provided identifiers
@@ -211,13 +211,13 @@ public class OrganizationAPIImpl implements OrganizationAPI {
      * Retrieves network details for a specific organization and location.
      *
      * @param orgId the unique identifier of the organization for which the networks need to be retrieved
-     * @param netId
+     * @param locId
      * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
      * representing the network details for the specified organization and location
      */
     @Override
-    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getNetworksForOrgAndLoc(String orgId, String netId) {
-        OrganizationDto organizationDto = organizationService.getOrganizationLocationNetworks(orgId, netId);
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getNetworksForOrgAndLoc(String orgId, String locId) {
+        OrganizationDto organizationDto = organizationService.getOrganizationLocationNetworks(orgId, locId);
         SapphireAPIResponse<OrganizationDto> apiResponse =
                 SapphireAPIResponse.<OrganizationDto>builder()
                         .statusCode(200)

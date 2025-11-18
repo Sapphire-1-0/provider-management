@@ -289,7 +289,7 @@ public class OrganizationReadAPIIntTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
         String orgElementId = organizationDto.getElementId();
-        String uri = "/api/v1/sapphire/organization/private/" + orgElementId +"/location/" +
+        String uri = "/api/v1/sapphire/organization/" + orgElementId +"/location/" +
                 "4:584fe225-8704-4f61-b2b6-1cce33b0b662:11132/network/_search";
         ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
                 testRestTemplate.exchange(
@@ -322,7 +322,7 @@ public class OrganizationReadAPIIntTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(organizationSearchRequest, headers);
-        String uri = "/api/v1/sapphire/organization/private/_search";
+        String uri = "/api/v1/sapphire/organization/_search";
         ResponseEntity<SapphireAPIResponse<OrganizationList>> responseEntity =
                 testRestTemplate.exchange(
                         uri,

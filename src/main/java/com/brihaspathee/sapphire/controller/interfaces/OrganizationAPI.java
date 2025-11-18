@@ -18,7 +18,7 @@ import java.util.Map;
  * Package Name: com.brihaspathee.sapphire.controller.interfaces
  * To change this template use File | Settings | File and Code Template
  */
-@RequestMapping("/api/v1/sapphire/organization/private")
+@RequestMapping("/api/v1/sapphire/organization")
 public interface OrganizationAPI {
 
     /**
@@ -27,7 +27,7 @@ public interface OrganizationAPI {
      * @param organizationDto the DTO containing organization details to be created
      * @return a ResponseEntity containing a SapphireAPIResponse encapsulating the created OrganizationDto
      */
-    @PostMapping("/create-org")
+    @PostMapping("/_upsert")
     ResponseEntity<SapphireAPIResponse<OrganizationDto>> createOrganization(
             @RequestBody OrganizationDto organizationDto);
 
@@ -101,5 +101,5 @@ public interface OrganizationAPI {
      *         representing the network details for the specified organization and location
      */
     @PostMapping("/{orgId}/location/{locId}/network/_search")
-    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getNetworksForOrgAndLoc(@PathVariable("orgId") String orgId, @PathVariable("locId") String netId);
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getNetworksForOrgAndLoc(@PathVariable("orgId") String orgId, @PathVariable("locId") String locId);
 }

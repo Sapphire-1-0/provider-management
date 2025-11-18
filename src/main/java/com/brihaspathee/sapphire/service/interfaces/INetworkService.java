@@ -1,6 +1,7 @@
 package com.brihaspathee.sapphire.service.interfaces;
 
 import com.brihaspathee.sapphire.model.NetworkList;
+import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
 
 /**
  * Created in Intellij IDEA
@@ -14,11 +15,13 @@ import com.brihaspathee.sapphire.model.NetworkList;
 public interface INetworkService {
 
     /**
-     * Retrieves a list of all available networks.
+     * Retrieves a list of networks based on the specified search criteria.
      *
-     * @return an instance of {@code NetworkList} containing a collection of networks,
-     *         where each network is represented as a {@code NetworkDto} object with
-     *         its associated attributes and details.
+     * @param networkSearchRequest an instance of {@code NetworkSearchRequest} that contains
+     *                             the search criteria for retrieving networks, including
+     *                             parameters such as product code, network code, and network name
+     * @return an instance of {@code NetworkList} containing the collection of networks
+     *         that match the provided search criteria
      */
-    NetworkList getAllNetworks();
+    NetworkList getNetworks(NetworkSearchRequest networkSearchRequest);
 }

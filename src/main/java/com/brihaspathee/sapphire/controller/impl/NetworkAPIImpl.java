@@ -1,10 +1,8 @@
 package com.brihaspathee.sapphire.controller.impl;
 
 import com.brihaspathee.sapphire.controller.interfaces.NetworkAPI;
-import com.brihaspathee.sapphire.model.NetworkDto;
 import com.brihaspathee.sapphire.model.NetworkList;
-import com.brihaspathee.sapphire.model.OrganizationDto;
-import com.brihaspathee.sapphire.model.OrganizationList;
+import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
 import com.brihaspathee.sapphire.service.impl.NetworkService;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Created in Intellij IDEA
@@ -44,8 +41,8 @@ public class NetworkAPIImpl implements NetworkAPI {
      * which represents the collection of networks retrieved by the search.
      */
     @Override
-    public ResponseEntity<SapphireAPIResponse<NetworkList>> getNetworks() {
-        NetworkList networkList = networkService.getAllNetworks();
+    public ResponseEntity<SapphireAPIResponse<NetworkList>> getNetworks(NetworkSearchRequest networkSearchRequest) {
+        NetworkList networkList = networkService.getNetworks(networkSearchRequest);
 
         SapphireAPIResponse<NetworkList> apiResponse =
                 SapphireAPIResponse.<NetworkList>builder()

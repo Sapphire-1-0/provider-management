@@ -2,6 +2,7 @@ package com.brihaspathee.sapphire.domain.repository.interfaces;
 
 import com.brihaspathee.sapphire.domain.entity.Network;
 import com.brihaspathee.sapphire.domain.entity.Organization;
+import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
 
 import java.util.List;
 
@@ -17,11 +18,14 @@ import java.util.List;
 public interface NetworkRepository {
 
     /**
-     * Retrieves a list of all network entities.
+     * Retrieves a list of networks based on the specified search criteria.
      *
-     * @return a list of Network objects representing all networks in the repository
+     * @param networkSearchRequest the search request containing the criteria
+     *                             for filtering networks, such as product code,
+     *                             network code, or network name
+     * @return a list of Network objects that match the provided search criteria
      */
-    List<Network> findAll();
+    List<Network> findNetworks(NetworkSearchRequest networkSearchRequest);
 
 
     /**

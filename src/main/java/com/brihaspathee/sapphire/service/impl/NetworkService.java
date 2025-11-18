@@ -6,6 +6,7 @@ import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
 import com.brihaspathee.sapphire.model.NetworkDto;
 import com.brihaspathee.sapphire.model.NetworkList;
 import com.brihaspathee.sapphire.model.ProductDto;
+import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
 import com.brihaspathee.sapphire.service.interfaces.INetworkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +42,8 @@ public class NetworkService implements INetworkService {
      * its associated attributes and details.
      */
     @Override
-    public NetworkList getAllNetworks() {
-        List<Network> networks = networkRepository.findAll();
+    public NetworkList getNetworks(NetworkSearchRequest networkSearchRequest) {
+        List<Network> networks = networkRepository.findNetworks(networkSearchRequest);
         List<NetworkDto> networkDtos = networks.stream().map(NetworkService::toNetworkDto).toList();
         return NetworkList.builder()
                 .networks(networkDtos)

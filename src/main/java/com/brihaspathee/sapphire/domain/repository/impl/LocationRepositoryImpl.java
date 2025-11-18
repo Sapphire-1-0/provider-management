@@ -1,14 +1,12 @@
 package com.brihaspathee.sapphire.domain.repository.impl;
 
-import com.brihaspathee.sapphire.domain.entity.Location;
-import com.brihaspathee.sapphire.domain.entity.LocationNetworkServiceInfo;
-import com.brihaspathee.sapphire.domain.entity.Network;
-import com.brihaspathee.sapphire.domain.entity.Organization;
+import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
+import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
 import com.brihaspathee.sapphire.util.CypherLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -96,6 +95,25 @@ public class LocationRepositoryImpl implements LocationRepository {
         List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params,
                 LocationRepositoryImpl::getOrganizationWithLocAndNet);
         return organizations.isEmpty() ? null : organizations.getFirst();
+    }
+
+    /**
+     * Retrieves a list of locations based on the specified search criteria.
+     *
+     * @param locationSearchRequest the search request containing the criteria
+     *                              for filtering locations, such as name, address, city,
+     *                              state, zip code, or county FIPS code
+     * @return a list of Location objects that match the provided search criteria
+     */
+    @Override
+    public List<Location> findLocations(LocationSearchRequest locationSearchRequest) {
+        log.info("Fetching locations in ATON:");
+        Map<String, Object> params = getCypherParams(locationSearchRequest);
+        String cypher = cypherLoader.load("get_locations.cypher");
+        log.info("Cypher query: {}", cypher);
+        List<Location> locations = queryExecutor.executeReadQuery(cypher, params,
+                LocationRepositoryImpl::getLocations);
+        return locations;
     }
 
     /**
@@ -195,9 +213,51 @@ public class LocationRepositoryImpl implements LocationRepository {
         Node node = record.get("org").asNode();
         log.debug("Organization name: {}", node.get("name").asString());
         log.debug("Element id of the Org:{}", node.elementId());
-        Organization.OrganizationBuilder orgBuilder = BuilderUtil.buildOrganization(node);
+        Organization org = BuilderUtil.buildOrganization(node);
         List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
-        return orgBuilder.identifiers(BuilderUtil.buildIdentifiers(idList)).build();
+        org.setIdentifiers(BuilderUtil.buildIdentifiers(idList));
+        return org;
 
+    }
+
+    /**
+     * Extracts location data from the given Neo4j record and constructs a {@link Location} object.
+     *
+     * This method processes the "loc" node from the provided record to build a {@link Location}
+     * instance using the specified utility method.
+     *
+     * @param record the Neo4j record containing the location node and its associated properties.
+     *               It is expected to include a node labeled as "loc" that represents the location details.
+     * @return a {@link Location} object constructed using the data from the "loc" node, or {@code null}
+     *         if the required node is not found or cannot be processed.
+     */
+    private static Location getLocations(org.neo4j.driver.Record record){
+        Node locationNode = record.get("loc").asNode();
+        Location location = BuilderUtil.buildLocation(locationNode);
+        return location  ;
+    }
+
+    /**
+     * Constructs a map of Cypher query parameters based on the provided location search request.
+     * If the request is null, the parameters will have null values for "name", "city", and "state".
+     * Otherwise, the values from the provided request will be used.
+     *
+     * @param locationSearchRequest the search request containing location details such as name, city, and state.
+     *                              If null, default parameters with null values will be used.
+     * @return a map containing the parameters for the Cypher query. The map includes keys for "name",
+     *         "city", and "state", with their corresponding values derived from the search request.
+     */
+    private static Map<String, Object> getCypherParams(LocationSearchRequest locationSearchRequest){
+        Map<String, Object> params = new HashMap<>();
+        if (locationSearchRequest == null) {
+            params.put("name", null);
+            params.put("city", null);
+            params.put("state", null);
+        }else{
+            params.put("name", locationSearchRequest.getLocationName());
+            params.put("city", locationSearchRequest.getCity());
+            params.put("state", locationSearchRequest.getState());
+        }
+        return params;
     }
 }

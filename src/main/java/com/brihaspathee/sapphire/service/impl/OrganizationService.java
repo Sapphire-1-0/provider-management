@@ -49,6 +49,18 @@ public class OrganizationService implements IOrganizationService {
 
 
     /**
+     * Inserts a new organization or updates an existing one based on the provided organization details.
+     *
+     * @param organizationDto an instance of {@code OrganizationDto} containing the details of the organization
+     *                        to be inserted or updated, including its identifiers, name, type, and associated
+     *                        information such as locations and networks
+     */
+    @Override
+    public void upsertOrganization(OrganizationDto organizationDto) {
+
+    }
+
+    /**
      * Retrieves all organizations and converts them to a list of OrganizationDto objects.
      * Logs the name of each organization during the retrieval process.
      *
