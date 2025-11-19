@@ -130,6 +130,7 @@
                 }
               ]
             },
+            "networkCode": "3258",
             "expectedOrganizationList" : {
               "organizationList": [
                 {
@@ -238,6 +239,7 @@
                 }
               ]
             },
+            "locationName": "Lone Star Family Health Center",
             "expectedOrganizationList" : {
               "organizationList": [
                 {

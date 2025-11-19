@@ -88,7 +88,7 @@ public class LocationRepositoryImpl implements LocationRepository {
     public Organization findLocationsByOrgAndNet(String orgId, String netId) {
         log.debug("Fetching locations for organization and network:");
         String cypher = cypherLoader.load("get_locs_by_net_org.cypher");
-        log.debug("Cypher query: {}", cypher);
+        log.info("Cypher query: {}", cypher);
         log.debug("Org elementId: {}", orgId);
         log.debug("Net elementId: {}", netId);
         Map<String, Object> params = Map.of("orgId", orgId, "netId", netId);

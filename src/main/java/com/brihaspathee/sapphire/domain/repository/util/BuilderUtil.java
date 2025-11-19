@@ -9,6 +9,7 @@ import org.neo4j.driver.types.Relationship;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -243,5 +244,47 @@ public class BuilderUtil {
             }
         }
         return roleLocationServesList;
+    }
+
+    public static CypherQuery buildCypher(String entityType, Map<String, String> identifiers, boolean matchAll){
+        String entityVariable = "";
+        String entityLabel = "";
+        if (entityType.equals("ORG")){
+            entityVariable = "org";
+            entityLabel = "Organization";
+        }
+        Map<String, Object> params = new HashMap<>();
+        List<String> whereClauses = new ArrayList<>();
+        int idx = 0;
+        for (var entry : identifiers.entrySet()) {
+            String relType = entry.getKey();
+            String paramName = "val" + idx;
+            String alias = "id" + idx;
+
+            params.put(paramName, entry.getValue());
+
+            whereClauses.add(String.format(
+                    "EXISTS { MATCH ("+entityVariable+") -[:HAS_%s]->(%s:Identifier) WHERE %s.value = $%s }",
+                    relType, alias, alias, paramName));
+            idx++;
+        }
+
+        String operator = matchAll ? " AND " : " OR ";
+        String cypher = """
+                MATCH ("""+entityVariable+
+                """
+                :"""+
+                entityLabel+
+                """
+                )
+                WHERE %s
+                OPTIONAL MATCH (org)-[r]->(id:Identifier)
+                RETURN DISTINCT org, collect(DISTINCT {relType: type(r), node: id}) AS identifiers
+                """.formatted(String.join(operator, whereClauses));
+        log.info("Cypher query to match orgs by identifiers: {}", cypher);
+        return CypherQuery.builder()
+                .cypher(cypher)
+                .params(params)
+                .build();
     }
 }

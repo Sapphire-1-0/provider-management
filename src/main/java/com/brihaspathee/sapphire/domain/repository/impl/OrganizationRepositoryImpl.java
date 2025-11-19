@@ -6,6 +6,7 @@ import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository
 import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
 import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
+import com.brihaspathee.sapphire.domain.repository.util.CypherQuery;
 import com.brihaspathee.sapphire.util.CypherLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -89,32 +90,33 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         if (identifiers == null || identifiers.isEmpty()) {
             return findAll();
         }
-        Map<String, Object> params = new HashMap<>();
-        List<String> whereClauses = new ArrayList<>();
-        int idx = 0;
-        for (var entry : identifiers.entrySet()) {
-            String relType = entry.getKey();
-            String paramName = "val" + idx;
-            String alias = "id" + idx;
-
-            params.put(paramName, entry.getValue());
-
-            whereClauses.add(String.format(
-                    "EXISTS { MATCH (org) -[:HAS_%s]->(%s:Identifier) WHERE %s.value = $%s }",
-                    relType, alias, alias, paramName));
-            idx++;
-        }
-
-        String operator = matchAll ? " AND " : " OR ";
-        String cypher = """
-                MATCH (org:Organization)
-                WHERE %s
-                OPTIONAL MATCH (org)-[r]->(id:Identifier)
-                RETURN DISTINCT org, collect(DISTINCT {relType: type(r), node: id}) AS identifiers
-                """.formatted(String.join(operator, whereClauses));
-        log.info("Cypher query to match orgs by identifiers: {}", cypher);
-        log.info("Parameters for the cypher query: {}", params);
-        return mapResults(cypher, params);
+        CypherQuery cypherQuery = BuilderUtil.buildCypher("ORG", identifiers, matchAll);
+//        Map<String, Object> params = new HashMap<>();
+//        List<String> whereClauses = new ArrayList<>();
+//        int idx = 0;
+//        for (var entry : identifiers.entrySet()) {
+//            String relType = entry.getKey();
+//            String paramName = "val" + idx;
+//            String alias = "id" + idx;
+//
+//            params.put(paramName, entry.getValue());
+//
+//            whereClauses.add(String.format(
+//                    "EXISTS { MATCH (org) -[:HAS_%s]->(%s:Identifier) WHERE %s.value = $%s }",
+//                    relType, alias, alias, paramName));
+//            idx++;
+//        }
+//
+//        String operator = matchAll ? " AND " : " OR ";
+//        String cypher = """
+//                MATCH (org:Organization)
+//                WHERE %s
+//                OPTIONAL MATCH (org)-[r]->(id:Identifier)
+//                RETURN DISTINCT org, collect(DISTINCT {relType: type(r), node: id}) AS identifiers
+//                """.formatted(String.join(operator, whereClauses));
+//        log.info("Cypher query to match orgs by identifiers: {}", cypher);
+//        log.info("Parameters for the cypher query: {}", params);
+        return mapResults(cypherQuery.getCypher(), cypherQuery.getParams());
     }
 
     public Organization findAllOrganizationNetworks(String elementId){

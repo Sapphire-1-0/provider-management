@@ -82,4 +82,15 @@ public class NetworkDto {
      * durations or additional attributes related to the location's network.
      */
     private LocationNetworkDto locationNetwork;
+
+    @Override
+    public String toString() {
+        return "NetworkDto{" +
+                "elementId='" + elementId + '\'' +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", isHNETNetwork=" + isHNETNetwork +
+                ", isVendorNetwork=" + isVendorNetwork +
+                '}';
+    }
 }

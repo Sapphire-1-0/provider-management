@@ -1,7 +1,8 @@
 package com.brihaspathee.sapphire.integration;
 
-import com.brihaspathee.sapphire.model.OrganizationDto;
-import com.brihaspathee.sapphire.model.OrganizationList;
+import com.brihaspathee.sapphire.model.*;
+import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
+import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
 import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
 import com.brihaspathee.sapphire.validator.OrganizationValidator;
 import com.brihaspathee.sapphire.web.model.TestOrganizationSearchRequest;
@@ -170,7 +171,7 @@ public class OrganizationReadAPIIntTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
         String orgElementId = organizationDto.getElementId();
-        String uri = "/api/v1/sapphire/organization/private/" + orgElementId +"/network/_search";
+        String uri = "/api/v1/sapphire/organization/" + orgElementId +"/network/_search";
         ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
                 testRestTemplate.exchange(
                         uri,
@@ -210,8 +211,13 @@ public class OrganizationReadAPIIntTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
         String orgElementId = organizationDto.getElementId();
-        String uri = "/api/v1/sapphire/organization/private/" + orgElementId +"/network/" +
-                "4:584fe225-8704-4f61-b2b6-1cce33b0b662:3048/location/_search";
+        String networkCode = testOrganizationSearchRequest.getNetworkCode();
+        log.info("Network code is:{}", networkCode);
+        NetworkDto networkDto = getNetwork(networkCode);
+        log.info("Network is:{}", networkDto);
+        String uri = "/api/v1/sapphire/organization/" + orgElementId +"/network/" +
+                networkDto.getElementId() +
+                "/location/_search";
         ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
                 testRestTemplate.exchange(
                         uri,
@@ -249,7 +255,7 @@ public class OrganizationReadAPIIntTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
         String orgElementId = organizationDto.getElementId();
-        String uri = "/api/v1/sapphire/organization/private/" + orgElementId +"/location/_search";
+        String uri = "/api/v1/sapphire/organization/" + orgElementId +"/location/_search";
         ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
                 testRestTemplate.exchange(
                         uri,
@@ -289,8 +295,13 @@ public class OrganizationReadAPIIntTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
         String orgElementId = organizationDto.getElementId();
+        String locationName = testOrganizationSearchRequest.getLocationName();
+        log.info("Location Name is:{}", locationName);
+        LocationDto locationDto = getLocation(locationName);
+        log.info("Location is:{}", locationDto);
         String uri = "/api/v1/sapphire/organization/" + orgElementId +"/location/" +
-                "4:584fe225-8704-4f61-b2b6-1cce33b0b662:11132/network/_search";
+                locationDto.getElementId() +
+                "/network/_search";
         ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
                 testRestTemplate.exchange(
                         uri,
@@ -336,5 +347,48 @@ public class OrganizationReadAPIIntTest {
         return objectMapper.convertValue(apiResponse.getResponse(), OrganizationList.class);
     }
 
+    private NetworkDto getNetwork(String networkCode){
+        NetworkSearchRequest networkSearchRequest = NetworkSearchRequest.builder()
+                .networkCode(networkCode)
+                .build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<NetworkSearchRequest> httpEntity = new HttpEntity<>(networkSearchRequest, headers);
+        String uri = "/api/v1/sapphire/network/_search";
+        ResponseEntity<SapphireAPIResponse<NetworkList>> responseEntity =
+                testRestTemplate.exchange(
+                        uri,
+                        HttpMethod.POST,
+                        httpEntity,
+                        new ParameterizedTypeReference<>() {
+                        }
+                );
+        SapphireAPIResponse<NetworkList> apiResponse = responseEntity.getBody();
+        Assertions.assertNotNull(apiResponse);
+        NetworkList networkList = objectMapper.convertValue(apiResponse.getResponse(), NetworkList.class);
+        return  networkList.getNetworks().getFirst();
+    }
+
+    private LocationDto getLocation(String locationName){
+        LocationSearchRequest locationSearchRequest = LocationSearchRequest.builder()
+                .locationName(locationName)
+                .build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<LocationSearchRequest> httpEntity = new HttpEntity<>(locationSearchRequest, headers);
+        String uri = "/api/v1/sapphire/location/_search";
+        ResponseEntity<SapphireAPIResponse<LocationList>> responseEntity =
+                testRestTemplate.exchange(
+                        uri,
+                        HttpMethod.POST,
+                        httpEntity,
+                        new ParameterizedTypeReference<>() {
+                        }
+                );
+        SapphireAPIResponse<LocationList> apiResponse = responseEntity.getBody();
+        Assertions.assertNotNull(apiResponse);
+        LocationList locationList = objectMapper.convertValue(apiResponse.getResponse(), LocationList.class);
+        return  locationList.getLocations().getFirst();
+    }
 
 }

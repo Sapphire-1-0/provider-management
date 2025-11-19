@@ -109,4 +109,18 @@ public class LocationDto {
      */
     private LocationNetworkDto locationNetwork;
 
+    @Override
+    public String toString() {
+        return "LocationDto{" +
+                "elementId='" + elementId + '\'' +
+                ", name='" + name + '\'' +
+                ", streetAddress='" + streetAddress + '\'' +
+                ", secondaryAddress='" + secondaryAddress + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", county='" + county + '\'' +
+                ", countyFIPS='" + countyFIPS + '\'' +
+                '}';
+    }
 }

@@ -50,6 +50,10 @@ public class TestOrganizationSearchRequest {
      */
     private OrganizationSearchRequest orgSearchRequest;
 
+    private String networkCode;
+
+    private String locationName;
+
     /**
      * Represents the expected organization details in the form of an OrganizationDto object.
      * This variable is used to store the expected output for a test case,
