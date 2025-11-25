@@ -1,6 +1,7 @@
 package com.brihaspathee.sapphire.domain.repository.interfaces;
 
 import com.brihaspathee.sapphire.domain.entity.Organization;
+import com.brihaspathee.sapphire.model.OrganizationDto;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -80,4 +81,13 @@ public interface OrganizationRepository {
      * @return an Organization object containing the organization details and associated networks for the specified location
      */
     Organization findNetworksByOrgAndLoc(String orgId, String locId);
+
+
+    /**
+     * Creates a new organization using the details provided in the OrganizationDto object.
+     *
+     * @param organizationDto the data transfer object containing the details of the organization to be created
+     * @return the newly created Organization object
+     */
+    Organization createOrganization(OrganizationDto organizationDto);
 }

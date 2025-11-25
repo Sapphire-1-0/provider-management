@@ -1,9 +1,8 @@
 package com.brihaspathee.sapphire.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
 
 import java.util.List;
 
@@ -19,16 +18,30 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "Represents an organization in the system")
 public class OrganizationDto {
 
+    @Schema(description = "Unique identifier for an element within the system",
+            example = "123456789")
     private String elementId;
     /**
      * Represents the name of the organization.
      * This variable is used to store the name of an organization
      * associated with this DTO.
      */
+    @Schema(description = "Name of the organization",
+            example = "St. Joseph Hospital")
     private String name;
+
+    /**
+     * Represents a description of the organization.
+     * This variable is used to provide additional details or context
+     * about the organization within the system.
+     */
+    private String description;
 
     /**
      * Represents an alternate or additional name for the organization.

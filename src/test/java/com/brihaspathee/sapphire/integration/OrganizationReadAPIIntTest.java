@@ -17,10 +17,14 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+//import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,11 +38,15 @@ import java.util.List;
  * Project: sapphire
  * Package Name: com.brihaspathee.sapphire.integration
  * To change this template use File | Settings | File and Code Template
+ *
  */
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OrganizationReadAPIIntTest {
+
+    @LocalServerPort
+    private int port;
 
     /**
      * Used to handle JSON serialization and deserialization operations.
@@ -53,13 +61,16 @@ public class OrganizationReadAPIIntTest {
     private ObjectMapper objectMapper;
 
     /**
-     * An instance of {@link TestRestTemplate} used to simplify the interaction with RESTful services during testing.
-     * This object is commonly utilized to send and receive HTTP requests and responses, enabling easy validation
-     * of API endpoints and their behavior under various test scenarios. It supports basic authentication,
-     * request customization, and automatic serialization/deserialization of objects.
+     * A WebTestClient instance used to perform integration testing of web applications.
+     * This variable is automatically injected into the test class and allows for
+     * testing HTTP endpoints by simulating client requests and validating responses.
+     *
+     * The WebTestClient is leveraged for executing HTTP methods like GET, POST, PUT, DELETE,
+     * and provides a fluent API for performing request constructions, executions,
+     * and response validations. It is commonly used for verifying the correctness
+     * of controller endpoints in a web layer.
      */
-    @Autowired
-    private TestRestTemplate testRestTemplate;
+    private WebTestClient webTestClient;
 
     /**
      * Represents a resource file utilized in the OrganizationReadAPIIntTest.
@@ -118,6 +129,11 @@ public class OrganizationReadAPIIntTest {
     @BeforeEach
     void setUp(TestInfo testInfo) throws IOException {
 
+        this.webTestClient = WebTestClient
+                .bindToServer()
+                .baseUrl("http://localhost:" + port)
+                .build();
+
         // Read the file information and convert to test class object
         organizationSearchRequestTestClass = objectMapper.readValue(resourceFile.getFile(), new TypeReference<>() {
         });
@@ -172,16 +188,24 @@ public class OrganizationReadAPIIntTest {
         HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
         String orgElementId = organizationDto.getElementId();
         String uri = "/api/v1/sapphire/organization/" + orgElementId +"/network/_search";
-        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
-                testRestTemplate.exchange(
-                        uri,
-                        HttpMethod.POST,
-                        httpEntity,
-                        new ParameterizedTypeReference<>() {
-                        }
-                );
+//        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
+//                testRestTemplate.exchange(
+//                        uri,
+//                        HttpMethod.POST,
+//                        httpEntity,
+//                        new ParameterizedTypeReference<>() {
+//                        }
+//                );
 
-        SapphireAPIResponse<OrganizationDto> apiResponse = responseEntity.getBody();
+        SapphireAPIResponse<OrganizationDto> apiResponse = webTestClient.post()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.empty(), Void.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<SapphireAPIResponse<OrganizationDto>>(){})
+                .returnResult()
+                .getResponseBody();
         Assertions.assertNotNull(apiResponse);
         OrganizationDto actualOrgDto = objectMapper.convertValue(apiResponse.getResponse(), OrganizationDto.class);
         OrganizationDto expectedOrgDto = testOrganizationSearchRequest.getExpectedOrganizationList().getOrganizationList().getFirst();
@@ -218,16 +242,24 @@ public class OrganizationReadAPIIntTest {
         String uri = "/api/v1/sapphire/organization/" + orgElementId +"/network/" +
                 networkDto.getElementId() +
                 "/location/_search";
-        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
-                testRestTemplate.exchange(
-                        uri,
-                        HttpMethod.POST,
-                        httpEntity,
-                        new ParameterizedTypeReference<>() {
-                        }
-                );
+//        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
+//                testRestTemplate.exchange(
+//                        uri,
+//                        HttpMethod.POST,
+//                        httpEntity,
+//                        new ParameterizedTypeReference<>() {
+//                        }
+//                );
 
-        SapphireAPIResponse<OrganizationDto> apiResponse = responseEntity.getBody();
+        SapphireAPIResponse<OrganizationDto> apiResponse = webTestClient.post()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.empty(), Void.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<SapphireAPIResponse<OrganizationDto>>(){})
+                .returnResult()
+                .getResponseBody();
         Assertions.assertNotNull(apiResponse);
         OrganizationDto actualOrgDto = objectMapper.convertValue(apiResponse.getResponse(), OrganizationDto.class);
         OrganizationDto expectedOrgDto = testOrganizationSearchRequest.getExpectedOrganizationList().getOrganizationList().getFirst();
@@ -256,16 +288,24 @@ public class OrganizationReadAPIIntTest {
         HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
         String orgElementId = organizationDto.getElementId();
         String uri = "/api/v1/sapphire/organization/" + orgElementId +"/location/_search";
-        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
-                testRestTemplate.exchange(
-                        uri,
-                        HttpMethod.POST,
-                        httpEntity,
-                        new ParameterizedTypeReference<>() {
-                        }
-                );
+//        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
+//                testRestTemplate.exchange(
+//                        uri,
+//                        HttpMethod.POST,
+//                        httpEntity,
+//                        new ParameterizedTypeReference<>() {
+//                        }
+//                );
 
-        SapphireAPIResponse<OrganizationDto> apiResponse = responseEntity.getBody();
+        SapphireAPIResponse<OrganizationDto> apiResponse = webTestClient.post()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.empty(), Void.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<SapphireAPIResponse<OrganizationDto>>(){})
+                .returnResult()
+                .getResponseBody();
         Assertions.assertNotNull(apiResponse);
         OrganizationDto actualOrgDto = objectMapper.convertValue(apiResponse.getResponse(), OrganizationDto.class);
         OrganizationDto expectedOrgDto = testOrganizationSearchRequest.getExpectedOrganizationList().getOrganizationList().getFirst();
@@ -302,16 +342,24 @@ public class OrganizationReadAPIIntTest {
         String uri = "/api/v1/sapphire/organization/" + orgElementId +"/location/" +
                 locationDto.getElementId() +
                 "/network/_search";
-        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
-                testRestTemplate.exchange(
-                        uri,
-                        HttpMethod.POST,
-                        httpEntity,
-                        new ParameterizedTypeReference<>() {
-                        }
-                );
+//        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
+//                testRestTemplate.exchange(
+//                        uri,
+//                        HttpMethod.POST,
+//                        httpEntity,
+//                        new ParameterizedTypeReference<>() {
+//                        }
+//                );
 
-        SapphireAPIResponse<OrganizationDto> apiResponse = responseEntity.getBody();
+        SapphireAPIResponse<OrganizationDto> apiResponse = webTestClient.post()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.empty(), Void.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<SapphireAPIResponse<OrganizationDto>>(){})
+                .returnResult()
+                .getResponseBody();;
         Assertions.assertNotNull(apiResponse);
         OrganizationDto actualOrgDto = objectMapper.convertValue(apiResponse.getResponse(), OrganizationDto.class);
         OrganizationDto expectedOrgDto = testOrganizationSearchRequest.getExpectedOrganizationList().getOrganizationList().getFirst();
@@ -334,15 +382,23 @@ public class OrganizationReadAPIIntTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(organizationSearchRequest, headers);
         String uri = "/api/v1/sapphire/organization/_search";
-        ResponseEntity<SapphireAPIResponse<OrganizationList>> responseEntity =
-                testRestTemplate.exchange(
-                        uri,
-                        HttpMethod.POST,
-                        httpEntity,
-                        new ParameterizedTypeReference<>() {
-                        }
-                );
-        SapphireAPIResponse<OrganizationList> apiResponse = responseEntity.getBody();
+//        ResponseEntity<SapphireAPIResponse<OrganizationList>> responseEntity =
+//                testRestTemplate.exchange(
+//                        uri,
+//                        HttpMethod.POST,
+//                        httpEntity,
+//                        new ParameterizedTypeReference<>() {
+//                        }
+//                );
+        SapphireAPIResponse<OrganizationList> apiResponse = webTestClient.post()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(organizationSearchRequest)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<SapphireAPIResponse<OrganizationList>>(){})
+                .returnResult()
+                .getResponseBody();
         Assertions.assertNotNull(apiResponse);
         return objectMapper.convertValue(apiResponse.getResponse(), OrganizationList.class);
     }
@@ -355,15 +411,23 @@ public class OrganizationReadAPIIntTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<NetworkSearchRequest> httpEntity = new HttpEntity<>(networkSearchRequest, headers);
         String uri = "/api/v1/sapphire/network/_search";
-        ResponseEntity<SapphireAPIResponse<NetworkList>> responseEntity =
-                testRestTemplate.exchange(
-                        uri,
-                        HttpMethod.POST,
-                        httpEntity,
-                        new ParameterizedTypeReference<>() {
-                        }
-                );
-        SapphireAPIResponse<NetworkList> apiResponse = responseEntity.getBody();
+//        ResponseEntity<SapphireAPIResponse<NetworkList>> responseEntity =
+//                testRestTemplate.exchange(
+//                        uri,
+//                        HttpMethod.POST,
+//                        httpEntity,
+//                        new ParameterizedTypeReference<>() {
+//                        }
+//                );
+        SapphireAPIResponse<NetworkList> apiResponse = webTestClient.post()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(networkSearchRequest)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<SapphireAPIResponse<NetworkList>>(){})
+                .returnResult()
+                .getResponseBody();
         Assertions.assertNotNull(apiResponse);
         NetworkList networkList = objectMapper.convertValue(apiResponse.getResponse(), NetworkList.class);
         return  networkList.getNetworks().getFirst();
@@ -377,15 +441,24 @@ public class OrganizationReadAPIIntTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<LocationSearchRequest> httpEntity = new HttpEntity<>(locationSearchRequest, headers);
         String uri = "/api/v1/sapphire/location/_search";
-        ResponseEntity<SapphireAPIResponse<LocationList>> responseEntity =
-                testRestTemplate.exchange(
-                        uri,
-                        HttpMethod.POST,
-                        httpEntity,
-                        new ParameterizedTypeReference<>() {
-                        }
-                );
-        SapphireAPIResponse<LocationList> apiResponse = responseEntity.getBody();
+//        ResponseEntity<SapphireAPIResponse<LocationList>> responseEntity =
+//                testRestTemplate.exchange(
+//                        uri,
+//                        HttpMethod.POST,
+//                        httpEntity,
+//                        new ParameterizedTypeReference<>() {
+//                        }
+//                );
+        SapphireAPIResponse<LocationList> apiResponse =
+                webTestClient.post()
+                        .uri(uri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(locationSearchRequest)
+                        .exchange()
+                        .expectStatus().isOk()
+                        .expectBody(new ParameterizedTypeReference<SapphireAPIResponse<LocationList>>(){})
+                        .returnResult()
+                        .getResponseBody();
         Assertions.assertNotNull(apiResponse);
         LocationList locationList = objectMapper.convertValue(apiResponse.getResponse(), LocationList.class);
         return  locationList.getLocations().getFirst();

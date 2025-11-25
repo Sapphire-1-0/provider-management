@@ -5,11 +5,32 @@ info:
 servers:
 - url: http://localhost:8080
   description: Generated server url
+tags:
+- name: Organizations
+  description: APIs for managing organizations
 paths:
-  /api/v1/sapphire/organization/private/{organizationId}/network/_search:
+  /api/v1/sapphire/practitioner/_search:
     post:
       tags:
-      - organization-api-impl
+      - practitioner-api-impl
+      operationId: getPractitioners
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PractitionerSearchRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponsePractitionerList"
+  /api/v1/sapphire/organization/{organizationId}/network/_search:
+    post:
+      tags:
+      - Organizations
       operationId: getOrganizationNetworks
       parameters:
       - name: organizationId
@@ -24,10 +45,10 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
-  /api/v1/sapphire/organization/private/{organizationId}/location/_search:
+  /api/v1/sapphire/organization/{organizationId}/location/_search:
     post:
       tags:
-      - organization-api-impl
+      - Organizations
       operationId: getOrganizationLocations
       parameters:
       - name: organizationId
@@ -42,10 +63,10 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
-  /api/v1/sapphire/organization/private/{orgId}/network/{netId}/location/_search:
+  /api/v1/sapphire/organization/{orgId}/network/{netId}/location/_search:
     post:
       tags:
-      - organization-api-impl
+      - Organizations
       operationId: getLocationsForOrgAndNet
       parameters:
       - name: orgId
@@ -65,10 +86,10 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
-  /api/v1/sapphire/organization/private/{orgId}/location/{locId}/network/_search:
+  /api/v1/sapphire/organization/{orgId}/location/{locId}/network/_search:
     post:
       tags:
-      - organization-api-impl
+      - Organizations
       operationId: getNetworksForOrgAndLoc
       parameters:
       - name: orgId
@@ -88,10 +109,10 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
-  /api/v1/sapphire/organization/private/create-org:
+  /api/v1/sapphire/organization/_upsert:
     post:
       tags:
-      - organization-api-impl
+      - Organizations
       operationId: createOrganization
       requestBody:
         content:
@@ -106,10 +127,10 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
-  /api/v1/sapphire/organization/private/_search:
+  /api/v1/sapphire/organization/_search:
     post:
       tags:
-      - organization-api-impl
+      - Organizations
       operationId: getOrganizationsByIdentifiers
       requestBody:
         content:
@@ -171,28 +192,35 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseWelcomeDto"
-  /api/v1/sapphire/organization/private/{organizationId}:
+  /api/v1/sapphire/organization/{organizationId}:
     get:
       tags:
-      - organization-api-impl
+      - Organizations
+      summary: Retrieves the details of a specific organization based on the provided
+        organization ID.
+      description: Retrieves the details of a specific organization based on the provided
+        organization ID.
       operationId: getOrganizationById
       parameters:
       - name: organizationId
         in: path
+        description: The unique identifier of the organization to be retrieved.
         required: true
         schema:
           type: string
       responses:
         "200":
-          description: OK
+          description: The details of the organization were successfully retrieved.
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
-  /api/v1/sapphire/organization/private/get-orgs:
+                $ref: "#/components/schemas/OrganizationDto"
+        "400":
+          description: The provided organization ID is invalid.
+  /api/v1/sapphire/organization/get-orgs:
     get:
       tags:
-      - organization-api-impl
+      - Organizations
       operationId: getOrganizations
       responses:
         "200":
@@ -203,6 +231,137 @@ paths:
                 $ref: "#/components/schemas/SapphireAPIResponseOrganizationList"
 components:
   schemas:
+    IdentifierInfo:
+      type: object
+      properties:
+        identifierType:
+          type: string
+        identifierValue:
+          type: string
+    PractitionerSearchRequest:
+      type: object
+      properties:
+        identifiers:
+          type: array
+          items:
+            $ref: "#/components/schemas/IdentifierInfo"
+    PractitionerDto:
+      type: object
+      properties:
+        elementId:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        birthDate:
+          type: string
+        gender:
+          type: string
+        altFirstName:
+          type: string
+        altLastName:
+          type: string
+        altMiddleName:
+          type: string
+    PractitionerList:
+      type: object
+      properties:
+        practitioners:
+          type: array
+          items:
+            $ref: "#/components/schemas/PractitionerDto"
+    SapphireAPIResponsePractitionerList:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        statusCode:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        reason:
+          type: string
+        message:
+          type: string
+        developerMessage:
+          type: string
+        response:
+          $ref: "#/components/schemas/PractitionerList"
     IdentifierDto:
       type: object
       properties:
@@ -442,13 +601,6 @@ components:
           type: string
         response:
           $ref: "#/components/schemas/OrganizationDto"
-    IdentifierInfo:
-      type: object
-      properties:
-        identifierType:
-          type: string
-        identifierValue:
-          type: string
     OrganizationSearchRequest:
       type: object
       properties:

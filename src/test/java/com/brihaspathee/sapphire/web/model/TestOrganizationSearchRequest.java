@@ -20,6 +20,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TestOrganizationSearchRequest {
+
+    private String testCaseId;
+
+    private String testCaseDescription;
     /**
      * Identifies if an exception is expected
      */

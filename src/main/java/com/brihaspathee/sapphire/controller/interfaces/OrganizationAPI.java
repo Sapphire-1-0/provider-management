@@ -4,6 +4,12 @@ import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.model.OrganizationList;
 import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +24,7 @@ import java.util.Map;
  * Package Name: com.brihaspathee.sapphire.controller.interfaces
  * To change this template use File | Settings | File and Code Template
  */
+@Tag(name = "Organizations", description = "APIs for managing organizations")
 @RequestMapping("/api/v1/sapphire/organization")
 public interface OrganizationAPI {
 
@@ -47,6 +54,28 @@ public interface OrganizationAPI {
      * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates an OrganizationDto,
      * which represents the details of the retrieved organization
      */
+    @Operation(
+            summary = "Retrieves the details of a specific organization based on the provided organization ID.",
+            description = "Retrieves the details of a specific organization based on the provided organization ID.",
+            parameters = {
+                    @Parameter(name = "organizationId", description = "The unique identifier of the organization to be retrieved.", required = true)
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "The details of the organization were successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = OrganizationDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "The provided organization ID is invalid.",
+                            content = @Content()
+                    )
+            }
+    )
     @GetMapping("/{organizationId}")
     ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationById(@PathVariable("organizationId") String id);
 

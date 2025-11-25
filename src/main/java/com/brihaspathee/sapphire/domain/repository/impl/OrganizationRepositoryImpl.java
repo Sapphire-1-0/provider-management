@@ -7,6 +7,7 @@ import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
 import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.domain.repository.util.CypherQuery;
+import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.util.CypherLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +15,7 @@ import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created in Intellij IDEA
@@ -151,6 +149,48 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
 
         return networkRepository.findNetworksByOrgAndLoc(orgId, locId);
     }
+
+    /**
+     * Creates a new organization using the details provided in the OrganizationDto object.
+     *
+     * @param organizationDto the data transfer object containing the details of the organization to be created
+     * @return the newly created Organization object
+     */
+    @Override
+    public Organization createOrganization(OrganizationDto organizationDto) {
+        String cypher = cypherLoader.load("create_organization.cypher");
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", organizationDto.getName());
+
+        Map<String, String> tin = new HashMap<>();
+        tin.put("type", "TIN");
+        tin.put("value", "TestTIN");
+        tin.put("legalName", "TestLegalName");
+
+        Map<String, String> npi = new HashMap<>();
+        tin.put("type", "NPI");
+        tin.put("value", "TestNPI");
+
+        Map<String, String> medicaidId = new HashMap<>();
+        tin.put("type", "MEDICAID_ID");
+        tin.put("value", "TestMedicaidId");
+        tin.put("state", "FL");
+
+        List<Map<String, String>> identifiers = Arrays.asList(tin, npi, medicaidId);
+        params.put("identifiers", identifiers);
+
+        queryExecutor.executeReadQuery(cypher, params,
+                record -> {
+                    Node node = record.get("o").asNode();
+                    log.info("Organization name: {}", node.get("name").asString());
+                    log.info("Element id of the Org:{}", node.elementId());
+//                    Organization org = BuilderUtil.buildOrganization(node);
+                    return node;
+                });
+
+        return null;
+    }
+
 
     /**
      * Maps the results of a Neo4j Cypher query to a list of Organization objects.
