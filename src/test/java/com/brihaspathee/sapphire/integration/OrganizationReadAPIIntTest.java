@@ -1,5 +1,6 @@
 package com.brihaspathee.sapphire.integration;
 
+import com.brihaspathee.sapphire.integration.base.Neo4jIntegrationTest;
 import com.brihaspathee.sapphire.model.*;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
 import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
@@ -43,7 +44,7 @@ import java.util.List;
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class OrganizationReadAPIIntTest {
+public class OrganizationReadAPIIntTest extends Neo4jIntegrationTest{
 
     @LocalServerPort
     private int port;

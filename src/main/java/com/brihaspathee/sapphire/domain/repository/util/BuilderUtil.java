@@ -48,6 +48,29 @@ public class BuilderUtil {
     }
 
     /**
+     * Constructs and returns a {@link Practitioner} instance populated with data extracted
+     * from a provided Neo4j {@link Node}.
+     *
+     * @param practitionerNode the Neo4j {@link Node} containing practitioner data. If null, the method returns null.
+     *                         It is expected that the Node provides values for keys such as "elementId", "firstName",
+     *                         "lastName", "middleName", and "gender".
+     * @return a {@link Practitioner} object constructed from the given {@link Node} data,
+     *         or null if the input {@link Node} is null.
+     */
+    public static Practitioner buildPractitioner(Node practitionerNode){
+        if (practitionerNode == null) {
+            return null;
+        }
+        return Practitioner.builder()
+                .elementId(practitionerNode.elementId())
+                .firstName(practitionerNode.get("first_name").asString())
+                .lastName(practitionerNode.get("last_name").asString())
+                .middleName(practitionerNode.get("middle_name").asString())
+                .gender(practitionerNode.get("gender").asString())
+                .build();
+    }
+
+    /**
      * Builds and returns a {@link Network} object populated with data extracted from the provided Neo4j {@link Node}.
      * The method validates the input and constructs a Network instance using the builder pattern.
      * It also sets additional properties if the corresponding keys exist within the {@link Node}.
@@ -246,6 +269,16 @@ public class BuilderUtil {
         return roleLocationServesList;
     }
 
+    /**
+     * Builds a Cypher query to fetch entities of the specified type based on given identifiers.
+     * The method generates a query that matches the specified entity type and constructs
+     * appropriate filtering conditions using the provided identifiers.
+     *
+     * @param entityType the type of the entity to be queried (e.g., "ORG" for Organization)
+     * @param identifiers a map of identifier types and their corresponding values to use for filtering
+     * @param matchAll if true, all identifier conditions must match (AND logic), otherwise any condition can match (OR logic)
+     * @return a {@link CypherQuery} object containing the generated Cypher query and its parameters
+     */
     public static CypherQuery buildCypher(String entityType, Map<String, String> identifiers, boolean matchAll){
         String entityVariable = "";
         String entityLabel = "";

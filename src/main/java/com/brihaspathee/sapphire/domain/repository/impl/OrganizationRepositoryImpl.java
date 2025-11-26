@@ -31,12 +31,45 @@ import java.util.*;
 @RequiredArgsConstructor
 public class OrganizationRepositoryImpl implements OrganizationRepository {
 
+    /**
+     * Responsible for executing Neo4j database queries within the repository.
+     * Utilized to perform both read and write operations by constructing
+     * Cypher queries with specified parameters and mapping the results.
+     * Ensures direct database interactions are abstracted and encapsulated.
+     */
     private final Neo4jQueryExecutor queryExecutor;
 
+    /**
+     * Utility class used to manage and load Cypher query files.
+     * It provides functionality to cache Cypher files for faster access
+     * and dynamically load Cypher query content based on the file name.
+     *
+     * This instance of CypherLoader is utilized within the repository
+     * to retrieve and map Cypher queries used for database operations,
+     * ensuring efficient query management and execution.
+     */
     private final CypherLoader cypherLoader;
 
+    /**
+     * Manages operations related to network retrieval and associations within the organization.
+     * The {@code networkRepository} is an instance of the {@link NetworkRepository} interface
+     * and provides access to methods that facilitate interactions with network-related data,
+     * including searching for networks and retrieving networks associated with specific organizations
+     * or locations. This component acts as a dependency in the data access layer.
+     */
     private final NetworkRepository networkRepository;
 
+    /**
+     * This variable serves as a dependency for interacting with the `LocationRepository` interface.
+     * The `LocationRepository` is responsible for accessing and managing location-related data
+     * stored in the underlying database. It provides methods for retrieving organizations and their
+     * associated locations based on various criteria, such as organization ID, network ID, or custom
+     * search requests.
+     *
+     * The `locationRepository` is utilized within the `OrganizationRepositoryImpl` class to
+     * implement functionality related to location data as part of the broader organization data
+     * management operations.
+     */
     private final LocationRepository locationRepository;
 
     @Override

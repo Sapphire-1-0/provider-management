@@ -12,6 +12,7 @@ import lombok.*;
  * To change this template use File | Settings | File and Code Template
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class MedicareID extends Identifier{
 
 }

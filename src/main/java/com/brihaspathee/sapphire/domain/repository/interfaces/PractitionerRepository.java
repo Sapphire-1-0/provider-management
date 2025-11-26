@@ -16,5 +16,20 @@ import java.util.List;
  */
 public interface PractitionerRepository {
 
+    /**
+     * Retrieves a list of practitioners based on the specified search criteria.
+     *
+     * @param practitionerSearchRequest the search request containing the criteria
+     *                                   for filtering practitioners, such as identifiers or other attributes
+     * @return a list of Practitioner objects that match the provided search criteria
+     */
     List<Practitioner> findPractitioners(PractitionerSearchRequest practitionerSearchRequest);
+
+    /**
+     * Retrieves a Practitioner entity based on the provided practitioner ID.
+     *
+     * @param practitionerId the unique identifier of the practitioner to be retrieved
+     * @return the Practitioner object corresponding to the specified ID, or null if no practitioner is found
+     */
+    Practitioner findPractitionerById(String practitionerId);
 }

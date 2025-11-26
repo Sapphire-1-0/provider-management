@@ -1,14 +1,13 @@
 package com.brihaspathee.sapphire.controller.interfaces;
 
 import com.brihaspathee.sapphire.model.OrganizationList;
+import com.brihaspathee.sapphire.model.PractitionerDto;
 import com.brihaspathee.sapphire.model.PractitionerList;
 import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created in Intellij IDEA
@@ -22,7 +21,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/v1/sapphire/practitioner")
 public interface PractitionerAPI {
 
+    /**
+     * Retrieves a list of practitioners based on the search criteria provided in the request.
+     *
+     * @param practitionerSearchRequest the request object containing search criteria such as
+     *                                  identifiers or other attributes related to practitioners.
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates a
+     *         PractitionerList, which represents the collection of practitioners
+     *         retrieved as part of the search operation.
+     */
     @PostMapping("/_search")
     ResponseEntity<SapphireAPIResponse<PractitionerList>> getPractitioners(
             @RequestBody PractitionerSearchRequest practitionerSearchRequest);
+
+    /**
+     * Retrieves a practitioner based on the provided practitioner ID.
+     *
+     * @param practitionerId the unique identifier of the practitioner to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates
+     *         a PractitionerDto, which represents the details of the requested practitioner
+     */
+    @GetMapping("/{pracId}")
+    ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerById(@PathVariable(name = "pracId") String practitionerId);
 }
