@@ -49,6 +49,18 @@ public class OrganizationService implements IOrganizationService {
 
 
     /**
+     * Retrieves an organization based on its unique code.
+     *
+     * @param code the unique code of the organization to retrieve
+     * @return the organization matching the provided code, or null if no matching organization is found
+     */
+    @Override
+    public OrganizationDto getOrganizationByCode(String code) {
+        List<Organization> organizations = organizationRepository.findByCode(code);
+        return toOrganizationDto(organizations.isEmpty() ? null : organizations.getFirst());
+    }
+
+    /**
      * Inserts a new organization or updates an existing one based on the provided organization details.
      *
      * @param organizationDto an instance of {@code OrganizationDto} containing the details of the organization

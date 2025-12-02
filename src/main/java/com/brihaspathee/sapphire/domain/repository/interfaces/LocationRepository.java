@@ -18,6 +18,14 @@ import java.util.List;
 public interface LocationRepository {
 
     /**
+     * Retrieves a location based on the provided location code.
+     *
+     * @param locationCode the unique code representing the location to be retrieved
+     * @return the Location object associated with the given location code, or null if no location is found
+     */
+    Location findLocationByCode(String locationCode);
+
+    /**
      * Retrieves the organization and all its associated locations based on the provided organization ID.
      *
      * @param organizationId the unique identifier of the organization

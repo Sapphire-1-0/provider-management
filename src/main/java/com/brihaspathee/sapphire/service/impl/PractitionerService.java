@@ -36,6 +36,19 @@ public class PractitionerService implements IPractitionerService {
     private final PractitionerRepository practitionerRepository;
 
     /**
+     * Retrieves the details of a practitioner based on the provided practitioner code.
+     *
+     * @param practitionerCode the unique code of the practitioner whose details are to be retrieved
+     * @return an instance of {@code PractitionerDto} containing the details of the practitioner
+     * that corresponds to the specified code, or {@code null} if no such practitioner exists
+     */
+    @Override
+    public PractitionerDto getPractitionerByCode(String practitionerCode) {
+        Practitioner practitioner = practitionerRepository.findPractitionerByCode(practitionerCode);
+        return toPractitionerDto(practitioner);
+    }
+
+    /**
      * Retrieves a list of practitioners based on the provided search criteria.
      *
      * @param practitionerSearchRequest the search request containing criteria such as identifiers
@@ -64,5 +77,25 @@ public class PractitionerService implements IPractitionerService {
             log.info("Practitioner Identifier Value: {}", identifier.getValue());
         }
         return null;
+    }
+
+    /**
+     * Converts a {@link Practitioner} entity into a {@link PractitionerDto}.
+     *
+     * @param practitioner the Practitioner entity to be converted
+     * @return a PractitionerDto containing the mapped fields from the Practitioner entity
+     */
+    private PractitionerDto toPractitionerDto(Practitioner practitioner) {
+        PractitionerDto practitionerDto = PractitionerDto.builder().build();
+        practitionerDto.setElementId(practitioner.getElementId());
+        practitionerDto.setFirstName(practitioner.getFirstName());
+        practitionerDto.setLastName(practitioner.getLastName());
+        practitionerDto.setMiddleName(practitioner.getMiddleName());
+        practitionerDto.setBirthDate(practitioner.getBirthDate());
+        practitionerDto.setGender(practitioner.getGender());
+        practitionerDto.setAltFirstName(practitioner.getAltFirstName());
+        practitionerDto.setAltMiddleName(practitioner.getAltMiddleName());
+        practitionerDto.setAltLastName(practitioner.getAltLastName());
+        return practitionerDto;
     }
 }

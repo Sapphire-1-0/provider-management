@@ -40,6 +40,30 @@ public class LocationAPIImpl implements LocationAPI {
     private final LocationService  locationService;
 
     /**
+     * Retrieves location details based on the provided location code.
+     *
+     * @param locCode the unique code of the location to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse
+     * that encapsulates a LocationDto representing the
+     * details of the requested location
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<LocationDto>> getLocationByCode(String locCode) {
+        LocationDto locationDto = locationService.getLocationByCode(locCode);
+        SapphireAPIResponse<LocationDto> apiResponse =
+                SapphireAPIResponse.<LocationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Location Retrieved successfully")
+                        .response(locationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Location Retrieved successfully")
+                        .developerMessage("Location Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
      * Performs a search for networks based on the provided location search criteria.
      *
      * @param locationSearchRequest the request object containing location search criteria,
@@ -57,13 +81,13 @@ public class LocationAPIImpl implements LocationAPI {
                 SapphireAPIResponse.<LocationList>builder()
                         .statusCode(200)
                         .status(HttpStatus.OK)
-                        .message("Organization Retrieved successfully")
+                        .message("Location Retrieved successfully")
                         .response(LocationList.builder()
                                 .locations(locationDtos)
                                 .build())
                         .timestamp(LocalDateTime.now())
-                        .reason("Organization Retrieved successfully")
-                        .developerMessage("Organization Retrieved successfully")
+                        .reason("Location Retrieved successfully")
+                        .developerMessage("Location Retrieved successfully")
                         .build();
         return ResponseEntity.ok(apiResponse);
     }

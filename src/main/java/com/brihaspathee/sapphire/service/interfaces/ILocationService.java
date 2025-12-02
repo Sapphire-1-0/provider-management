@@ -17,6 +17,15 @@ import java.util.List;
 public interface ILocationService {
 
     /**
+     * Retrieves the location details based on the specified location code.
+     *
+     * @param locationCode a {@code String} representing the unique code used to identify a location
+     * @return an instance of {@code LocationDto} containing the details of the location corresponding
+     *         to the provided location code
+     */
+    LocationDto getLocationByCode(String locationCode);
+
+    /**
      * Retrieves a list of locations that match the specified search criteria.
      *
      * @param locationSearchRequest an instance of {@code LocationSearchRequest} containing

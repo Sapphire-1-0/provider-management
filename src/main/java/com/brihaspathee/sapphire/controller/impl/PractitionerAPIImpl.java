@@ -37,6 +37,29 @@ public class PractitionerAPIImpl implements PractitionerAPI {
     private final PractitionerService practitionerService;
 
     /**
+     * Retrieves the details of a practitioner based on the provided practitioner code.
+     *
+     * @param practitionerCode the unique code associated with the practitioner to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates a
+     * PractitionerDto, representing the details of the requested practitioner
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerByCode(String practitionerCode) {
+        PractitionerDto practitionerDto = practitionerService.getPractitionerByCode(practitionerCode);
+        SapphireAPIResponse<PractitionerDto> apiResponse =
+                SapphireAPIResponse.<PractitionerDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Practitioner Retrieved successfully")
+                        .response(practitionerDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Practitioner Retrieved successfully")
+                        .developerMessage("Practitioner Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
      * Retrieves a list of practitioners based on the provided search criteria.
      *
      * @param practitionerSearchRequest the search request containing criteria such as identifiers
@@ -52,11 +75,11 @@ public class PractitionerAPIImpl implements PractitionerAPI {
                 SapphireAPIResponse.<PractitionerList>builder()
                         .statusCode(200)
                         .status(HttpStatus.OK)
-                        .message("Organization Retrieved successfully")
+                        .message("Practitioner Retrieved successfully")
                         .response(practitionerList)
                         .timestamp(LocalDateTime.now())
-                        .reason("Organization Retrieved successfully")
-                        .developerMessage("Organization Retrieved successfully")
+                        .reason("Practitioner Retrieved successfully")
+                        .developerMessage("Practitioner Retrieved successfully")
                         .build();
         return ResponseEntity.ok(apiResponse);
     }

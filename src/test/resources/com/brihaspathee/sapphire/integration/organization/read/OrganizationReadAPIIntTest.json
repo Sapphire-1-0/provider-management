@@ -64,6 +64,7 @@
             "testCaseDescription": "Find networks for organization",
             "exceptionExpected": false,
             "httpStatusCode": "200",
+            "organizationCode": "MGCX6OROA9LFTCX",
             "orgSearchRequest": {
               "identifiers": [
                 {
@@ -118,6 +119,7 @@
             "testCaseDescription": "Find network and locations for organization",
             "exceptionExpected": false,
             "httpStatusCode": "200",
+            "organizationCode": "MGCX6OROA9LFTCX",
             "orgSearchRequest": {
               "identifiers": [
                 {
@@ -173,6 +175,7 @@
             "testCaseDescription": "Find networks for organization",
             "exceptionExpected": false,
             "httpStatusCode": "200",
+            "organizationCode": "MGCX6OROA9LFTCX",
             "orgSearchRequest": {
               "identifiers": [
                 {
@@ -227,6 +230,7 @@
             "testCaseDescription": "Find network and locations for organization",
             "exceptionExpected": false,
             "httpStatusCode": "200",
+            "organizationCode": "MGCX6OROA9LFTCX",
             "orgSearchRequest": {
               "identifiers": [
                 {

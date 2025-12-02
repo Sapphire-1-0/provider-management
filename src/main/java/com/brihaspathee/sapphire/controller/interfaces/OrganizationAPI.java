@@ -29,6 +29,16 @@ import java.util.Map;
 public interface OrganizationAPI {
 
     /**
+     * Retrieves the details of an organization based on the provided organization code.
+     *
+     * @param orgCode the unique code identifying the organization to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     *         which represents the details of the requested organization
+     */
+    @GetMapping("/code/{orgCode}")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationByCode(@PathVariable("orgCode") String orgCode);
+
+    /**
      * Creates a new organization based on the provided organization details.
      *
      * @param organizationDto the DTO containing organization details to be created

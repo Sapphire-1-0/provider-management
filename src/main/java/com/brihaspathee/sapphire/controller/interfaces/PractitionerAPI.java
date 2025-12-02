@@ -22,6 +22,16 @@ import org.springframework.web.bind.annotation.*;
 public interface PractitionerAPI {
 
     /**
+     * Retrieves the details of a practitioner based on the provided practitioner code.
+     *
+     * @param practitionerCode the unique code associated with the practitioner to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates a
+     *         PractitionerDto, representing the details of the requested practitioner
+     */
+    @GetMapping("/code/{pracCode}")
+    ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerByCode(@PathVariable(name = "pracCode") String practitionerCode);
+
+    /**
      * Retrieves a list of practitioners based on the search criteria provided in the request.
      *
      * @param practitionerSearchRequest the request object containing search criteria such as

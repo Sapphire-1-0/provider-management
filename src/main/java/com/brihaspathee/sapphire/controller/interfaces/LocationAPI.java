@@ -1,13 +1,12 @@
 package com.brihaspathee.sapphire.controller.interfaces;
 
 
+import com.brihaspathee.sapphire.model.LocationDto;
 import com.brihaspathee.sapphire.model.LocationList;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created in Intellij IDEA
@@ -20,6 +19,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @RequestMapping("/api/v1/sapphire/location")
 public interface LocationAPI {
+
+    /**
+     * Retrieves location details based on the provided location code.
+     *
+     * @param locCode the unique code of the location to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse
+     *         that encapsulates a LocationDto representing the
+     *         details of the requested location
+     */
+    @GetMapping("/code/{locCode}")
+    ResponseEntity<SapphireAPIResponse<LocationDto>> getLocationByCode(@PathVariable("locCode") String locCode);
 
     /**
      * Performs a search for networks based on the provided location search criteria.

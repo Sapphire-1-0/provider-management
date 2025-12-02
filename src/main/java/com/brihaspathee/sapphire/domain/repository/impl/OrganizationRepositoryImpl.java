@@ -8,7 +8,7 @@ import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationReposi
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.domain.repository.util.CypherQuery;
 import com.brihaspathee.sapphire.model.OrganizationDto;
-import com.brihaspathee.sapphire.util.CypherLoader;
+import com.brihaspathee.sapphire.utils.CypherLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.Value;
@@ -72,6 +72,35 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
      */
     private final LocationRepository locationRepository;
 
+    /**
+     * Retrieves a list of organizations by their unique code.
+     * This method executes a Cypher query to search for organizations
+     * in the database that match the specified code.
+     *
+     * @param code the unique code used to identify the organizations
+     * @return a list of organizations that match the specified code
+     */
+    @Override
+    public List<Organization> findByCode(String code) {
+        String cypher = cypherLoader.load("get_org_by_code.cypher");
+        Map<String, Object> params = new HashMap<>(Map.of("code", code));
+        params.put("orgCode", code);
+        List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params,
+                record -> {
+                    Node node = record.get("o").asNode();
+                    Organization org = BuilderUtil.buildOrganization(node);
+                    return org;
+                });
+        return organizations;
+    }
+
+    /**
+     * Retrieves a list of all organizations from the data repository.
+     * This method utilizes a Cypher query to fetch organization details
+     * and maps the results to a list of Organization objects.
+     *
+     * @return a list of all Organization objects available in the repository
+     */
     @Override
     public List<Organization> findAll() {
         log.info("Fetching all organizations inside the repository method");

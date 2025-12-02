@@ -20,6 +20,14 @@ import java.util.Map;
 public interface OrganizationRepository {
 
     /**
+     * Retrieves a list of organizations that match the provided code.
+     *
+     * @param code the unique code representing the organization
+     * @return a list of Organization objects that have the specified code
+     */
+    List<Organization> findByCode(String code);
+
+    /**
      * Retrieves a list of all organizations.
      *
      * @return a list of Organization objects representing all organizations in the repository

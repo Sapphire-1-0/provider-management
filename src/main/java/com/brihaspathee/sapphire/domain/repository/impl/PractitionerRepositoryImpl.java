@@ -6,7 +6,7 @@ import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.PractitionerRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
-import com.brihaspathee.sapphire.util.CypherLoader;
+import com.brihaspathee.sapphire.utils.CypherLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.Value;
@@ -50,6 +50,26 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
      * queries used in database operations by the repository implementation.
      */
     private final CypherLoader cypherLoader;
+
+    /**
+     * Retrieves a Practitioner entity based on the provided practitioner code.
+     *
+     * @param code the unique code associated with the practitioner to be retrieved
+     * @return the Practitioner object corresponding to the specified code,
+     *         or null if no practitioner is found
+     */
+    @Override
+    public Practitioner findPractitionerByCode(String code) {
+        String cypher = cypherLoader.load("get_prac_by_code.cypher");
+        Map<String, Object> params = new HashMap<>();
+        params.put("pracCode", code);
+        List<Practitioner> practitioners = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Node pracNode = record.get("prac").asNode();
+            Practitioner practitioner = BuilderUtil.buildPractitioner(pracNode);
+            return practitioner;
+        });
+        return practitioners.isEmpty() ? null : practitioners.getFirst();
+    }
 
     /**
      * Finds practitioners based on the criteria specified in the PractitionerSearchRequest.

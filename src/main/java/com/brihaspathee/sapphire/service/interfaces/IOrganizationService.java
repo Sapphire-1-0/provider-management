@@ -19,6 +19,15 @@ import java.util.Map;
 public interface IOrganizationService {
 
     /**
+     * Retrieves the details of an organization based on the provided organization code.
+     *
+     * @param code the unique code of the organization to be retrieved
+     * @return an instance of {@code OrganizationDto} containing the details of the organization
+     *         that corresponds to the specified code, or {@code null} if no such organization exists
+     */
+    OrganizationDto getOrganizationByCode(String code);
+
+    /**
      * Inserts a new organization or updates an existing one based on the provided organization details.
      *
      * @param organizationDto an instance of {@code OrganizationDto} containing the details of the organization

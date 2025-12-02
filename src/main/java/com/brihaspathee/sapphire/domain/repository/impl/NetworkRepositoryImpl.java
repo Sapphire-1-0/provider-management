@@ -7,7 +7,7 @@ import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
-import com.brihaspathee.sapphire.util.CypherLoader;
+import com.brihaspathee.sapphire.utils.CypherLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.Value;

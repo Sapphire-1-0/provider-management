@@ -5,6 +5,7 @@ import com.brihaspathee.sapphire.model.*;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
 import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
 import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
+import com.brihaspathee.sapphire.util.TestUtils;
 import com.brihaspathee.sapphire.validator.OrganizationValidator;
 import com.brihaspathee.sapphire.web.model.TestOrganizationSearchRequest;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
@@ -182,22 +183,13 @@ public class OrganizationReadAPIIntTest extends Neo4jIntegrationTest{
     @Order(2)
     void testGetNetworksForOrg(RepetitionInfo repetitionInfo) throws JsonProcessingException {
         TestOrganizationSearchRequest testOrganizationSearchRequest = requests.get(repetitionInfo.getCurrentRepetition() - 1);
-        OrganizationList actualOrganizationList = getOrganizationList(testOrganizationSearchRequest);
-        OrganizationDto organizationDto = actualOrganizationList.getOrganizationList().getFirst();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
+        String organizationCode = testOrganizationSearchRequest.getOrganizationCode();
+        OrganizationDto organizationDto = TestUtils.getOrganizationByCode(webTestClient, objectMapper, organizationCode);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
         String orgElementId = organizationDto.getElementId();
         String uri = "/api/v1/sapphire/organization/" + orgElementId +"/network/_search";
-//        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
-//                testRestTemplate.exchange(
-//                        uri,
-//                        HttpMethod.POST,
-//                        httpEntity,
-//                        new ParameterizedTypeReference<>() {
-//                        }
-//                );
-
         SapphireAPIResponse<OrganizationDto> apiResponse = webTestClient.post()
                 .uri(uri)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -230,11 +222,13 @@ public class OrganizationReadAPIIntTest extends Neo4jIntegrationTest{
     @Order(3)
     void testGetNetworkLocationsForOrg(RepetitionInfo repetitionInfo) throws JsonProcessingException {
         TestOrganizationSearchRequest testOrganizationSearchRequest = requests.get(repetitionInfo.getCurrentRepetition() - 1);
-        OrganizationList actualOrganizationList = getOrganizationList(testOrganizationSearchRequest);
-        OrganizationDto organizationDto = actualOrganizationList.getOrganizationList().getFirst();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
+        String organizationCode = testOrganizationSearchRequest.getOrganizationCode();
+        OrganizationDto organizationDto = TestUtils.getOrganizationByCode(webTestClient, objectMapper, organizationCode);
+//        OrganizationList actualOrganizationList = getOrganizationList(testOrganizationSearchRequest);
+//        OrganizationDto organizationDto = actualOrganizationList.getOrganizationList().getFirst();
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
         String orgElementId = organizationDto.getElementId();
         String networkCode = testOrganizationSearchRequest.getNetworkCode();
         log.info("Network code is:{}", networkCode);
@@ -243,15 +237,6 @@ public class OrganizationReadAPIIntTest extends Neo4jIntegrationTest{
         String uri = "/api/v1/sapphire/organization/" + orgElementId +"/network/" +
                 networkDto.getElementId() +
                 "/location/_search";
-//        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
-//                testRestTemplate.exchange(
-//                        uri,
-//                        HttpMethod.POST,
-//                        httpEntity,
-//                        new ParameterizedTypeReference<>() {
-//                        }
-//                );
-
         SapphireAPIResponse<OrganizationDto> apiResponse = webTestClient.post()
                 .uri(uri)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -282,11 +267,13 @@ public class OrganizationReadAPIIntTest extends Neo4jIntegrationTest{
     @Order(4)
     void testGetLocationsForOrg(RepetitionInfo repetitionInfo) throws JsonProcessingException {
         TestOrganizationSearchRequest testOrganizationSearchRequest = requests.get(repetitionInfo.getCurrentRepetition() - 1);
-        OrganizationList actualOrganizationList = getOrganizationList(testOrganizationSearchRequest);
-        OrganizationDto organizationDto = actualOrganizationList.getOrganizationList().getFirst();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
+        String organizationCode = testOrganizationSearchRequest.getOrganizationCode();
+        OrganizationDto organizationDto = TestUtils.getOrganizationByCode(webTestClient, objectMapper, organizationCode);
+//        OrganizationList actualOrganizationList = getOrganizationList(testOrganizationSearchRequest);
+//        OrganizationDto organizationDto = actualOrganizationList.getOrganizationList().getFirst();
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
         String orgElementId = organizationDto.getElementId();
         String uri = "/api/v1/sapphire/organization/" + orgElementId +"/location/_search";
 //        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
@@ -330,11 +317,13 @@ public class OrganizationReadAPIIntTest extends Neo4jIntegrationTest{
     @Order(5)
     void testGetLocationNetworksForOrg(RepetitionInfo repetitionInfo) throws JsonProcessingException {
         TestOrganizationSearchRequest testOrganizationSearchRequest = requests.get(repetitionInfo.getCurrentRepetition() - 1);
-        OrganizationList actualOrganizationList = getOrganizationList(testOrganizationSearchRequest);
-        OrganizationDto organizationDto = actualOrganizationList.getOrganizationList().getFirst();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
+        String organizationCode = testOrganizationSearchRequest.getOrganizationCode();
+        OrganizationDto organizationDto = TestUtils.getOrganizationByCode(webTestClient, objectMapper, organizationCode);
+//        OrganizationList actualOrganizationList = getOrganizationList(testOrganizationSearchRequest);
+//        OrganizationDto organizationDto = actualOrganizationList.getOrganizationList().getFirst();
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(null, headers);
         String orgElementId = organizationDto.getElementId();
         String locationName = testOrganizationSearchRequest.getLocationName();
         log.info("Location Name is:{}", locationName);
@@ -343,14 +332,6 @@ public class OrganizationReadAPIIntTest extends Neo4jIntegrationTest{
         String uri = "/api/v1/sapphire/organization/" + orgElementId +"/location/" +
                 locationDto.getElementId() +
                 "/network/_search";
-//        ResponseEntity<SapphireAPIResponse<OrganizationDto>> responseEntity =
-//                testRestTemplate.exchange(
-//                        uri,
-//                        HttpMethod.POST,
-//                        httpEntity,
-//                        new ParameterizedTypeReference<>() {
-//                        }
-//                );
 
         SapphireAPIResponse<OrganizationDto> apiResponse = webTestClient.post()
                 .uri(uri)
@@ -379,18 +360,10 @@ public class OrganizationReadAPIIntTest extends Neo4jIntegrationTest{
      */
     private OrganizationList getOrganizationList(TestOrganizationSearchRequest testOrganizationSearchRequest) {
         OrganizationSearchRequest organizationSearchRequest = testOrganizationSearchRequest.getOrgSearchRequest();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(organizationSearchRequest, headers);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<OrganizationSearchRequest> httpEntity = new HttpEntity<>(organizationSearchRequest, headers);
         String uri = "/api/v1/sapphire/organization/_search";
-//        ResponseEntity<SapphireAPIResponse<OrganizationList>> responseEntity =
-//                testRestTemplate.exchange(
-//                        uri,
-//                        HttpMethod.POST,
-//                        httpEntity,
-//                        new ParameterizedTypeReference<>() {
-//                        }
-//                );
         SapphireAPIResponse<OrganizationList> apiResponse = webTestClient.post()
                 .uri(uri)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -404,22 +377,22 @@ public class OrganizationReadAPIIntTest extends Neo4jIntegrationTest{
         return objectMapper.convertValue(apiResponse.getResponse(), OrganizationList.class);
     }
 
+    /**
+     * Retrieves a network based on the provided network code.
+     * This method makes a POST request to fetch the network details matching the given network code
+     * and returns the corresponding NetworkDto object.
+     *
+     * @param networkCode the unique code identifying the network to be retrieved
+     * @return a {@link NetworkDto} object representing the network details, or null if not found
+     */
     private NetworkDto getNetwork(String networkCode){
         NetworkSearchRequest networkSearchRequest = NetworkSearchRequest.builder()
                 .networkCode(networkCode)
                 .build();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<NetworkSearchRequest> httpEntity = new HttpEntity<>(networkSearchRequest, headers);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<NetworkSearchRequest> httpEntity = new HttpEntity<>(networkSearchRequest, headers);
         String uri = "/api/v1/sapphire/network/_search";
-//        ResponseEntity<SapphireAPIResponse<NetworkList>> responseEntity =
-//                testRestTemplate.exchange(
-//                        uri,
-//                        HttpMethod.POST,
-//                        httpEntity,
-//                        new ParameterizedTypeReference<>() {
-//                        }
-//                );
         SapphireAPIResponse<NetworkList> apiResponse = webTestClient.post()
                 .uri(uri)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -434,22 +407,23 @@ public class OrganizationReadAPIIntTest extends Neo4jIntegrationTest{
         return  networkList.getNetworks().getFirst();
     }
 
+    /**
+     * Retrieves a location based on the provided location name.
+     * This method sends a POST request to search for a location using the specified location name
+     * and returns the corresponding LocationDto object.
+     *
+     * @param locationName the name of the location to be searched
+     * @return a {@link LocationDto} object representing the location details,
+     *         or null if no matching location is found
+     */
     private LocationDto getLocation(String locationName){
         LocationSearchRequest locationSearchRequest = LocationSearchRequest.builder()
                 .locationName(locationName)
                 .build();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<LocationSearchRequest> httpEntity = new HttpEntity<>(locationSearchRequest, headers);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpEntity<LocationSearchRequest> httpEntity = new HttpEntity<>(locationSearchRequest, headers);
         String uri = "/api/v1/sapphire/location/_search";
-//        ResponseEntity<SapphireAPIResponse<LocationList>> responseEntity =
-//                testRestTemplate.exchange(
-//                        uri,
-//                        HttpMethod.POST,
-//                        httpEntity,
-//                        new ParameterizedTypeReference<>() {
-//                        }
-//                );
         SapphireAPIResponse<LocationList> apiResponse =
                 webTestClient.post()
                         .uri(uri)

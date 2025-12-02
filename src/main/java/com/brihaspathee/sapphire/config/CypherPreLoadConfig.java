@@ -1,6 +1,6 @@
 package com.brihaspathee.sapphire.config;
 
-import com.brihaspathee.sapphire.util.CypherLoader;
+import com.brihaspathee.sapphire.utils.CypherLoader;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

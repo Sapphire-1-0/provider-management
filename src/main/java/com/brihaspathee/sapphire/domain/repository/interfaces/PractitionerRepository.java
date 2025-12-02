@@ -17,6 +17,15 @@ import java.util.List;
 public interface PractitionerRepository {
 
     /**
+     * Retrieves a Practitioner entity based on the provided code.
+     *
+     * @param code the unique code used to identify the practitioner
+     * @return the Practitioner object corresponding to the specified code,
+     *         or null if no practitioner is found
+     */
+    Practitioner findPractitionerByCode(String code);
+
+    /**
      * Retrieves a list of practitioners based on the specified search criteria.
      *
      * @param practitionerSearchRequest the search request containing the criteria

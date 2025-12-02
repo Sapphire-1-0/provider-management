@@ -7,21 +7,18 @@ import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
-import com.brihaspathee.sapphire.util.CypherLoader;
+import com.brihaspathee.sapphire.utils.CypherLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.Value;
-import org.neo4j.driver.types.MapAccessor;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created in Intellij IDEA
@@ -53,6 +50,24 @@ public class LocationRepositoryImpl implements LocationRepository {
      * for fetching pre-configured Cypher queries needed for executing database operations.
      */
     private final CypherLoader cypherLoader;
+
+    /**
+     * Retrieves a location based on the provided location code.
+     *
+     * @param locationCode the unique code representing the location to be retrieved
+     * @return the Location object associated with the given location code, or null if no location is found
+     */
+    @Override
+    public Location findLocationByCode(String locationCode) {
+        String cypher = cypherLoader.load("get_location_by_code.cypher");
+        List<Location> locations = queryExecutor.executeReadQuery(cypher, Map.of("locCode", locationCode),
+                record -> {
+                    Node locNode = record.get("loc").asNode();
+                    Location location = BuilderUtil.buildLocation(locNode);
+                    return location;
+                });
+        return locations.isEmpty() ? null : locations.getFirst();
+    }
 
     /**
      * Retrieves an organization and its associated locations based on the provided organization ID.

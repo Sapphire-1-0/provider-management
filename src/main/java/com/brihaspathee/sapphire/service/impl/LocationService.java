@@ -37,6 +37,19 @@ public class LocationService implements ILocationService {
     private final LocationRepository locationRepository;
 
     /**
+     * Retrieves the location details based on the specified location code.
+     *
+     * @param locationCode a {@code String} representing the unique code used to identify a location
+     * @return an instance of {@code LocationDto} containing the details of the location corresponding
+     * to the provided location code
+     */
+    @Override
+    public LocationDto getLocationByCode(String locationCode) {
+        Location location = locationRepository.findLocationByCode(locationCode);
+        return toLocationDto(location);
+    }
+
+    /**
      * Retrieves a list of locations that match the specified search criteria.
      *
      * @param locationSearchRequest an instance of {@code LocationSearchRequest} containing
@@ -66,18 +79,29 @@ public class LocationService implements ILocationService {
         }
         List<LocationDto> locationDtos = new ArrayList<>();
         for (Location location : locations) {
-            LocationDto locationDto = LocationDto.builder()
-                    .elementId(location.getElementId())
-                    .name(location.getName())
-                    .streetAddress(location.getStreetAddress())
-                    .secondaryAddress(location.getSecondaryAddress())
-                    .city(location.getCity())
-                    .state(location.getState())
-                    .zipCode(location.getZipCode())
-                    .countyFIPS(location.getCountyFIPS())
-                    .build();
+            LocationDto locationDto = toLocationDto(location);
             locationDtos.add(locationDto);
         }
         return locationDtos;
+    }
+
+    /**
+     * Converts a {@code Location} entity to its corresponding {@code LocationDto}.
+     *
+     * @param location the {@code Location} entity to be converted to a DTO
+     * @return a {@code LocationDto} containing the mapped information from the given {@code Location} entity
+     */
+    private LocationDto toLocationDto(Location location){
+        LocationDto locationDto = LocationDto.builder()
+                .elementId(location.getElementId())
+                .name(location.getName())
+                .streetAddress(location.getStreetAddress())
+                .secondaryAddress(location.getSecondaryAddress())
+                .city(location.getCity())
+                .state(location.getState())
+                .zipCode(location.getZipCode())
+                .countyFIPS(location.getCountyFIPS())
+                .build();
+        return locationDto;
     }
 }

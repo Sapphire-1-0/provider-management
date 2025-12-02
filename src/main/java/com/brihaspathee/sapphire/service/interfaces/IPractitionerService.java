@@ -16,6 +16,15 @@ import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
 public interface IPractitionerService {
 
     /**
+     * Retrieves the details of a practitioner based on the provided practitioner code.
+     *
+     * @param practitionerCode the unique code of the practitioner whose details are to be retrieved
+     * @return an instance of {@code PractitionerDto} containing the details of the practitioner
+     *         that corresponds to the specified code, or {@code null} if no such practitioner exists
+     */
+    PractitionerDto getPractitionerByCode(String practitionerCode);
+
+    /**
      * Retrieves a list of practitioners based on the specified search criteria.
      *
      * @param practitionerSearchRequest an instance of {@code PractitionerSearchRequest} containing

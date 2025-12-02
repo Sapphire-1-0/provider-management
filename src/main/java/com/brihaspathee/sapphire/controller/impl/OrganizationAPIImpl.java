@@ -39,6 +39,29 @@ public class OrganizationAPIImpl implements OrganizationAPI {
     private final IOrganizationService organizationService;
 
     /**
+     * Retrieves the details of an organization based on the provided organization code.
+     *
+     * @param orgCode the unique code identifying the organization to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     * which represents the details of the requested organization
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationByCode(String orgCode) {
+        OrganizationDto organizationDto = organizationService.getOrganizationByCode(orgCode);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization matched with code" + orgCode +" was Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization matched with code" + orgCode +" was Retrieved successfully")
+                        .developerMessage("Organization matched with code" + orgCode +" was Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
      * Creates a new organization based on the provided organization details.
      *
      * @param organizationDto the DTO containing organization details to be created
