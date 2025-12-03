@@ -20,8 +20,30 @@ import java.util.List;
 @AllArgsConstructor
 public class PractitionerSearchRequest {
 
+    /**
+     * Represents the first name of the practitioner to be included in the search request.
+     * This field is used as a search parameter to filter practitioners based on their first name.
+     */
+    private String firstName;
+
+    /**
+     * Represents the last name of the practitioner to be included in the search request.
+     * The last name is used as a search parameter to filter the practitioners.
+     */
+    private String lastName;
+
+    /**
+     * Represents a list of identifiers associated with the practitioner being searched for.
+     * Each identifier in the list provides additional details such as type and value.
+     */
     private List<IdentifierInfo> identifiers;
 
+    /**
+     * Returns the string representation of the PractitionerSearchRequest object.
+     * This includes the identifiers field.
+     *
+     * @return a string representation of the PractitionerSearchRequest object.
+     */
     @Override
     public String toString() {
         return "OrganizationSearchRequest{" +

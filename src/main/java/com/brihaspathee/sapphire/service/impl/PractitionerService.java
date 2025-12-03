@@ -3,6 +3,7 @@ package com.brihaspathee.sapphire.service.impl;
 import com.brihaspathee.sapphire.domain.entity.Identifier;
 import com.brihaspathee.sapphire.domain.entity.Practitioner;
 import com.brihaspathee.sapphire.domain.repository.interfaces.PractitionerRepository;
+import com.brihaspathee.sapphire.mapper.interfaces.IPractitionerMapper;
 import com.brihaspathee.sapphire.model.PractitionerDto;
 import com.brihaspathee.sapphire.model.PractitionerList;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
@@ -36,6 +37,12 @@ public class PractitionerService implements IPractitionerService {
     private final PractitionerRepository practitionerRepository;
 
     /**
+     * Facilitates the mapping of {@code Practitioner} entities to {@code PractitionerDto} objects.
+     * This field is used in the service layer to transform entity data for client-side or external use.
+     */
+    private final IPractitionerMapper practitionerMapper;
+
+    /**
      * Retrieves the details of a practitioner based on the provided practitioner code.
      *
      * @param practitionerCode the unique code of the practitioner whose details are to be retrieved
@@ -45,7 +52,7 @@ public class PractitionerService implements IPractitionerService {
     @Override
     public PractitionerDto getPractitionerByCode(String practitionerCode) {
         Practitioner practitioner = practitionerRepository.findPractitionerByCode(practitionerCode);
-        return toPractitionerDto(practitioner);
+        return practitionerMapper.toPractitionerDto(practitioner);
     }
 
     /**
@@ -76,26 +83,26 @@ public class PractitionerService implements IPractitionerService {
             log.info("Practitioner Identifier: {}", identifier);
             log.info("Practitioner Identifier Value: {}", identifier.getValue());
         }
-        return null;
+        return practitionerMapper.toPractitionerDto(practitioner);
     }
 
-    /**
-     * Converts a {@link Practitioner} entity into a {@link PractitionerDto}.
-     *
-     * @param practitioner the Practitioner entity to be converted
-     * @return a PractitionerDto containing the mapped fields from the Practitioner entity
-     */
-    private PractitionerDto toPractitionerDto(Practitioner practitioner) {
-        PractitionerDto practitionerDto = PractitionerDto.builder().build();
-        practitionerDto.setElementId(practitioner.getElementId());
-        practitionerDto.setFirstName(practitioner.getFirstName());
-        practitionerDto.setLastName(practitioner.getLastName());
-        practitionerDto.setMiddleName(practitioner.getMiddleName());
-        practitionerDto.setBirthDate(practitioner.getBirthDate());
-        practitionerDto.setGender(practitioner.getGender());
-        practitionerDto.setAltFirstName(practitioner.getAltFirstName());
-        practitionerDto.setAltMiddleName(practitioner.getAltMiddleName());
-        practitionerDto.setAltLastName(practitioner.getAltLastName());
-        return practitionerDto;
-    }
+//    /**
+//     * Converts a {@link Practitioner} entity into a {@link PractitionerDto}.
+//     *
+//     * @param practitioner the Practitioner entity to be converted
+//     * @return a PractitionerDto containing the mapped fields from the Practitioner entity
+//     */
+//    private PractitionerDto toPractitionerDto(Practitioner practitioner) {
+//        PractitionerDto practitionerDto = PractitionerDto.builder().build();
+//        practitionerDto.setElementId(practitioner.getElementId());
+//        practitionerDto.setFirstName(practitioner.getFirstName());
+//        practitionerDto.setLastName(practitioner.getLastName());
+//        practitionerDto.setMiddleName(practitioner.getMiddleName());
+//        practitionerDto.setBirthDate(practitioner.getBirthDate());
+//        practitionerDto.setGender(practitioner.getGender());
+//        practitionerDto.setAltFirstName(practitioner.getAltFirstName());
+//        practitionerDto.setAltMiddleName(practitioner.getAltMiddleName());
+//        practitionerDto.setAltLastName(practitioner.getAltLastName());
+//        return practitionerDto;
+//    }
 }

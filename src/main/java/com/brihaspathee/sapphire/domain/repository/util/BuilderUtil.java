@@ -320,4 +320,29 @@ public class BuilderUtil {
                 .params(params)
                 .build();
     }
+
+    /**
+     * Builds a search string by concatenating non-blank terms from the provided list.
+     * Each term is appended with a tilde (~) at the end, and terms are separated by spaces.
+     * Trims the input terms before appending them, and skips null or blank terms.
+     *
+     * @param searchTerms the list of terms to be used for building the search string.
+     *                    May contain null or blank values, which will be ignored.
+     * @return a concatenated search string composed of valid terms from the list.
+     *         Returns an empty string if the input list is null or contains no valid terms.
+     */
+    private static String buildSearchString(List<String> searchTerms){
+        StringBuilder sb = new StringBuilder();
+        if (searchTerms != null && !searchTerms.isEmpty()){
+            for (String term : searchTerms) {
+                if (term != null && !term.isBlank()){
+                    if (!sb.isEmpty()){
+                        sb.append(" ");
+                    }
+                    sb.append(term.trim()).append("~");
+                }
+            }
+        }
+        return sb.toString().trim();
+    }
 }

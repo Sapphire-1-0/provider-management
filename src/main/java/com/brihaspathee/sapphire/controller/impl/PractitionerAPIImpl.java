@@ -94,6 +94,16 @@ public class PractitionerAPIImpl implements PractitionerAPI {
     @Override
     public ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerById(String practitionerId) {
         PractitionerDto practitionerDto = practitionerService.getPractitionerById(practitionerId);
-        return null;
+        SapphireAPIResponse<PractitionerDto> apiResponse =
+                SapphireAPIResponse.<PractitionerDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Practitioner Retrieved successfully")
+                        .response(practitionerDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Practitioner Retrieved successfully")
+                        .developerMessage("Practitioner Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
     }
 }
