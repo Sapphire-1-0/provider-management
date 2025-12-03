@@ -3,15 +3,15 @@ package com.brihaspathee.sapphire.domain.repository.util;
 import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
+import com.brihaspathee.sapphire.model.web.IdentifierInfo;
+import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Created in Intellij IDEA
@@ -63,9 +63,9 @@ public class BuilderUtil {
         }
         return Practitioner.builder()
                 .elementId(practitionerNode.elementId())
-                .firstName(practitionerNode.get("first_name").asString())
-                .lastName(practitionerNode.get("last_name").asString())
-                .middleName(practitionerNode.get("middle_name").asString())
+                .firstName(practitionerNode.get("firstName").asString())
+                .lastName(practitionerNode.get("lastName").asString())
+                .middleName(practitionerNode.get("middleName").asString())
                 .gender(practitionerNode.get("gender").asString())
                 .build();
     }
@@ -226,12 +226,12 @@ public class BuilderUtil {
     public static HasPanel buildHasPanelRel(Relationship hasPanelRel) {
         return HasPanel.builder()
                 .status(hasPanelRel.get("status") !=null ? hasPanelRel.get("status").asString() : null)
-                .genderLimitation(hasPanelRel.containsKey("gender_limitation")  ? hasPanelRel.get("gender_limitation").asString(): null)
-                .ageLimitation(hasPanelRel.containsKey("age_limitation")  ? hasPanelRel.get("age_limitation").asString() : null)
-                .highestAgeYears(hasPanelRel.containsKey("highest_age_years") ? hasPanelRel.get("highest_age_years").asInt() : null)
-                .lowestAgeYears(hasPanelRel.containsKey("lowest_age_years")  ? hasPanelRel.get("lowest_age_years").asInt() : null)
-                .highestAgeMonths(hasPanelRel.containsKey("highest_age_months")  ? hasPanelRel.get("highest_age_months").asInt() : null)
-                .lowestAgeMonths(hasPanelRel.containsKey("lowest_age_months")  ? hasPanelRel.get("lowest_age_months").asInt() : null)
+                .genderLimitation(hasPanelRel.containsKey("genderLimitation")  ? hasPanelRel.get("genderLimitation").asString(): null)
+                .ageLimitation(hasPanelRel.containsKey("ageLimitation")  ? hasPanelRel.get("ageLimitation").asString() : null)
+                .highestAgeYears(hasPanelRel.containsKey("highestAgeYears") ? hasPanelRel.get("highestAgeYears").asInt() : null)
+                .lowestAgeYears(hasPanelRel.containsKey("lowestAgeYears")  ? hasPanelRel.get("lowestAgeYears").asInt() : null)
+                .highestAgeMonths(hasPanelRel.containsKey("highestAgeMonths")  ? hasPanelRel.get("highestAgeMonths").asInt() : null)
+                .lowestAgeMonths(hasPanelRel.containsKey("lowestAgeMonths")  ? hasPanelRel.get("lowestAgeMonths").asInt() : null)
                 .build();
     }
 
@@ -344,5 +344,85 @@ public class BuilderUtil {
             }
         }
         return sb.toString().trim();
+    }
+
+    public static CypherQuery buildPractitionerSearchCypher(PractitionerSearchRequest searchRequest,
+                                                       boolean matchAll){
+        Map<String, Object> params = new HashMap<>();
+        List<String> whereClauses = new ArrayList<>();
+        int skip = searchRequest.getPageNumber() * searchRequest.getPageSize();
+        params.put("skip", skip);
+        params.put("limit", searchRequest.getPageSize());
+        List<String> names =
+                Stream.of(searchRequest.getFirstName(), searchRequest.getLastName())
+                        .filter(Objects::nonNull)
+                        .toList();
+        String searchString = buildSearchString(names);
+        boolean useSearchTerms = !searchString.isBlank();
+        if (useSearchTerms){
+            params.put("searchString", searchString);
+        }
+        // ---- Build identifier EXISTS clauses ----
+        int idx = 0;
+        if (searchRequest.getIdentifiers() != null && !searchRequest.getIdentifiers().isEmpty()){
+            for (IdentifierInfo identifierInfo : searchRequest.getIdentifiers()) {
+                String relType = identifierInfo.getIdentifierType();
+                String paramName = "val" + idx;
+                String alias = "id" + idx;
+
+                params.put(paramName, identifierInfo.getIdentifierValue());
+
+                whereClauses.add(String.format(
+                        """
+                        EXISTS {
+                            MATCH (prac)-[:HAS_%s]->(%s:Identifier)
+                            WHERE %s.value = $%s
+                        }
+                        """,
+                        relType, alias, alias, paramName
+                ));
+                idx++;
+            }
+        }
+
+        String operator = matchAll ? " AND " : " OR ";
+        String identifierWhere = whereClauses.isEmpty()
+                ? "true"
+                : String.join(operator, whereClauses);
+        // ---- Build final Cypher ----
+        String cypher = getCypherQuery(useSearchTerms, identifierWhere);
+        return CypherQuery.builder()
+                .cypher(cypher)
+                .params(params)
+                .build();
+    }
+
+    private static String getCypherQuery(boolean useSearchTerms, String identifierWhere) {
+        String cypher;
+        if (useSearchTerms) {
+            cypher =
+                    """
+                    CALL db.index.fulltext.queryNodes('practitionerSearchIndex', $searchString)
+                    YIELD node AS prac, score
+                    WHERE score > 1.0
+        
+                    WITH prac
+                    WHERE %s
+        
+                    OPTIONAL MATCH (prac)-[r]->(id:Identifier)
+                    RETURN DISTINCT prac, collect(DISTINCT {relType: type(r), node: id}) AS identifiers
+                    SKIP $skip LIMIT $limit
+                    """.formatted(identifierWhere);
+        }else{
+            cypher =
+                    """
+                    MATCH (prac:Practitioner)
+                    WHERE %s
+                    OPTIONAL MATCH (prac)-[r]->(id:Identifier)
+                    RETURN DISTINCT prac, collect(DISTINCT {relType: type(r), node: id}) AS identifiers
+                    SKIP $skip LIMIT $limit
+                    """.formatted(identifierWhere);
+        }
+        return cypher;
     }
 }

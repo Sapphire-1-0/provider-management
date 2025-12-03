@@ -1,10 +1,12 @@
 package com.brihaspathee.sapphire.domain.repository.impl;
 
 import com.brihaspathee.sapphire.domain.entity.Identifier;
+import com.brihaspathee.sapphire.domain.entity.Organization;
 import com.brihaspathee.sapphire.domain.entity.Practitioner;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.PractitionerRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
+import com.brihaspathee.sapphire.domain.repository.util.CypherQuery;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
 import com.brihaspathee.sapphire.utils.CypherLoader;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +81,9 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
      */
     @Override
     public List<Practitioner> findPractitioners(PractitionerSearchRequest practitionerSearchRequest) {
-        return List.of();
+        CypherQuery cypherQuery = BuilderUtil.buildPractitionerSearchCypher(practitionerSearchRequest, true);
+        log.info("Practitioner search query: {}", cypherQuery);
+        return mapResults(cypherQuery);
     }
 
     /**
@@ -103,5 +107,22 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
             return practitioner;
         });
         return practitioners.isEmpty() ? null : practitioners.getFirst();
+    }
+
+    /**
+     * Maps the results of a Cypher query to a list of Practitioner objects.
+     *
+     * @param cypherQuery the CypherQuery object containing the query string and parameters
+     * @return a list of Practitioner objects constructed from the query results
+     */
+    private List<Practitioner> mapResults(CypherQuery cypherQuery) {
+        return queryExecutor.executeReadQuery(cypherQuery.getCypher(), cypherQuery.getParams(), record -> {
+            Node node = record.get("prac").asNode();
+            Practitioner prac = BuilderUtil.buildPractitioner(node);
+            List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
+            List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
+            prac.setIdentifiers(identifiers);
+            return prac;
+        });
     }
 }

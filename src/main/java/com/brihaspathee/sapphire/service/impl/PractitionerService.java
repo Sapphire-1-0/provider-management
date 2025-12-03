@@ -66,6 +66,7 @@ public class PractitionerService implements IPractitionerService {
     @Override
     public PractitionerList getPractitioners(PractitionerSearchRequest practitionerSearchRequest) {
         List<Practitioner> practitioners = practitionerRepository.findPractitioners(practitionerSearchRequest);
+        log.info("Practitioners in service: {}", practitioners);
         return null;
     }
 

@@ -23,4 +23,12 @@ public class CypherQuery {
     private String cypher;
 
     private Map<String, Object> params;
+
+    @Override
+    public String toString() {
+        return "CypherQuery{" +
+                "cypher='" + cypher + '\'' +
+                ", params=" + params +
+                '}';
+    }
 }

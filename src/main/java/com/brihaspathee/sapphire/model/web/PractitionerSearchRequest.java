@@ -33,6 +33,20 @@ public class PractitionerSearchRequest {
     private String lastName;
 
     /**
+     * Represents the current page number in a paginated search request.
+     * This variable is used to determine which set of results should be fetched.
+     * The default value is set to 0, indicating the first page of results.
+     */
+    private int pageNumber = 0;
+
+    /**
+     * Represents the number of results to be returned per page in a paginated search request.
+     * This variable determines the maximum number of entries displayed on one page of the search results.
+     * The default value is set to 10.
+     */
+    private int pageSize = 10;
+
+    /**
      * Represents a list of identifiers associated with the practitioner being searched for.
      * Each identifier in the list provides additional details such as type and value.
      */
