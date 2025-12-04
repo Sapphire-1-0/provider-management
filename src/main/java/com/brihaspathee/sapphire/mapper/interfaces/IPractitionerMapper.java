@@ -3,6 +3,8 @@ package com.brihaspathee.sapphire.mapper.interfaces;
 import com.brihaspathee.sapphire.domain.entity.Practitioner;
 import com.brihaspathee.sapphire.model.PractitionerDto;
 
+import java.util.List;
+
 /**
  * Created in Intellij IDEA
  * User: Balaji Varadharajan
@@ -21,4 +23,12 @@ public interface IPractitionerMapper {
      * @return a PractitionerDto object that corresponds to the provided Practitioner entity
      */
     PractitionerDto toPractitionerDto(Practitioner practitioner);
+
+    /**
+     * Converts a list of Practitioner entities into a list of PractitionerDto objects.
+     *
+     * @param practitioners the list of Practitioner entities to be converted
+     * @return a list of PractitionerDto objects corresponding to the provided Practitioner entities
+     */
+    List<PractitionerDto> toPractitionerDtoList(List<Practitioner> practitioners);
 }

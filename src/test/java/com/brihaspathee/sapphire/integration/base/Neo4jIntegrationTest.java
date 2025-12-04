@@ -32,19 +32,21 @@ import java.nio.file.Paths;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class Neo4jIntegrationTest {
 
-    @Container
-    protected static Neo4jContainer<?> neo4jContainer =
-            new Neo4jContainer<>("neo4j:5.11")
-                    .withAdminPassword("password")
-                    .withEnv("NEO4JLABS_PLUGINS", "apoc")
-                    .withEnv("NEO4J_AUTH", "neo4j/password")
-                    .withEnv("NEO4J_apoc_export_file_enabled", "true")
-                    .withExposedPorts(7687);
-//                    .withEnv("NEO4J_dbms_security_procedures_unrestricted", "apoc.*")
-//                    .withEnv("NEO4J_dbms_default_database", "neo4j")
-//                    .withEnv("NEO4J_dbms_multi_database", "true"); // important!
+//    @Container
+//    protected static Neo4jContainer<?> neo4jContainer =
+//            new Neo4jContainer<>("neo4j:5.11")
+//                    .withAdminPassword("password")
+//                    .withEnv("NEO4JLABS_PLUGINS", "apoc")
+//                    .withEnv("NEO4J_AUTH", "neo4j/password")
+//                    .withEnv("NEO4J_apoc_export_file_enabled", "true")
+//                    .withExposedPorts(7687);
+
+    protected static final Neo4jContainer<?> neo4jContainer =
+            TestNeo4jContainer.getInstance();
 
     protected Driver driver;
+
+    private static boolean dataLoaded = false; // <-- prevent multiple loads
 
     static final String NEO4J_USERNAME = "neo4j";
     static final String NEO4J_PASSWORD = "password";
@@ -59,12 +61,12 @@ public abstract class Neo4jIntegrationTest {
         registry.add("neo4j.database", () -> NEO4J_DATABASE);
     }
 
-    /**
-     * Start container manually BEFORE Spring tries to load properties
-     */
-    static {
-        neo4jContainer.start();
-    }
+//    /**
+//     * Start container manually BEFORE Spring tries to load properties
+//     */
+//    static {
+//        neo4jContainer.start();
+//    }
 
     @BeforeAll
     void setUp() throws Exception {
@@ -88,11 +90,18 @@ public abstract class Neo4jIntegrationTest {
 //        }
 
         waitForDatabaseOnline();
-        loadTestData();
+        // load only once for whole JVM test run
+        synchronized (Neo4jIntegrationTest.class) {
+            if (!dataLoaded) {
+                loadTestData();
+                dataLoaded = true;
+            }
+        }
     }
 
     void loadTestData() throws Exception {
         Path cypherPath = Paths.get("src/test/resources/test-data-dump/test-data.cypher").toAbsolutePath();
+        log.info("Test data starting to loaded into '{}'", NEO4J_DATABASE);
         try (BufferedReader reader = Files.newBufferedReader(cypherPath);
              Session session = driver.session(SessionConfig.forDatabase(NEO4J_DATABASE))) {
 
@@ -107,7 +116,7 @@ public abstract class Neo4jIntegrationTest {
                     String stmt = sb.toString().trim();
                     stmt = stmt.substring(0, stmt.length() - 1); // remove ;
                     String finalStmt = stmt;
-                    log.info("Loading test data: {}", stmt);
+//                    log.info("Loading test data: {}", stmt);
                     session.executeWrite(tx -> { tx.run(finalStmt); return null; });
                     sb.setLength(0);
                 }

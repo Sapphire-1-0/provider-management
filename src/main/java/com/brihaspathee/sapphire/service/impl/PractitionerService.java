@@ -67,7 +67,10 @@ public class PractitionerService implements IPractitionerService {
     public PractitionerList getPractitioners(PractitionerSearchRequest practitionerSearchRequest) {
         List<Practitioner> practitioners = practitionerRepository.findPractitioners(practitionerSearchRequest);
         log.info("Practitioners in service: {}", practitioners);
-        return null;
+        List<PractitionerDto> practitionerDtos = practitionerMapper.toPractitionerDtoList(practitioners);
+        return PractitionerList.builder()
+                .practitioners(practitionerDtos)
+                .build();
     }
 
     /**

@@ -402,7 +402,7 @@ public class BuilderUtil {
         if (useSearchTerms) {
             cypher =
                     """
-                    CALL db.index.fulltext.queryNodes('practitionerSearchIndex', $searchString)
+                    CALL db.index.fulltext.queryNodes('practitioner_name_lucene_index', $searchString)
                     YIELD node AS prac, score
                     WHERE score > 1.0
         
