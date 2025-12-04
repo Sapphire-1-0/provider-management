@@ -83,9 +83,10 @@ public class Neo4jQueryExecutor {
 
     }
 
+
     /**
-     * Executes a write Cypher query on a Neo4j database. This method establishes a write transaction
-     * and passes the provided query and parameters to be executed within the transaction.
+     * Executes a write Cypher query on a Neo4j database. This method establishes a write
+     * transaction and executes the provided Cypher query with the specified parameters.
      *
      * @param cypher     the Cypher query to execute
      * @param parameters the parameters to be passed to the Cypher query

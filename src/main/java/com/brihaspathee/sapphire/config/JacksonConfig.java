@@ -16,6 +16,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class JacksonConfig {
 
+    /**
+     * Provides a configured {@link ObjectMapper} bean for the application context.
+     * The returned {@link ObjectMapper} includes support for Java 8 Date/Time API
+     * through registration of the {@link com.fasterxml.jackson.datatype.jsr310.JavaTimeModule}
+     * and automatically scans for additional modules.
+     *
+     * @return a configured {@link ObjectMapper} instance with Java 8 Date/Time module support
+     */
     @Bean
     public ObjectMapper objectMapper(){
         ObjectMapper mapper = new ObjectMapper();
