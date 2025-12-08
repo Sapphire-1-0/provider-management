@@ -4227,3 +4227,13 @@ REMOVE n.`UNIQUE IMPORT ID`;
 // Remove the unwanted label
 MATCH (n:`UNIQUE IMPORT LABEL`)
 REMOVE n:`UNIQUE IMPORT LABEL`;
+// Create Practitioner Name Index
+CREATE FULLTEXT INDEX practitioner_name_lucene_index
+FOR (p:Practitioner)
+ON EACH [p.firstName, p.lastName]
+OPTIONS {
+  indexConfig: {
+    `fulltext.analyzer`: 'standard',
+    `fulltext.eventually_consistent`: false
+  }
+};

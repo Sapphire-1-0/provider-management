@@ -1,14 +1,16 @@
 package com.brihaspathee.sapphire.mapper.impl;
 
 import com.brihaspathee.sapphire.domain.entity.*;
-import com.brihaspathee.sapphire.mapper.interfaces.IPractitionerMapper;
+import com.brihaspathee.sapphire.mapper.interfaces.PractitionerMapper;
+import com.brihaspathee.sapphire.mapper.interfaces.QualificationMapper;
 import com.brihaspathee.sapphire.model.IdentifierDto;
-import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.model.PractitionerDto;
+import com.brihaspathee.sapphire.model.QualificationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,14 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class PractitionerMapperImpl implements IPractitionerMapper {
+public class PractitionerMapperImpl implements PractitionerMapper {
+
+    /**
+     * A mapper used for converting Qualification entities to their respective
+     * Data Transfer Objects (DTOs) and vice versa. This component aids in
+     * transforming qualifications data between different layers of the application.
+     */
+    private final QualificationMapper qualificationMapper;
 
     /**
      * Converts a Practitioner entity to a PractitionerDto object.
@@ -51,6 +60,15 @@ public class PractitionerMapperImpl implements IPractitionerMapper {
                         .build();
             }).toList();
         }
+        List<QualificationDto> qualificationDtos;
+        if(practitioner.getQualifications() != null && !practitioner.getQualifications().isEmpty()){
+            qualificationDtos = new ArrayList<>();
+            practitioner.getQualifications().forEach(qualification -> {
+                qualificationDtos.add(qualificationMapper.toQualificationDto(qualification));
+            });
+        } else {
+            qualificationDtos = null;
+        }
         PractitionerDto practitionerDto = PractitionerDto.builder().build();
         practitionerDto.setElementId(practitioner.getElementId());
         practitionerDto.setFirstName(practitioner.getFirstName());
@@ -62,6 +80,7 @@ public class PractitionerMapperImpl implements IPractitionerMapper {
         practitionerDto.setAltMiddleName(practitioner.getAltMiddleName());
         practitionerDto.setAltLastName(practitioner.getAltLastName());
         practitionerDto.setIdentifiers(identifierDtos);
+        practitionerDto.setQualifications(qualificationDtos);
         return practitionerDto;
     }
 

@@ -97,5 +97,35 @@ public class PractitionerDto {
      */
     private List<IdentifierDto> identifiers;
 
+    /**
+     * Represents a list of qualifications associated with a practitioner.
+     * Each entry in the list is an instance of {@link QualificationDto}, containing detailed
+     * information about a specific qualification, such as its type, issuer, level, and validity period.
+     * This variable is used to capture and track the qualifications of a practitioner
+     * within the system for professional or regulatory purposes.
+     */
+    private List<QualificationDto> qualifications;
 
+    /**
+     * Returns a string representation of the PractitionerDto object.
+     * The string includes the values of the properties such as elementId,
+     * firstName, lastName, middleName, birthDate, gender, altFirstName,
+     * altLastName, and altMiddleName.
+     *
+     * @return a string representation of the PractitionerDto object.
+     */
+    @Override
+    public String toString() {
+        return "PractitionerDto{" +
+                "elementId='" + elementId + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", birthDate='" + birthDate + '\'' +
+                ", gender='" + gender + '\'' +
+                ", altFirstName='" + altFirstName + '\'' +
+                ", altLastName='" + altLastName + '\'' +
+                ", altMiddleName='" + altMiddleName + '\'' +
+                '}';
+    }
 }

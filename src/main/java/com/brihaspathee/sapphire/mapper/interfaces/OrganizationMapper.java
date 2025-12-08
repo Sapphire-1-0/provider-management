@@ -14,7 +14,7 @@ import java.util.List;
  * Package Name: com.brihaspathee.sapphire.mapper.interfaces
  * To change this template use File | Settings | File and Code Template
  */
-public interface IOrganizationMapper {
+public interface OrganizationMapper {
 
     /**
      * Converts the given Organization entity into an OrganizationDto object.

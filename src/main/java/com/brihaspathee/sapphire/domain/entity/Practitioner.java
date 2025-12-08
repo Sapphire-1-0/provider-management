@@ -104,6 +104,14 @@ public class Practitioner {
     private List<Identifier> identifiers;
 
     /**
+     * Represents the list of qualifications associated with the practitioner.
+     * Each qualification in the list provides detailed information about
+     * the practitioner's credentials, certifications, licenses, or other
+     * qualifications relevant to their role or specialty.
+     */
+    private List<Qualification> qualifications;
+
+    /**
      * Represents the list of networks associated with the practitioner.
      * Each network in the list contains specific information such as
      * unique identifier, network code, network name, and type

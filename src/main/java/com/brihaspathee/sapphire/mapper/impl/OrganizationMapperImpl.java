@@ -3,10 +3,8 @@ package com.brihaspathee.sapphire.mapper.impl;
 import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
-import com.brihaspathee.sapphire.mapper.interfaces.IOrganizationMapper;
+import com.brihaspathee.sapphire.mapper.interfaces.OrganizationMapper;
 import com.brihaspathee.sapphire.model.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -28,7 +26,7 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class OrganizationMapperImpl implements IOrganizationMapper {
+public class OrganizationMapperImpl implements OrganizationMapper {
 
     /**
      * Converts an Organization entity to an OrganizationDto object.

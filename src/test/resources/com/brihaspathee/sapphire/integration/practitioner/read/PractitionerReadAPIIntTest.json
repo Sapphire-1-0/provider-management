@@ -1,0 +1,28 @@
+{
+  "testClassName": "PractitionerReadAPIIntTest",
+  "testMethods": [
+    {
+      "testMethodName": "testGetPractitioners",
+      "testData": [
+        {
+          "testData": {
+            "testCaseId": "SAPPHIRE-FIND-PRACTITIONERS-01",
+            "testCaseDescription": "Find practitioners by search",
+            "exceptionExpected": false,
+            "httpStatusCode": "200",
+            "pracSearchRequest": {
+              "pageNumber": 0,
+              "pageSize": 10,
+              "identifiers": [
+                {
+                  "identifierType": "NPI",
+                  "identifierValue": "1306367982"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

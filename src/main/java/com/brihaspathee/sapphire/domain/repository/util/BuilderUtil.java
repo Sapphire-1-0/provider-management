@@ -214,6 +214,37 @@ public class BuilderUtil {
     }
 
     /**
+     * Builds and returns a list of {@link Qualification} objects from the provided list of Neo4j {@link Node} instances.
+     * Each {@link Node} in the input list is expected to contain data required to construct a {@link Qualification}.
+     *
+     * @param qualNodes a list of Neo4j {@link Node} instances, where each {@link Node} represents qualification data.
+     *                  If null or empty, an empty list is returned.
+     * @return a list of {@link Qualification} objects constructed from the provided {@link Node} instances.
+     *         Returns an empty list if the input {@link Node} list is null or empty.
+     */
+    public static List<Qualification> buildQualifications(List<Node> qualNodes){
+        if (qualNodes == null || qualNodes.isEmpty()) {
+            return null;
+        }
+        log.debug("Building Qualifications: {}", qualNodes);
+        List<Qualification> qualifications = new ArrayList<>();
+        for (Node qualNode : qualNodes) {
+            Qualification qual = Qualification.builder()
+                    .elementId(qualNode.elementId())
+                    .type(qualNode.get("type").asString())
+                    .issuer(qualNode.get("issuer").asString(null))
+                    .state(qualNode.get("state").asString(null))
+                    .value(qualNode.get("value").asString(null))
+                    .specialtyTaxonomy(qualNode.get("specialtyTaxonomy").asString(null))
+                    .startDate(qualNode.get("startDate").asLocalDate(null))
+                    .endDate(qualNode.get("endDate").asLocalDate(null))
+                    .build();
+            qualifications.add(qual);
+        }
+        return qualifications;
+    }
+
+    /**
      * Constructs and returns a {@link HasPanel} object populated with data extracted from the provided {@link Relationship}.
      * The method maps various attributes from the Relationship object to corresponding fields in the HasPanel object.
      *

@@ -14,7 +14,7 @@ import java.util.List;
  * Package Name: com.brihaspathee.sapphire.mapper.interfaces
  * To change this template use File | Settings | File and Code Template
  */
-public interface IPractitionerMapper {
+public interface PractitionerMapper {
 
     /**
      * Converts the provided Practitioner entity into a PractitionerDto object.

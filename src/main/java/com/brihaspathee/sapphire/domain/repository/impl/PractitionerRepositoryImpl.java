@@ -3,6 +3,7 @@ package com.brihaspathee.sapphire.domain.repository.impl;
 import com.brihaspathee.sapphire.domain.entity.Identifier;
 import com.brihaspathee.sapphire.domain.entity.Organization;
 import com.brihaspathee.sapphire.domain.entity.Practitioner;
+import com.brihaspathee.sapphire.domain.entity.Qualification;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.PractitionerRepository;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
@@ -97,13 +98,15 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
         String cypher = cypherLoader.load("get_prac_by_id.cypher");
         Map<String, Object> params = new HashMap<>();
         params.put("pracId", practitionerId);
-        params.put("orgId", null);
         List<Practitioner> practitioners = queryExecutor.executeReadQuery(cypher, params, record -> {
             Node pracNode = record.get("prac").asNode();
             Practitioner practitioner = BuilderUtil.buildPractitioner(pracNode);
             List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
             List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
             practitioner.setIdentifiers(identifiers);
+            List<Node> qualNodes = record.get("qualifications").asList(Value::asNode);
+            List<Qualification> qualifications = BuilderUtil.buildQualifications(qualNodes);
+            practitioner.setQualifications(qualifications);
             return practitioner;
         });
         return practitioners.isEmpty() ? null : practitioners.getFirst();

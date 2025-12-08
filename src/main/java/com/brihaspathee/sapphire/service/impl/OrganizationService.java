@@ -1,10 +1,8 @@
 package com.brihaspathee.sapphire.service.impl;
 
 import com.brihaspathee.sapphire.domain.entity.*;
-import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
-import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
-import com.brihaspathee.sapphire.mapper.interfaces.IOrganizationMapper;
+import com.brihaspathee.sapphire.mapper.interfaces.OrganizationMapper;
 import com.brihaspathee.sapphire.model.*;
 import com.brihaspathee.sapphire.model.web.IdentifierInfo;
 import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
@@ -13,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +42,7 @@ public class OrganizationService implements IOrganizationService {
      * This mapper is responsible for converting between the database entity
      * representations of organizations and their data transfer object (DTO) representations.
      */
-    private final IOrganizationMapper organizationMapper;
+    private final OrganizationMapper organizationMapper;
 
 
     /**

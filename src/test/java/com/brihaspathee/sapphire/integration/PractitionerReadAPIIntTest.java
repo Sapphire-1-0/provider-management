@@ -1,7 +1,13 @@
 package com.brihaspathee.sapphire.integration;
 
 import com.brihaspathee.sapphire.integration.base.Neo4jIntegrationTest;
+import com.brihaspathee.sapphire.model.*;
+import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
+import com.brihaspathee.sapphire.util.TestUtils;
+import com.brihaspathee.sapphire.validator.OrganizationValidator;
 import com.brihaspathee.sapphire.web.model.TestOrganizationSearchRequest;
+import com.brihaspathee.sapphire.web.model.TestPractitionerSearchRequest;
+import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import com.brihaspathee.test.BuildTestData;
 import com.brihaspathee.test.TestClass;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.io.IOException;
@@ -73,38 +81,43 @@ public class PractitionerReadAPIIntTest extends Neo4jIntegrationTest {
      * It serves as input data to validate the behavior and correctness of the
      * organization read API during integration tests.
      */
-    @Value("classpath:com/brihaspathee/sapphire/integration/organization/read/OrganizationReadAPIIntTest.json")
+    @Value("classpath:com/brihaspathee/sapphire/integration/practitioner/read/PractitionerReadAPIIntTest.json")
     Resource resourceFile;
 
-    /**
-     * Represents a test class instance for testing organization search requests.
-     * This variable is of type {@code TestClass<TestOrganizationSearchRequest>}
-     * and manages a collection of test methods along with their related test data.
-     * It provides functionality for organizing and executing tests related to
-     * the {@code TestOrganizationSearchRequest} model.
-     */
-    private TestClass<TestOrganizationSearchRequest> organizationSearchRequestTestClass;
 
     /**
-     * An autowired instance of the {@link BuildTestData} class configured to create
-     * and manage test data specifically for instances of {@link TestOrganizationSearchRequest}.
-     * This variable is utilized to build and provide test data for test scenarios within
-     * the {@code OrganizationReadAPIIntTest} class. The test data is constructed dynamically
-     * based on the test method and the corresponding test class being executed.
+     * Represents a test class configuration for {@link TestPractitionerSearchRequest} objects.
+     * This variable is an instance of {@link TestClass} that encapsulates the details of a
+     * test class containing methods and metadata specific to testing practitioner search requests.
+     *
+     * It allows the configuration and validation of different test methods associated
+     * with {@link TestPractitionerSearchRequest}, ensuring comprehensive testing scenarios
+     * for practitioner search operations.
+     */
+    private TestClass<TestPractitionerSearchRequest> practitionerSearchRequestTestClass;
+
+
+    /**
+     * An autowired instance of the {@link BuildTestData} utility class, parameterized for
+     * {@link TestPractitionerSearchRequest}, used to construct test data specific to
+     * test cases in the PractitionerReadAPI integration tests.
+     * <p>
+     * This variable is responsible for dynamically generating or retrieving the necessary
+     * test data objects based on the invoked test method during integration testing.
+     * It leverages method-specific configurations to provide tailored test data that can
+     * validate the functionality of the test methods.
      */
     @Autowired
-    private BuildTestData<TestOrganizationSearchRequest> buildTestData;
+    private BuildTestData<TestPractitionerSearchRequest> buildTestData;
 
     /**
-     * Represents a list of test organization search requests.
-     * This variable is used during integration tests to hold
-     * multiple instances of {@link TestOrganizationSearchRequest} objects,
-     * allowing for the testing of various scenarios related to
-     * organization search operations. Each object in the list contains
-     * details such as search criteria, exception expectations,
-     * and response validation information.
+     * Represents a list of requests for testing practitioner search functionality.
+     * Each element within the list is an instance of {@link TestPractitionerSearchRequest}.
+     * This variable is utilized to store the test data needed for executing multiple
+     * variations of practitioner search test cases. It provides access to the necessary
+     * inputs and expected results required for validating the search functionality.
      */
-    private List<TestOrganizationSearchRequest> requests = new ArrayList<>();
+    private List<TestPractitionerSearchRequest> requests = new ArrayList<>();
 
     /**
      * Sets up the necessary test data and configurations required for each test method execution.
@@ -124,16 +137,48 @@ public class PractitionerReadAPIIntTest extends Neo4jIntegrationTest {
                 .build();
 
         // Read the file information and convert to test class object
-        organizationSearchRequestTestClass = objectMapper.readValue(resourceFile.getFile(), new TypeReference<>() {
+        practitionerSearchRequestTestClass = objectMapper.readValue(resourceFile.getFile(), new TypeReference<>() {
         });
 
         // Build the test data for the test method that is to be executed
-        this.requests = buildTestData.buildData(testInfo.getTestMethod().get().getName(),this.organizationSearchRequestTestClass);
+        this.requests = buildTestData.buildData(testInfo.getTestMethod().get().getName(),this.practitionerSearchRequestTestClass);
     }
 
     @RepeatedTest(value = 1, name = "{displayName} : {currentRepetition}/{totalRepetitions}")
     @Order(1)
-    void testGetOrganizationById(RepetitionInfo repetitionInfo){
-        log.info("Test Organization Search Request:{}",requests.get(repetitionInfo.getCurrentRepetition() - 1));
+    void testGetPractitioners(RepetitionInfo repetitionInfo){
+        log.info("Current Repetition:{}",repetitionInfo.getCurrentRepetition());
+        TestPractitionerSearchRequest testPractitionerSearchRequest =
+                requests.get(repetitionInfo.getCurrentRepetition() - 1);
+        log.info("Test Practitioner Search Request:{}",testPractitionerSearchRequest);
+        PractitionerSearchRequest practitionerSearchRequest = testPractitionerSearchRequest.getPracSearchRequest();
+        String uri = "/api/v1/sapphire/practitioner/_search";
+        SapphireAPIResponse<PractitionerList> apiResponse = webTestClient.post()
+                .uri(uri)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(practitionerSearchRequest)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<SapphireAPIResponse<PractitionerList>>(){})
+                .returnResult()
+                .getResponseBody();
+        Assertions.assertNotNull(apiResponse);
+        PractitionerList practitionerList = objectMapper.convertValue(apiResponse.getResponse(), PractitionerList.class);
+        log.info("Practitioner List:{}",practitionerList);
+    }
+
+    @RepeatedTest(value = 1, name = "{displayName} : {currentRepetition}/{totalRepetitions}")
+    @Order(1)
+    void testGetPractitionerById(RepetitionInfo repetitionInfo){
+        log.info("Current Repetition:{}", repetitionInfo.getCurrentRepetition());
+        TestPractitionerSearchRequest testPractitionerSearchRequest = requests.get(repetitionInfo.getCurrentRepetition() - 1);
+        log.info("Test Practitioner Search Request:{}", testPractitionerSearchRequest);
+        log.info("Practitioner Search Request:{}", testPractitionerSearchRequest.getPracSearchRequest());
+        String practitionerCode = testPractitionerSearchRequest.getPracCode();
+        PractitionerDto actualPractitionerDto = TestUtils.getPractitionerByCode(webTestClient, objectMapper, practitionerCode);
+        PractitionerList expectedPractitionerList = testPractitionerSearchRequest.getPractitionerList();
+        log.info("Actual Practitioner Dto:{}", actualPractitionerDto);
+        log.info("Expected Practitioner List:{}", expectedPractitionerList);
+//        OrganizationValidator.assertOrganizationList(actualOrganizationList, expectedOrganizationList);
     }
 }

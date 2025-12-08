@@ -3,7 +3,7 @@ package com.brihaspathee.sapphire.service.impl;
 import com.brihaspathee.sapphire.domain.entity.Identifier;
 import com.brihaspathee.sapphire.domain.entity.Practitioner;
 import com.brihaspathee.sapphire.domain.repository.interfaces.PractitionerRepository;
-import com.brihaspathee.sapphire.mapper.interfaces.IPractitionerMapper;
+import com.brihaspathee.sapphire.mapper.interfaces.PractitionerMapper;
 import com.brihaspathee.sapphire.model.PractitionerDto;
 import com.brihaspathee.sapphire.model.PractitionerList;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created in Intellij IDEA
@@ -40,7 +39,7 @@ public class PractitionerService implements IPractitionerService {
      * Facilitates the mapping of {@code Practitioner} entities to {@code PractitionerDto} objects.
      * This field is used in the service layer to transform entity data for client-side or external use.
      */
-    private final IPractitionerMapper practitionerMapper;
+    private final PractitionerMapper practitionerMapper;
 
     /**
      * Retrieves the details of a practitioner based on the provided practitioner code.
