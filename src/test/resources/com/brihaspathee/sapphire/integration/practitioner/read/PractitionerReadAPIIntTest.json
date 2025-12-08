@@ -23,6 +23,20 @@
           }
         }
       ]
+    },
+    {
+      "testMethodName": "testGetPractitionerById",
+      "testData": [
+        {
+          "testData": {
+            "testCaseId": "SAPPHIRE-FIND-PRACTITIONER-BY-ID-01",
+            "testCaseDescription": "Find practitioners by element id",
+            "exceptionExpected": false,
+            "httpStatusCode": "200",
+            "pracCode": "YYXZ27YP3PDTH5N"
+          }
+        }
+      ]
     }
   ]
 }
