@@ -71,6 +71,7 @@ public class PractitionerMapperImpl implements PractitionerMapper {
         }
         PractitionerDto practitionerDto = PractitionerDto.builder().build();
         practitionerDto.setElementId(practitioner.getElementId());
+        practitionerDto.setCode(practitioner.getCode());
         practitionerDto.setFirstName(practitioner.getFirstName());
         practitionerDto.setLastName(practitioner.getLastName());
         practitionerDto.setMiddleName(practitioner.getMiddleName());

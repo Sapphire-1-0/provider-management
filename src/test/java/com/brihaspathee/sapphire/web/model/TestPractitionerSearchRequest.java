@@ -103,7 +103,7 @@ public class TestPractitionerSearchRequest {
      * during testing, facilitating the comparison of actual and expected results
      * for validation purposes.
      */
-    private PractitionerList practitionerList;
+    private PractitionerList expectedPractitionerList;
 
     /**
      * Generates a string representation of the TestPractitionerSearchRequest object.
@@ -127,7 +127,7 @@ public class TestPractitionerSearchRequest {
                 ", pracCode='" + pracCode + '\'' +
                 ", locCode='" + locCode + '\'' +
                 ", netCode='" + netCode + '\'' +
-                ", practitionerList=" + practitionerList +
+                ", expectedPractitionerList=" + expectedPractitionerList +
                 '}';
     }
 }

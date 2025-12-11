@@ -66,8 +66,10 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
         String cypher = cypherLoader.load("get_prac_by_code.cypher");
         Map<String, Object> params = new HashMap<>();
         params.put("pracCode", code);
+        log.info("Practitioner code: {}", code);
         List<Practitioner> practitioners = queryExecutor.executeReadQuery(cypher, params, record -> {
             Node pracNode = record.get("prac").asNode();
+            log.info("Practitioner Node: {}", pracNode);
             Practitioner practitioner = BuilderUtil.buildPractitioner(pracNode);
             return practitioner;
         });

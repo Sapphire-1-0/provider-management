@@ -70,4 +70,23 @@ public class IdentifierDto {
      * corresponding attribute values.
      */
     private Map<String, Object> additionalProperties;
+
+    /**
+     * Returns a string representation of the IdentifierDto object.
+     * The string includes the values of the class attributes such as elementId, value, type,
+     * startDate, endDate, and additionalProperties in a formatted manner.
+     *
+     * @return A string that represents the IdentifierDto object.
+     */
+    @Override
+    public String toString() {
+        return "IdentifierDto{" +
+                "elementId='" + elementId + '\'' +
+                ", value='" + value + '\'' +
+                ", type='" + type + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", additionalProperties=" + additionalProperties +
+                '}';
+    }
 }

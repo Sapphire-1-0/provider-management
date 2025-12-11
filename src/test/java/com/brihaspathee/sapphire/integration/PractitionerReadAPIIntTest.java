@@ -5,6 +5,7 @@ import com.brihaspathee.sapphire.model.*;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
 import com.brihaspathee.sapphire.util.TestUtils;
 import com.brihaspathee.sapphire.validator.OrganizationValidator;
+import com.brihaspathee.sapphire.validator.PractitionerValidator;
 import com.brihaspathee.sapphire.web.model.TestOrganizationSearchRequest;
 import com.brihaspathee.sapphire.web.model.TestPractitionerSearchRequest;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
@@ -176,9 +177,17 @@ public class PractitionerReadAPIIntTest extends Neo4jIntegrationTest {
         log.info("Practitioner Search Request:{}", testPractitionerSearchRequest.getPracSearchRequest());
         String practitionerCode = testPractitionerSearchRequest.getPracCode();
         PractitionerDto actualPractitionerDto = TestUtils.getPractitionerByCode(webTestClient, objectMapper, practitionerCode);
-        PractitionerList expectedPractitionerList = testPractitionerSearchRequest.getPractitionerList();
+        PractitionerList expectedPractitionerList = testPractitionerSearchRequest.getExpectedPractitionerList();
         log.info("Actual Practitioner Dto:{}", actualPractitionerDto);
         log.info("Expected Practitioner List:{}", expectedPractitionerList);
-//        OrganizationValidator.assertOrganizationList(actualOrganizationList, expectedOrganizationList);
+        if (actualPractitionerDto.getIdentifiers()!=null && !actualPractitionerDto.getIdentifiers().isEmpty()) {
+            for (IdentifierDto identifierDto : actualPractitionerDto.getIdentifiers()) {
+                log.info("IdentifierDto:{}", identifierDto);
+            }
+        }
+        PractitionerValidator.assertPractitionerList(PractitionerList.builder()
+                        .practitioners(List.of(actualPractitionerDto))
+                        .build(),
+                expectedPractitionerList);
     }
 }

@@ -63,10 +63,15 @@ public class BuilderUtil {
         }
         return Practitioner.builder()
                 .elementId(practitionerNode.elementId())
+                .code(practitionerNode.get("code").asString())
                 .firstName(practitionerNode.get("firstName").asString())
                 .lastName(practitionerNode.get("lastName").asString())
-                .middleName(practitionerNode.get("middleName").asString())
-                .gender(practitionerNode.get("gender").asString())
+                .middleName(practitionerNode.get("middleName").asString(null))
+                .gender(practitionerNode.get("gender").asString(null))
+                .birthDate(practitionerNode.get("birthDate").asLocalDate(null))
+                .altFirstName(practitionerNode.get("altFirstName").asString(null))
+                .altLastName(practitionerNode.get("altLastName").asString(null))
+                .altMiddleName(practitionerNode.get("altMiddleName").asString(null))
                 .build();
     }
 

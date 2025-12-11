@@ -33,7 +33,19 @@
             "testCaseDescription": "Find practitioners by element id",
             "exceptionExpected": false,
             "httpStatusCode": "200",
-            "pracCode": "YYXZ27YP3PDTH5N"
+            "pracCode": "R5K8T2Q9L1W3X7Z",
+            "expectedPractitionerList": {
+              "practitioners": [
+                {
+                  "code": "R5K8T2Q9L1W3X7Z",
+                  "firstName": "Jonathan",
+                  "lastName": "Edwards",
+                  "middleName": "Paul",
+                  "birthDate": "1980-04-22",
+                  "gender": "M"
+                }
+              ]
+            }
           }
         }
       ]

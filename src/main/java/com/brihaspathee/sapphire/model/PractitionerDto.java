@@ -4,6 +4,7 @@ import com.brihaspathee.sapphire.model.web.IdentifierInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -31,6 +32,13 @@ public class PractitionerDto {
     private String elementId;
 
     /**
+     * Represents the code associated with the practitioner.
+     * This variable is used to uniquely identify or categorize the practitioner
+     * within the system or a specific context.
+     */
+    private String code;
+
+    /**
      * Represents the first name of the practitioner.
      * This variable is used to store the given name or personal name
      * of the practitioner as part of their personal identification details.
@@ -56,7 +64,7 @@ public class PractitionerDto {
      * This variable is used to store the birth date information
      * relevant to the practitioner, typically formatted as a string.
      */
-    private String birthDate;
+    private LocalDate birthDate;
 
     /**
      * Represents the gender of the practitioner.
@@ -118,6 +126,7 @@ public class PractitionerDto {
     public String toString() {
         return "PractitionerDto{" +
                 "elementId='" + elementId + '\'' +
+                ", code='" + code + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", middleName='" + middleName + '\'' +

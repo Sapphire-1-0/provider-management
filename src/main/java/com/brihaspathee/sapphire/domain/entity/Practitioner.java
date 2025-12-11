@@ -2,6 +2,7 @@ package com.brihaspathee.sapphire.domain.entity;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -27,6 +28,13 @@ public class Practitioner {
      * during data operations.
      */
     private String elementId;
+
+    /**
+     * Represents a code that uniquely identifies or categorizes the practitioner.
+     * This property serves as a reference for identification or classification
+     * within the system, enabling better organization and traceability.
+     */
+    private String code;
 
     /**
      * Represents the first name of a practitioner.
@@ -57,7 +65,7 @@ public class Practitioner {
      * which may be used for identification, record-keeping,
      * or demographic purposes within the system.
      */
-    private String birthDate;
+    private LocalDate birthDate;
 
     /**
      * Represents the gender of the practitioner.
