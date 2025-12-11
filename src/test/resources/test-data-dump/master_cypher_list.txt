@@ -1,1 +1,6 @@
-/Users/balaji/Documents/mac-mini/Projects.nosync/sapphire/services/provider-management/src/test/resources/test-data-dump/clear_db.cypher
+./clear_db.cypher
+./case-1/00_CA_Networks.cypher
+./case-2/00_GA_Networks.cypher
+./case-3/00_FL_Networks.cypher
+./case-4/00_AL_Networks.cypher
+./case-5/00_MA_Networks.cypher
