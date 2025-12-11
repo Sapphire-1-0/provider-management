@@ -1,5 +1,5 @@
-WITH $pracId AS practitionerId
-WITH $locId AS locationId
+WITH $pracId AS practitionerId,
+     $locId AS locationId
 
 MATCH (prac:Practitioner)
   WHERE elementId(prac) = practitionerId
@@ -9,11 +9,13 @@ MATCH (loc:Location)
 
 MATCH (prac)-[:HAS_ROLE]->(ri:RoleInstance)-[:PERFORMED_AT]->(rl:RoleLocation)-[LOCATION_IS]->(loc)
 
+
 CALL  {
-  WITH rl
-  WHERE rl IS NOT NULL
-  OPTIONAL MATCH (rl)-[:HAS_LOCATION_CONTACT]->(contact:Contact) WHERE contact.use = "DIR"
-  return contact
+WITH rl
+OPTIONAL MATCH (rl)-[:HAS_LOCATION_CONTACT]->(contact:Contact) WHERE contact.use = "DIR"
+OPTIONAL MATCH (contact)-[:TELECOM_IS]->(tel:Telecom)
+OPTIONAL MATCH (contact)-[:PERSON_IS]->(person: Person)
+return contact, tel, person
 }
 
 
@@ -29,4 +31,4 @@ RETURN
 // Practitioner-level qualifications
   collect(DISTINCT qual) AS pracQualifications,
 
-  loc, contact
+  loc, COLLECT(DISTINCT {contact: contact, telecom: tel, person: person}) AS locContacts
