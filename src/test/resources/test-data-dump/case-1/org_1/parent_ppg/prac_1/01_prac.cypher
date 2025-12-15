@@ -68,9 +68,32 @@ CREATE (certification_1:Qualification:Certification {
 
 CREATE (prac)-[:HAS_QUALIFICATION]->(certification_1)
 
+CREATE (prac_contact_1:Contact {use:"BILLING"})
+CREATE (prac_contact_telecom_1:Telecom {phone:"813-357-6342", tty:"813-357-6343", fax:"813-357-6344", email:"vbalaji215@example.com", website:"https://www.RVLOC000CA001.com"})
+CREATE (prac_contact_1)-[:TELECOM_IS]->(prac_contact_telecom_1)
+CREATE (prac_contact_person_1:Person {firstName:"Jamie", middleName:"M", lastName:"Smith"})
+CREATE (prac_contact_1)-[:PERSON_IS]->(prac_contact_person_1)
+CREATE (prac_contact_address_1:Address {streetAddress:"13377 Batten Lane", city:"Odessa", state:"FL", zipCode:"33556"})
+CREATE (prac_contact_1)-[:ADDRESS_IS]->(prac_contact_address_1)
+
+CREATE (prac_contact_2:Contact {use:"MAILING"})
+CREATE (prac_contact_telecom_2:Telecom {phone:"813-357-6345", tty:"813-357-6346", fax:"813-357-6347", email:"vbalaji215@example.com", website:"https://www.RVLOC000CA001.com"})
+CREATE (prac_contact_2)-[:TELECOM_IS]->(prac_contact_telecom_2)
+CREATE (prac_contact_person_2:Person {firstName:"Jacky", middleName:"M", lastName:"Smith"})
+CREATE (prac_contact_2)-[:PERSON_IS]->(prac_contact_person_2)
+CREATE (prac_contact_address_2:Address {streetAddress:"P.O. Box 3423", city:"Odessa", state:"FL", zipCode:"33556"})
+CREATE (prac_contact_2)-[:ADDRESS_IS]->(prac_contact_address_2)
+
 
 CREATE (prac)-[:HAS_ROLE]->(ri1:RoleInstance)
 CREATE (ri1)-[:CONTRACTED_BY]->(org1)
+CREATE (spec_1:Specialty {
+  specialty: "Dermatology",
+  taxonomy: "207N00000X"
+})
+CREATE(ri1)-[:SPECIALIZES]->(spec_1)
+CREATE(ri1)-[:HAS_PRACTITIONER_CONTACT]->(prac_contact_1)
+CREATE(ri1)-[:HAS_PRACTITIONER_CONTACT]->(prac_contact_2)
 
 
 CREATE (rn1: RoleNetwork)

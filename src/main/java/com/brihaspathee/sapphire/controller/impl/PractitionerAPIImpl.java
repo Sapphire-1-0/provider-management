@@ -45,6 +45,7 @@ public class PractitionerAPIImpl implements PractitionerAPI {
      */
     @Override
     public ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerByCode(String practitionerCode) {
+        log.info("Retrieving practitioner with code: {}", practitionerCode);
         PractitionerDto practitionerDto = practitionerService.getPractitionerByCode(practitionerCode);
         SapphireAPIResponse<PractitionerDto> apiResponse =
                 SapphireAPIResponse.<PractitionerDto>builder()

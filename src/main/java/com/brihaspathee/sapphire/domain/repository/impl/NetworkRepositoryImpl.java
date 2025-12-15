@@ -5,6 +5,7 @@ import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
+import com.brihaspathee.sapphire.domain.repository.util.BuildNetworkEntity;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
 import com.brihaspathee.sapphire.utils.CypherLoader;
@@ -128,7 +129,7 @@ public class NetworkRepositoryImpl implements NetworkRepository {
         List<Node> networkList = record.get("networks").asList(Value::asNode);
         List<Network> networks = new ArrayList<>();
         for (Node networkNode: networkList){
-            networks.add(BuilderUtil.buildNetwork(networkNode));
+            networks.add(BuildNetworkEntity.buildNetwork(networkNode));
         }
         log.info("Networks: {}", networks);
         organization.setNetworks(networks);
@@ -144,7 +145,7 @@ public class NetworkRepositoryImpl implements NetworkRepository {
         for (Map<String, Object> locNetInfo : locationNetworkInfoList) {
             log.debug("LocationNetworkInfo: {}", locNetInfo.get("network"));
             Node networkNode = (Node) (locNetInfo).get("network");
-            Network network = BuilderUtil.buildNetwork(networkNode);
+            Network network = BuildNetworkEntity.buildNetwork(networkNode);
             log.debug("Role Network Data: {}", locNetInfo.get("roleNetworkData"));
             List<Map<String, Object>> rnDataList = (List<Map<String, Object>>) locNetInfo.get("roleNetworkData");
             for (Map<String, Object> rnData : rnDataList) {
@@ -215,10 +216,10 @@ public class NetworkRepositoryImpl implements NetworkRepository {
     private static Network getNetworks(org.neo4j.driver.Record record){
         Node networkNode = record.get("net").asNode();
         List<Node> productNodes = record.get("products").asList(Value::asNode);
-        Network network = BuilderUtil.buildNetwork(networkNode);
+        Network network = BuildNetworkEntity.buildNetwork(networkNode);
         List<Product> products = new ArrayList<>();
         for (Node productNode : productNodes) {
-            Product product = BuilderUtil.buildProduct(productNode);
+            Product product = BuildNetworkEntity.buildProduct(productNode);
             products.add(product);
         }
         network.setPartOfProducts(products);

@@ -5,6 +5,7 @@ import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository;
+import com.brihaspathee.sapphire.domain.repository.util.BuildNetworkEntity;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
 import com.brihaspathee.sapphire.utils.CypherLoader;
@@ -145,7 +146,7 @@ public class LocationRepositoryImpl implements LocationRepository {
     private static Organization getOrganizationWithLocAndNet(org.neo4j.driver.Record record) {
         Organization organization = getOrganization(record);
         Node networkNode = record.get("net").asNode();
-        Network network = BuilderUtil.buildNetwork(networkNode);
+        Network network = BuildNetworkEntity.buildNetwork(networkNode);
         List<Location> locations = new ArrayList<>();
         List<Map<String, Object>> locationNetworkInfoList = record.get("locations").asList(Value::asMap);
         for (Map<String, Object> locNetInfo : locationNetworkInfoList) {

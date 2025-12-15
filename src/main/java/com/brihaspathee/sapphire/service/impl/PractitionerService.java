@@ -50,6 +50,7 @@ public class PractitionerService implements IPractitionerService {
      */
     @Override
     public PractitionerDto getPractitionerByCode(String practitionerCode) {
+        log.info("Retrieving practitioner with code: {}", practitionerCode);
         Practitioner practitioner = practitionerRepository.findPractitionerByCode(practitionerCode);
         return practitionerMapper.toPractitionerDto(practitioner);
     }

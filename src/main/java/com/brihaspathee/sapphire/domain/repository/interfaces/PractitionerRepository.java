@@ -41,4 +41,14 @@ public interface PractitionerRepository {
      * @return the Practitioner object corresponding to the specified ID, or null if no practitioner is found
      */
     Practitioner findPractitionerById(String practitionerId);
+
+    /**
+     * Retrieves a Practitioner entity based on the provided practitioner ID and network ID.
+     *
+     * @param practitionerId the unique identifier of the practitioner to be retrieved
+     * @param netId the unique identifier of the network associated with the practitioner
+     * @return the Practitioner object corresponding to the specified practitioner ID and network ID,
+     *         or null if no matching practitioner is found
+     */
+    Practitioner findPractitionerByNetId(String practitionerId, String netId);
 }

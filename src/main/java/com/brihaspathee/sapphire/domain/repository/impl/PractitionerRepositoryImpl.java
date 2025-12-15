@@ -1,11 +1,10 @@
 package com.brihaspathee.sapphire.domain.repository.impl;
 
-import com.brihaspathee.sapphire.domain.entity.Identifier;
-import com.brihaspathee.sapphire.domain.entity.Organization;
-import com.brihaspathee.sapphire.domain.entity.Practitioner;
-import com.brihaspathee.sapphire.domain.entity.Qualification;
+import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.PractitionerRepository;
+import com.brihaspathee.sapphire.domain.repository.util.BuildNetworkEntity;
+import com.brihaspathee.sapphire.domain.repository.util.BuildPractitionerEntity;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.domain.repository.util.CypherQuery;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
@@ -63,6 +62,8 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
      */
     @Override
     public Practitioner findPractitionerByCode(String code) {
+        log.info("Retrieving practitioner with code: {}", code);
+        log.info("Neo4j Database: {}", queryExecutor.getDatabase());
         String cypher = cypherLoader.load("get_prac_by_code.cypher");
         Map<String, Object> params = new HashMap<>();
         params.put("pracCode", code);
@@ -70,7 +71,7 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
         List<Practitioner> practitioners = queryExecutor.executeReadQuery(cypher, params, record -> {
             Node pracNode = record.get("prac").asNode();
             log.info("Practitioner Node: {}", pracNode);
-            Practitioner practitioner = BuilderUtil.buildPractitioner(pracNode);
+            Practitioner practitioner = BuildPractitionerEntity.buildPractitioner(pracNode);
             return practitioner;
         });
         return practitioners.isEmpty() ? null : practitioners.getFirst();
@@ -98,17 +99,47 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
     @Override
     public Practitioner findPractitionerById(String practitionerId) {
         String cypher = cypherLoader.load("get_prac_by_id.cypher");
+        log.info("Cypher: {}", cypher);
         Map<String, Object> params = new HashMap<>();
         params.put("pracId", practitionerId);
         List<Practitioner> practitioners = queryExecutor.executeReadQuery(cypher, params, record -> {
-            Node pracNode = record.get("prac").asNode();
-            Practitioner practitioner = BuilderUtil.buildPractitioner(pracNode);
-            List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
-            List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
-            practitioner.setIdentifiers(identifiers);
-            List<Node> qualNodes = record.get("qualifications").asList(Value::asNode);
-            List<Qualification> qualifications = BuilderUtil.buildQualifications(qualNodes);
-            practitioner.setQualifications(qualifications);
+            Value pracInfo = record.get("pracInfo");
+            Practitioner practitioner = BuildPractitionerEntity.buildPractitioner(pracInfo);
+//            // Practitioner node
+//            Node pracNode = pracInfo.get("prac").asNode();
+//            // Practitioner Details map
+//            Value pracDetails = pracInfo.get("pracDetails");
+//            Practitioner practitioner = BuilderUtil.buildPractitioner(pracNode);
+//            List<Map<String, Object>> idList = pracDetails.get("identifiers").asList(Value::asMap);
+//            List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
+//            practitioner.setIdentifiers(identifiers);
+//            List<Node> qualNodes = pracDetails.get("qualifications").asList(Value::asNode);
+//            List<Qualification> qualifications = BuilderUtil.buildQualifications(qualNodes);
+//            practitioner.setQualifications(qualifications);
+            return practitioner;
+        });
+        return practitioners.isEmpty() ? null : practitioners.getFirst();
+    }
+
+    /**
+     * Retrieves a Practitioner entity based on the provided practitioner ID and network ID.
+     *
+     * @param practitionerId the unique identifier of the practitioner to be retrieved
+     * @param netId          the unique identifier of the network associated with the practitioner
+     * @return the Practitioner object corresponding to the specified practitioner ID and network ID,
+     * or null if no matching practitioner is found
+     */
+    @Override
+    public Practitioner findPractitionerByNetId(String practitionerId, String netId) {
+        String cypher = cypherLoader.load("get_prac_net_by_id.cypher");
+        Map<String, Object> params = new HashMap<>();
+        params.put("pracId", practitionerId);
+        params.put("netId", netId);
+        List<Practitioner> practitioners = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Value pracInfo = record.get("pracInfo");
+            Practitioner practitioner = BuildPractitionerEntity.buildPractitioner(pracInfo);
+            Network network = BuildNetworkEntity.buildNetwork(record.get("netInfo"));
+            practitioner.setNetworks(List.of(network));
             return practitioner;
         });
         return practitioners.isEmpty() ? null : practitioners.getFirst();
@@ -123,7 +154,7 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
     private List<Practitioner> mapResults(CypherQuery cypherQuery) {
         return queryExecutor.executeReadQuery(cypherQuery.getCypher(), cypherQuery.getParams(), record -> {
             Node node = record.get("prac").asNode();
-            Practitioner prac = BuilderUtil.buildPractitioner(node);
+            Practitioner prac = BuildPractitionerEntity.buildPractitioner(node);
             List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
             List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
             prac.setIdentifiers(identifiers);

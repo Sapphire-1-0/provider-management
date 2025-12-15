@@ -70,6 +70,16 @@ public class Network {
     private List<Product> partOfProducts;
 
     /**
+     * Represents a collection of lines of business associated with the network.
+     * Each LineOfBusiness provides details about specific business units,
+     * including their unique identifier, code, and name. This collection
+     * is used to manage and associate various lines of business with the network,
+     * enabling better organization and classification of business operations
+     * within the system.
+     */
+    private List<LineOfBusiness> partOfLinesOfBusiness;
+
+    /**
      * Represents a list of locations associated with the network.
      * Each location in the list contains detailed information
      * such as the name, address, city, state, ZIP code, county,

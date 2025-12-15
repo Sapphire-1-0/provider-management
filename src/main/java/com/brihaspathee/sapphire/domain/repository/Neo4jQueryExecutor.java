@@ -1,5 +1,6 @@
 package com.brihaspathee.sapphire.domain.repository;
 
+import lombok.Getter;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.SessionConfig;
@@ -39,6 +40,7 @@ public class Neo4jQueryExecutor {
      * It is set during the instantiation of the {@link Neo4jQueryExecutor} class and is immutable,
      * ensuring that the database context remains consistent throughout the lifetime of the object.
      */
+    @Getter
     private final String database;
 
     /**
@@ -108,4 +110,5 @@ public class Neo4jQueryExecutor {
     public interface RecordMapper<T> {
         T map(org.neo4j.driver.Record record);
     }
+
 }

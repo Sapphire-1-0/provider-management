@@ -33,7 +33,7 @@ WITH [
 UNWIND networks AS net
 
 // Create or reuse LOB
-MERGE (lob:LOB { code: net.lob.code })
+MERGE (lob:LineOfBusiness { code: net.lob.code })
   ON CREATE SET lob.name = net.lob.name
 
 // Create or reuse Product

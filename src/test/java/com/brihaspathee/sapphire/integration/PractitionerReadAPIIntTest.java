@@ -40,7 +40,7 @@ import java.util.List;
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class PractitionerReadAPIIntTest extends Neo4jIntegrationTest {
+public class PractitionerReadAPIIntTest {
 
     @LocalServerPort
     private int port;
