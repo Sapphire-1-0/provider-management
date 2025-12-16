@@ -4,7 +4,7 @@ import com.brihaspathee.sapphire.domain.entity.Location;
 import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository;
 import com.brihaspathee.sapphire.model.LocationDto;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
-import com.brihaspathee.sapphire.service.interfaces.ILocationService;
+import com.brihaspathee.sapphire.service.interfaces.LocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LocationService implements ILocationService {
+public class LocationServiceImpl implements LocationService {
 
 
     /**

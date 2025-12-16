@@ -1,11 +1,10 @@
 package com.brihaspathee.sapphire.controller.impl;
 
 import com.brihaspathee.sapphire.controller.interfaces.PractitionerAPI;
-import com.brihaspathee.sapphire.model.OrganizationList;
 import com.brihaspathee.sapphire.model.PractitionerDto;
 import com.brihaspathee.sapphire.model.PractitionerList;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
-import com.brihaspathee.sapphire.service.impl.PractitionerService;
+import com.brihaspathee.sapphire.service.interfaces.PractitionerService;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +29,13 @@ import java.time.LocalDateTime;
 public class PractitionerAPIImpl implements PractitionerAPI {
 
     /**
-     * Reference to the {@link PractitionerService} that provides the core logic for retrieving,
-     * processing, and managing practitioner-related data within the application.
-     * This service is utilized to implement the functionality defined in the {@link PractitionerAPIImpl}.
+     * The {@code practitionerService} is a dependency that provides operations related to
+     * practitioner management. It facilitates interactions with practitioner data, including
+     * retrieval of a single practitioner's details or a list of practitioners based on
+     * search criteria.
+     *
+     * It is responsible for handling business logic and data access for practitioner-related
+     * actions and is used in the implementation of the PractitionerAPI.
      */
     private final PractitionerService practitionerService;
 

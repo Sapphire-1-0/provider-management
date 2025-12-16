@@ -98,4 +98,13 @@ public interface OrganizationRepository {
      * @return the newly created Organization object
      */
     Organization createOrganization(OrganizationDto organizationDto);
+
+    /**
+     * Retrieves an organization based on the provided unique element ID.
+     *
+     * @param elementId the unique identifier of the organization element to be retrieved
+     * @return an Organization object that corresponds to the specified element ID,
+     *         or null if no organization matches the given ID
+     */
+    Organization findOrganizationByElementId(String elementId);
 }

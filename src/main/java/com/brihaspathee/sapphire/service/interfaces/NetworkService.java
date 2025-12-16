@@ -12,7 +12,7 @@ import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
  * Package Name: com.brihaspathee.sapphire.service.interfaces
  * To change this template use File | Settings | File and Code Template
  */
-public interface INetworkService {
+public interface NetworkService {
 
     /**
      * Retrieves a list of networks based on the specified search criteria.

@@ -5,6 +5,8 @@ import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository;
 import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
 import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
+import com.brihaspathee.sapphire.domain.repository.util.BuildOrganizationEntity;
+import com.brihaspathee.sapphire.domain.repository.util.BuildPractitionerEntity;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.domain.repository.util.CypherQuery;
 import com.brihaspathee.sapphire.model.OrganizationDto;
@@ -88,7 +90,7 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params,
                 record -> {
                     Node node = record.get("o").asNode();
-                    Organization org = BuilderUtil.buildOrganization(node);
+                    Organization org = BuildOrganizationEntity.buildOrganization(node);
                     return org;
                 });
         return organizations;
@@ -110,7 +112,7 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
                         Node node = record.get("n").asNode();
                         log.info("Organization name: {}", node.get("name").asString());
                         log.info("Element id of the Org:{}", node.elementId());
-                        Organization org = BuilderUtil.buildOrganization(node);
+                        Organization org = BuildOrganizationEntity.buildOrganization(node);
                         return org;
                 });
         return organizations;
@@ -125,7 +127,7 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
                         record -> {
                            Node orgNode = record.get("o").asNode();
                            Organization org =
-                                   BuilderUtil.buildOrganization(orgNode);
+                                   BuildOrganizationEntity.buildOrganization(orgNode);
                            List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
                            List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
                            org.setIdentifiers(identifiers);
@@ -150,32 +152,7 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         if (identifiers == null || identifiers.isEmpty()) {
             return findAll();
         }
-        CypherQuery cypherQuery = BuilderUtil.buildCypher("ORG", identifiers, matchAll);
-//        Map<String, Object> params = new HashMap<>();
-//        List<String> whereClauses = new ArrayList<>();
-//        int idx = 0;
-//        for (var entry : identifiers.entrySet()) {
-//            String relType = entry.getKey();
-//            String paramName = "val" + idx;
-//            String alias = "id" + idx;
-//
-//            params.put(paramName, entry.getValue());
-//
-//            whereClauses.add(String.format(
-//                    "EXISTS { MATCH (org) -[:HAS_%s]->(%s:Identifier) WHERE %s.value = $%s }",
-//                    relType, alias, alias, paramName));
-//            idx++;
-//        }
-//
-//        String operator = matchAll ? " AND " : " OR ";
-//        String cypher = """
-//                MATCH (org:Organization)
-//                WHERE %s
-//                OPTIONAL MATCH (org)-[r]->(id:Identifier)
-//                RETURN DISTINCT org, collect(DISTINCT {relType: type(r), node: id}) AS identifiers
-//                """.formatted(String.join(operator, whereClauses));
-//        log.info("Cypher query to match orgs by identifiers: {}", cypher);
-//        log.info("Parameters for the cypher query: {}", params);
+        CypherQuery cypherQuery = BuildOrganizationEntity.buildCypher("ORG", identifiers, matchAll);
         return mapResults(cypherQuery.getCypher(), cypherQuery.getParams());
     }
 
@@ -253,6 +230,27 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         return null;
     }
 
+    /**
+     * Retrieves an organization based on the provided unique element ID.
+     *
+     * @param organizationId the unique identifier of the organization element to be retrieved
+     * @return an Organization object that corresponds to the specified element ID,
+     * or null if no organization matches the given ID
+     */
+    @Override
+    public Organization findOrganizationByElementId(String organizationId) {
+        String cypher = cypherLoader.load("get_org_by_id.cypher");
+        log.info("Cypher: {}", cypher);
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", organizationId);
+        List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Value orgInfo = record.get("orgInfo");
+            Organization organization = BuildOrganizationEntity.buildOrganization(orgInfo);
+            return organization;
+        });
+        return organizations.isEmpty() ? null : organizations.getFirst();
+    }
+
 
     /**
      * Maps the results of a Neo4j Cypher query to a list of Organization objects.
@@ -264,7 +262,7 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
     private List<Organization> mapResults(String cypher, Map<String, Object> params) {
         return queryExecutor.executeReadQuery(cypher, params, record -> {
             Node node = record.get("org").asNode();
-            Organization org = BuilderUtil.buildOrganization(node);
+            Organization org = BuildOrganizationEntity.buildOrganization(node);
             List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
             List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
             org.setIdentifiers(identifiers);

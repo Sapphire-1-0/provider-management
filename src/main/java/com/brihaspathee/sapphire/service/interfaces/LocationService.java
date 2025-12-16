@@ -14,7 +14,7 @@ import java.util.List;
  * Package Name: com.brihaspathee.sapphire.service.interfaces
  * To change this template use File | Settings | File and Code Template
  */
-public interface ILocationService {
+public interface LocationService {
 
     /**
      * Retrieves the location details based on the specified location code.

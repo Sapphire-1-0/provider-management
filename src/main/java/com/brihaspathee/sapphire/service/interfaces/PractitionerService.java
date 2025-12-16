@@ -13,7 +13,7 @@ import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
  * Package Name: com.brihaspathee.sapphire.service.interfaces
  * To change this template use File | Settings | File and Code Template
  */
-public interface IPractitionerService {
+public interface PractitionerService {
 
     /**
      * Retrieves the details of a practitioner based on the provided practitioner code.

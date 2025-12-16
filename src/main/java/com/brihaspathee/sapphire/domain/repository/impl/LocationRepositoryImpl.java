@@ -5,7 +5,9 @@ import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository;
+import com.brihaspathee.sapphire.domain.repository.util.BuildLocationEntity;
 import com.brihaspathee.sapphire.domain.repository.util.BuildNetworkEntity;
+import com.brihaspathee.sapphire.domain.repository.util.BuildOrganizationEntity;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
 import com.brihaspathee.sapphire.utils.CypherLoader;
@@ -64,7 +66,7 @@ public class LocationRepositoryImpl implements LocationRepository {
         List<Location> locations = queryExecutor.executeReadQuery(cypher, Map.of("locCode", locationCode),
                 record -> {
                     Node locNode = record.get("loc").asNode();
-                    Location location = BuilderUtil.buildLocation(locNode);
+                    Location location = BuildLocationEntity.buildLocation(locNode);
                     return location;
                 });
         return locations.isEmpty() ? null : locations.getFirst();
@@ -152,7 +154,7 @@ public class LocationRepositoryImpl implements LocationRepository {
         for (Map<String, Object> locNetInfo : locationNetworkInfoList) {
             log.debug("LocationNetworkInfo: {}", locNetInfo.get("location"));
             Node locationNode = (Node) (locNetInfo).get("location");
-            Location location = BuilderUtil.buildLocation(locationNode);
+            Location location = BuildLocationEntity.buildLocation(locationNode);
             log.debug("Role Location Data: {}", locNetInfo.get("roleLocationData"));
             List<Map<String, Object>> rlDataList = (List<Map<String, Object>>) locNetInfo.get("roleLocationData");
             for (Map<String, Object> rlData : rlDataList) {
@@ -163,12 +165,12 @@ public class LocationRepositoryImpl implements LocationRepository {
                 Relationship isPCPRel = rlData.get("isPcpRel") instanceof Relationship r ? r : null;
                 log.debug("Is PCP Relationship Object: {}", isPCPRel);
                 Object obj = rlData.get("servesRels");
-                List<RoleLocationServes> roleLocationServesList = BuilderUtil.buildRoleLocationServesRels(obj);
+                List<RoleLocationServes> roleLocationServesList = BuildLocationEntity.buildRoleLocationServesRels(obj);
                 if (roleLocationServesList != null) {
                     lnsi.setRoleLocationServes(roleLocationServesList);
                 }
                 if (hasPanelRel != null) {
-                    HasPanel hasPanel = BuilderUtil.buildHasPanelRel(hasPanelRel);
+                    HasPanel hasPanel = BuildLocationEntity.buildHasPanelRel(hasPanelRel);
                     lnsi.setHasPanel(hasPanel);
                 }
                 if (isPCPRel != null) {
@@ -208,7 +210,7 @@ public class LocationRepositoryImpl implements LocationRepository {
         List<Value> locationList = record.get("locations").asList(v->v);
         for (Value location: locationList){
             Node locNode = location.asNode();
-            Location loc = BuilderUtil.buildLocation(locNode);
+            Location loc = BuildLocationEntity.buildLocation(locNode);
             locations.add(loc);
         }
         organization.setLocations(locations);
@@ -229,7 +231,7 @@ public class LocationRepositoryImpl implements LocationRepository {
         Node node = record.get("org").asNode();
         log.debug("Organization name: {}", node.get("name").asString());
         log.debug("Element id of the Org:{}", node.elementId());
-        Organization org = BuilderUtil.buildOrganization(node);
+        Organization org = BuildOrganizationEntity.buildOrganization(node);
         List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
         org.setIdentifiers(BuilderUtil.buildIdentifiers(idList));
         return org;
@@ -249,7 +251,7 @@ public class LocationRepositoryImpl implements LocationRepository {
      */
     private static Location getLocations(org.neo4j.driver.Record record){
         Node locationNode = record.get("loc").asNode();
-        Location location = BuilderUtil.buildLocation(locationNode);
+        Location location = BuildLocationEntity.buildLocation(locationNode);
         return location  ;
     }
 

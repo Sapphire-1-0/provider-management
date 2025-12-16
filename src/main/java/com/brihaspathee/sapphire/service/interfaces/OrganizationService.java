@@ -1,11 +1,9 @@
 package com.brihaspathee.sapphire.service.interfaces;
 
-import com.brihaspathee.sapphire.domain.entity.Organization;
 import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created in Intellij IDEA
@@ -16,7 +14,7 @@ import java.util.Map;
  * Package Name: com.brihaspathee.sapphire.service.interfaces
  * To change this template use File | Settings | File and Code Template
  */
-public interface IOrganizationService {
+public interface OrganizationService {
 
     /**
      * Retrieves the details of an organization based on the provided organization code.
@@ -100,4 +98,14 @@ public interface IOrganizationService {
      *         including its associated locations and networks
      */
     OrganizationDto getOrganizationLocationNetworks(String orgId, String locId);
+
+    /**
+     * Retrieves the details of an organization based on the provided element ID.
+     *
+     * @param orgId the unique identifier of the element associated with the organization
+     * @return an instance of {@code OrganizationDto} containing the details of the
+     *         organization that corresponds to the specified element ID, or {@code null}
+     *         if no such organization exists
+     */
+    OrganizationDto getOrganizationByElementId(String orgId);
 }

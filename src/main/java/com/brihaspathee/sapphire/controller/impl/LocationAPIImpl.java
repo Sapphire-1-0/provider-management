@@ -3,9 +3,8 @@ package com.brihaspathee.sapphire.controller.impl;
 import com.brihaspathee.sapphire.controller.interfaces.LocationAPI;
 import com.brihaspathee.sapphire.model.LocationDto;
 import com.brihaspathee.sapphire.model.LocationList;
-import com.brihaspathee.sapphire.model.OrganizationList;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
-import com.brihaspathee.sapphire.service.impl.LocationService;
+import com.brihaspathee.sapphire.service.interfaces.LocationService;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,13 +30,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LocationAPIImpl implements LocationAPI {
 
+
     /**
-     * Reference to the {@link LocationService} that provides the core logic
-     * for retrieving, processing, and managing location-related data within
-     * the application. This service is utilized to implement functionality
-     * defined in the {@link LocationAPIImpl}.
+     * Service responsible for handling location-related operations and business logic.
+     * Provides methods to retrieve specific location details by code
+     * and perform search operations based on location criteria.
      */
-    private final LocationService  locationService;
+    private final LocationService locationService;
 
     /**
      * Retrieves location details based on the provided location code.

@@ -39,25 +39,6 @@ public interface OrganizationAPI {
     ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationByCode(@PathVariable("orgCode") String orgCode);
 
     /**
-     * Creates a new organization based on the provided organization details.
-     *
-     * @param organizationDto the DTO containing organization details to be created
-     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating the created OrganizationDto
-     */
-    @PostMapping("/_upsert")
-    ResponseEntity<SapphireAPIResponse<OrganizationDto>> createOrganization(
-            @RequestBody OrganizationDto organizationDto);
-
-    /**
-     * Retrieves a list of organizations.
-     *
-     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates an OrganizationList,
-     * representing the collection of organizations.
-     */
-    @GetMapping("/get-orgs")
-    ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizations();
-
-    /**
      * Retrieves the details of a specific organization based on the provided organization ID.
      *
      * @param id the unique identifier of the organization to be retrieved
@@ -88,6 +69,26 @@ public interface OrganizationAPI {
     )
     @GetMapping("/{organizationId}")
     ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationById(@PathVariable("organizationId") String id);
+
+    /**
+     * Creates a new organization based on the provided organization details.
+     *
+     * @param organizationDto the DTO containing organization details to be created
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating the created OrganizationDto
+     */
+    @PostMapping("/_upsert")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> createOrganization(
+            @RequestBody OrganizationDto organizationDto);
+
+    /**
+     * Retrieves a list of organizations.
+     *
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates an OrganizationList,
+     * representing the collection of organizations.
+     */
+    @GetMapping("/get-orgs")
+    ResponseEntity<SapphireAPIResponse<OrganizationList>> getOrganizations();
+
 
     /**
      * Retrieves a list of organizations based on the specified identifiers.

@@ -78,6 +78,14 @@ public class Organization {
     private List<Identifier> identifiers;
 
     /**
+     * Represents a collection of qualifications associated with the organization.
+     * Each qualification provides detailed information such as type, value, issuer,
+     * validity period, associated taxonomy, levels, and geographic scope. This property
+     * is used to manage and track the qualifications relevant to the organization within the system.
+     */
+    private List<Qualification> qualifications;
+
+    /**
      * Represents the list of networks associated with the organization.
      * Each network provides specific details such as its code, name, and
      * whether it is an HNET network or a vendor network.

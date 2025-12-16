@@ -1,11 +1,10 @@
 package com.brihaspathee.sapphire.controller.impl;
 
 import com.brihaspathee.sapphire.controller.interfaces.OrganizationAPI;
-import com.brihaspathee.sapphire.domain.entity.Organization;
 import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.model.OrganizationList;
 import com.brihaspathee.sapphire.model.web.OrganizationSearchRequest;
-import com.brihaspathee.sapphire.service.interfaces.IOrganizationService;
+import com.brihaspathee.sapphire.service.interfaces.OrganizationService;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created in Intellij IDEA
@@ -36,7 +34,7 @@ public class OrganizationAPIImpl implements OrganizationAPI {
      * This variable is used to invoke business logic for handling organization-specific tasks such
      * as retrieving, creating, or managing organization details.
      */
-    private final IOrganizationService organizationService;
+    private final OrganizationService organizationService;
 
     /**
      * Retrieves the details of an organization based on the provided organization code.
@@ -119,14 +117,13 @@ public class OrganizationAPIImpl implements OrganizationAPI {
      */
     @Override
     public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationById(String id) {
+        OrganizationDto organizationDto = organizationService.getOrganizationByElementId(id);
         SapphireAPIResponse<OrganizationDto> apiResponse =
                 SapphireAPIResponse.<OrganizationDto>builder()
                         .statusCode(200)
                         .status(HttpStatus.OK)
                         .message("Organization matched with id" + id +" was Retrieved successfully")
-                        .response(OrganizationDto.builder()
-                                .name("Test Organization")
-                                .build())
+                        .response(organizationDto)
                         .timestamp(LocalDateTime.now())
                         .reason("Organization matched with id" + id +" was Retrieved successfully")
                         .developerMessage("Organization matched with id" + id +" was Retrieved successfully")

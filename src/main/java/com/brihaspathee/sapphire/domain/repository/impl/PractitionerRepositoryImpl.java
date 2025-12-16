@@ -85,7 +85,7 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
      */
     @Override
     public List<Practitioner> findPractitioners(PractitionerSearchRequest practitionerSearchRequest) {
-        CypherQuery cypherQuery = BuilderUtil.buildPractitionerSearchCypher(practitionerSearchRequest, true);
+        CypherQuery cypherQuery = BuildPractitionerEntity.buildPractitionerSearchCypher(practitionerSearchRequest, true);
         log.info("Practitioner search query: {}", cypherQuery);
         return mapResults(cypherQuery);
     }
@@ -105,17 +105,6 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
         List<Practitioner> practitioners = queryExecutor.executeReadQuery(cypher, params, record -> {
             Value pracInfo = record.get("pracInfo");
             Practitioner practitioner = BuildPractitionerEntity.buildPractitioner(pracInfo);
-//            // Practitioner node
-//            Node pracNode = pracInfo.get("prac").asNode();
-//            // Practitioner Details map
-//            Value pracDetails = pracInfo.get("pracDetails");
-//            Practitioner practitioner = BuilderUtil.buildPractitioner(pracNode);
-//            List<Map<String, Object>> idList = pracDetails.get("identifiers").asList(Value::asMap);
-//            List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
-//            practitioner.setIdentifiers(identifiers);
-//            List<Node> qualNodes = pracDetails.get("qualifications").asList(Value::asNode);
-//            List<Qualification> qualifications = BuilderUtil.buildQualifications(qualNodes);
-//            practitioner.setQualifications(qualifications);
             return practitioner;
         });
         return practitioners.isEmpty() ? null : practitioners.getFirst();

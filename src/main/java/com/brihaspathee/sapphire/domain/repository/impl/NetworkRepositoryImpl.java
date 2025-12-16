@@ -5,7 +5,9 @@ import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
+import com.brihaspathee.sapphire.domain.repository.util.BuildLocationEntity;
 import com.brihaspathee.sapphire.domain.repository.util.BuildNetworkEntity;
+import com.brihaspathee.sapphire.domain.repository.util.BuildOrganizationEntity;
 import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
 import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
 import com.brihaspathee.sapphire.utils.CypherLoader;
@@ -139,7 +141,7 @@ public class NetworkRepositoryImpl implements NetworkRepository {
     private static Organization getOrganizationWithLocAndNet(org.neo4j.driver.Record record) {
         Organization organization = getOrganization(record);
         Node locationNode = record.get("loc").asNode();
-        Location location = BuilderUtil.buildLocation(locationNode);
+        Location location = BuildLocationEntity.buildLocation(locationNode);
         List<Network> networks = new ArrayList<>();
         List<Map<String, Object>> locationNetworkInfoList = record.get("networks").asList(Value::asMap);
         for (Map<String, Object> locNetInfo : locationNetworkInfoList) {
@@ -156,12 +158,12 @@ public class NetworkRepositoryImpl implements NetworkRepository {
                 Relationship isPCPRel = rnData.get("isPcpRel") instanceof Relationship r ? r : null;
                 log.debug("Is PCP Relationship Object: {}", isPCPRel);
                 Object obj = rnData.get("servesRels");
-                List<RoleLocationServes> roleLocationServesList = BuilderUtil.buildRoleLocationServesRels(obj);
+                List<RoleLocationServes> roleLocationServesList = BuildLocationEntity.buildRoleLocationServesRels(obj);
                 if (roleLocationServesList != null) {
                     lnsi.setRoleLocationServes(roleLocationServesList);
                 }
                 if (hasPanelRel != null) {
-                    HasPanel hasPanel = BuilderUtil.buildHasPanelRel(hasPanelRel);
+                    HasPanel hasPanel = BuildLocationEntity.buildHasPanelRel(hasPanelRel);
                     lnsi.setHasPanel(hasPanel);
                 }
                 if (isPCPRel != null) {
@@ -198,7 +200,7 @@ public class NetworkRepositoryImpl implements NetworkRepository {
         Node node = record.get("org").asNode();
         log.debug("Organization name: {}", node.get("name").asString());
         log.debug("Element id of the Org:{}", node.elementId());
-        Organization org = BuilderUtil.buildOrganization(node);
+        Organization org = BuildOrganizationEntity.buildOrganization(node);
         List<Map<String, Object>> idList = record.get("identifiers").asList(Value::asMap);
         org.setIdentifiers(BuilderUtil.buildIdentifiers(idList));
         return org;

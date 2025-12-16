@@ -32,6 +32,16 @@ public interface PractitionerAPI {
     ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerByCode(@PathVariable(name = "pracCode") String practitionerCode);
 
     /**
+     * Retrieves a practitioner based on the provided practitioner ID.
+     *
+     * @param practitionerId the unique identifier of the practitioner to be retrieved
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates
+     *         a PractitionerDto, which represents the details of the requested practitioner
+     */
+    @GetMapping("/{pracId}")
+    ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerById(@PathVariable(name = "pracId") String practitionerId);
+
+    /**
      * Retrieves a list of practitioners based on the search criteria provided in the request.
      *
      * @param practitionerSearchRequest the request object containing search criteria such as
@@ -44,13 +54,4 @@ public interface PractitionerAPI {
     ResponseEntity<SapphireAPIResponse<PractitionerList>> getPractitioners(
             @RequestBody PractitionerSearchRequest practitionerSearchRequest);
 
-    /**
-     * Retrieves a practitioner based on the provided practitioner ID.
-     *
-     * @param practitionerId the unique identifier of the practitioner to be retrieved
-     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates
-     *         a PractitionerDto, which represents the details of the requested practitioner
-     */
-    @GetMapping("/{pracId}")
-    ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerById(@PathVariable(name = "pracId") String practitionerId);
 }

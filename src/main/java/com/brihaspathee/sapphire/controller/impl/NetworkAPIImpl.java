@@ -3,7 +3,7 @@ package com.brihaspathee.sapphire.controller.impl;
 import com.brihaspathee.sapphire.controller.interfaces.NetworkAPI;
 import com.brihaspathee.sapphire.model.NetworkList;
 import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
-import com.brihaspathee.sapphire.service.impl.NetworkService;
+import com.brihaspathee.sapphire.service.interfaces.NetworkService;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +27,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class NetworkAPIImpl implements NetworkAPI {
 
-    /**
-     * Reference to the {@link NetworkService} that provides the core logic for retrieving,
-     * processing, and managing network-related data within the application.
-     * This service is utilized to implement the functionality defined in the {@link NetworkAPIImpl}.
-     */
+
     private final NetworkService networkService;
 
     /**

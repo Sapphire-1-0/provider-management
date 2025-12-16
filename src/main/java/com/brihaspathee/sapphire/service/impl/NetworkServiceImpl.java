@@ -7,7 +7,7 @@ import com.brihaspathee.sapphire.model.NetworkDto;
 import com.brihaspathee.sapphire.model.NetworkList;
 import com.brihaspathee.sapphire.model.ProductDto;
 import com.brihaspathee.sapphire.model.web.NetworkSearchRequest;
-import com.brihaspathee.sapphire.service.interfaces.INetworkService;
+import com.brihaspathee.sapphire.service.interfaces.NetworkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class NetworkService implements INetworkService {
+public class NetworkServiceImpl implements NetworkService {
 
     /**
      * Repository interface for performing CRUD operations and queries on network-related data.
@@ -44,7 +44,7 @@ public class NetworkService implements INetworkService {
     @Override
     public NetworkList getNetworks(NetworkSearchRequest networkSearchRequest) {
         List<Network> networks = networkRepository.findNetworks(networkSearchRequest);
-        List<NetworkDto> networkDtos = networks.stream().map(NetworkService::toNetworkDto).toList();
+        List<NetworkDto> networkDtos = networks.stream().map(NetworkServiceImpl::toNetworkDto).toList();
         return NetworkList.builder()
                 .networks(networkDtos)
                 .build();

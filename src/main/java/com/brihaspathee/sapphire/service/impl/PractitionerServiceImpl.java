@@ -7,7 +7,7 @@ import com.brihaspathee.sapphire.mapper.interfaces.PractitionerMapper;
 import com.brihaspathee.sapphire.model.PractitionerDto;
 import com.brihaspathee.sapphire.model.PractitionerList;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
-import com.brihaspathee.sapphire.service.interfaces.IPractitionerService;
+import com.brihaspathee.sapphire.service.interfaces.PractitionerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PractitionerService implements IPractitionerService {
+public class PractitionerServiceImpl implements PractitionerService {
 
     /**
      * Repository interface for performing CRUD operations and custom queries
