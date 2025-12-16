@@ -64,6 +64,14 @@ public class NetworkDto {
      */
     private List<ProductDto> partOfProducts;
 
+    /**
+     * Represents a list of Line Of Business (LOB) objects associated with the network.
+     * Each object in the list provides details and properties tied to a specific
+     * line of business. The information stored within this list helps to classify
+     * or define the network's involvement or relationship with various lines of business.
+     */
+    private List<LineOfBusinessDto> partOfLineOfBusinesses;
+
 
     /**
      * Represents a list of location details.

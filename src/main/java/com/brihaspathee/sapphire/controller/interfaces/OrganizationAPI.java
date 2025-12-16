@@ -67,8 +67,21 @@ public interface OrganizationAPI {
                     )
             }
     )
-    @GetMapping("/{organizationId}")
-    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationById(@PathVariable("organizationId") String id);
+    @GetMapping("/{orgId}")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationById(@PathVariable("orgId") String id);
+
+    /**
+     * Retrieves the details of a specific organization and its associated network
+     * based on the provided organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization to be retrieved
+     * @param netId the unique identifier of the network associated with the organization
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     *         which represents the details of the requested organization and network
+     */
+    @GetMapping("/{orgId}/network/{netId}")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationAndNetworkById(@PathVariable("orgId") String orgId,
+                                                                                       @PathVariable("netId") String netId);
 
     /**
      * Creates a new organization based on the provided organization details.

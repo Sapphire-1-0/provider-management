@@ -132,6 +132,31 @@ public class OrganizationAPIImpl implements OrganizationAPI {
     }
 
     /**
+     * Retrieves the details of a specific organization and its associated network
+     * based on the provided organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization to be retrieved
+     * @param netId the unique identifier of the network associated with the organization
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     * which represents the details of the requested organization and network
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationAndNetworkById(String orgId, String netId) {
+        OrganizationDto organizationDto = organizationService.getOrgAndNetByElementId(orgId, netId);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .developerMessage("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
      * Retrieves a list of organizations based on the provided set of identifiers.
      *
      * @param organizationSearchRequest a map containing key-value pairs representing the identifiers used to filter organizations

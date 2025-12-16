@@ -107,4 +107,13 @@ public interface OrganizationRepository {
      *         or null if no organization matches the given ID
      */
     Organization findOrganizationByElementId(String elementId);
+
+    /**
+     * Retrieves the organization and its associated networks based on the specified organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param netId the unique identifier of the network
+     * @return an Organization object containing the organization details and its associated networks
+     */
+    Organization findOrgAndNetByElementId(String orgId, String netId);
 }

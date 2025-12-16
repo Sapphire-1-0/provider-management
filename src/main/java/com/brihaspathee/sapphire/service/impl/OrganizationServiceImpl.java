@@ -169,4 +169,19 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization organization = organizationRepository.findOrganizationByElementId(orgId);
         return organizationMapper.toOrganizationDto(organization);
     }
+
+    /**
+     * Retrieves the organization details along with its associated network information
+     * based on the provided organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization for which the details are being retrieved
+     * @param netId the unique identifier of the network associated with the specified organization
+     * @return an instance of {@code OrganizationDto} containing the details of the organization,
+     * including its associated network information
+     */
+    @Override
+    public OrganizationDto getOrgAndNetByElementId(String orgId, String netId) {
+        Organization organization = organizationRepository.findOrgAndNetByElementId(orgId, netId);
+        return organizationMapper.toOrganizationDto(organization);
+    }
 }

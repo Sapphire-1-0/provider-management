@@ -5,10 +5,7 @@ import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository;
 import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
 import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
-import com.brihaspathee.sapphire.domain.repository.util.BuildOrganizationEntity;
-import com.brihaspathee.sapphire.domain.repository.util.BuildPractitionerEntity;
-import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
-import com.brihaspathee.sapphire.domain.repository.util.CypherQuery;
+import com.brihaspathee.sapphire.domain.repository.util.*;
 import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.utils.CypherLoader;
 import lombok.RequiredArgsConstructor;
@@ -246,6 +243,34 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params, record -> {
             Value orgInfo = record.get("orgInfo");
             Organization organization = BuildOrganizationEntity.buildOrganization(orgInfo);
+            return organization;
+        });
+        return organizations.isEmpty() ? null : organizations.getFirst();
+    }
+
+    /**
+     * Retrieves an organization along with its associated network details
+     * based on the provided organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param netId the unique identifier of the network
+     * @return an Organization object containing the organization details
+     *         and its associated network details, or null if no matching
+     *         organization and network are found
+     */
+    @Override
+    public Organization findOrgAndNetByElementId(String orgId, String netId) {
+        String cypher = cypherLoader.load("get_org_net_by_id.cypher");
+        log.info("Cypher: {}", cypher);
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        params.put("netId", netId);
+        List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Value orgInfo = record.get("orgInfo");
+            Organization organization = BuildOrganizationEntity.buildOrganization(orgInfo);
+            Value netInfo = record.get("netInfo");
+            Network network = BuildNetworkEntity.buildNetwork(netInfo);
+            organization.setNetworks(List.of(network));
             return organization;
         });
         return organizations.isEmpty() ? null : organizations.getFirst();

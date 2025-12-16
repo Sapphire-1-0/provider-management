@@ -3,6 +3,7 @@ package com.brihaspathee.sapphire.mapper.impl;
 import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
+import com.brihaspathee.sapphire.mapper.interfaces.NetworkMapper;
 import com.brihaspathee.sapphire.mapper.interfaces.OrganizationMapper;
 import com.brihaspathee.sapphire.model.*;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,18 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class OrganizationMapperImpl implements OrganizationMapper {
+
+    /**
+     * A mapper component responsible for converting Network entities to their
+     * corresponding DTO representations and vice versa. This field holds a
+     * reference to an implementation of {@code NetworkMapper}, which facilitates
+     * the mapping between the {@code Network} domain entity and the {@code NetworkDto}.
+     *
+     * Utilized as part of the organization conversion logic and ensures that
+     * the Network information is accurately converted and included in the output
+     * DTOs where applicable.
+     */
+    private final NetworkMapper networkMapper;
 
     /**
      * Converts an Organization entity to an OrganizationDto object.
@@ -59,13 +72,7 @@ public class OrganizationMapperImpl implements OrganizationMapper {
         }
         if (organization.getNetworks() != null && !organization.getNetworks().isEmpty()) {
             networkDtos = organization.getNetworks().stream().map(network -> {
-                NetworkDto networkDto = NetworkDto.builder()
-                        .elementId(network.getElementId())
-                        .name(network.getName())
-                        .code(network.getCode())
-                        .isHNETNetwork(network.getIsHNETNetwork())
-                        .isVendorNetwork(network.getIsVendorNetwork())
-                        .build();
+                NetworkDto networkDto = networkMapper.toNetDto(network);
                 if (network.getLocations() != null && !network.getLocations().isEmpty()) {
                     networkDto.setLocations(network.getLocations().stream().map(location -> {
                         LocationDto locationDto =  LocationDto.builder()
