@@ -1,17 +1,14 @@
 package com.brihaspathee.sapphire.mapper.impl;
 
+import com.brihaspathee.sapphire.domain.entity.Location;
 import com.brihaspathee.sapphire.domain.entity.LocationNetworkServiceInfo;
-import com.brihaspathee.sapphire.domain.entity.Network;
 import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
-import com.brihaspathee.sapphire.mapper.interfaces.LineOfBusinessMapper;
-import com.brihaspathee.sapphire.mapper.interfaces.NetworkMapper;
-import com.brihaspathee.sapphire.mapper.interfaces.ProductMapper;
+import com.brihaspathee.sapphire.mapper.interfaces.LocationMapper;
+import com.brihaspathee.sapphire.model.LocationDto;
 import com.brihaspathee.sapphire.model.LocationNetworkDto;
 import com.brihaspathee.sapphire.model.LocationNetworkSpanDto;
-import com.brihaspathee.sapphire.model.NetworkDto;
 import com.brihaspathee.sapphire.model.PanelDto;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -21,68 +18,49 @@ import java.util.List;
 /**
  * Created in Intellij IDEA
  * User: Balaji Varadharajan
- * Date: 12/16/25
- * Time: 6:01 PM
+ * Date: 17, December 2025
+ * Time: 05:58
  * Project: sapphire
  * Package Name: com.brihaspathee.sapphire.mapper.impl
  * To change this template use File | Settings | File and Code Template
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class NetworkMapperImpl implements NetworkMapper {
-
+public class LocationMapperImpl implements LocationMapper {
     /**
-     * A mapper component used for converting LineOfBusiness entities to their corresponding
-     * DTO representations and vice versa. This field holds a reference to the {@link LineOfBusinessMapper}
-     * implementation and is utilized to facilitate mapping operations involving Line of Business objects.
-     */
-    private final LineOfBusinessMapper lineOfBusinessMapper;
-
-    /**
-     * A reference to the {@link ProductMapper} implementation
-     * used for converting Product entities to ProductDto objects and vice versa.
-     */
-    private final ProductMapper productMapper;
-
-    /**
-     * Converts a {@link Network} entity to a {@link NetworkDto}.
+     * Converts a {@link Location} object to a {@link LocationDto} object.
      *
-     * @param network the {@link Network} entity to be converted
-     * @return the corresponding {@link NetworkDto} representation of the provided {@link Network} entity
+     * @param location the {@link Location} object to be converted
+     * @return a {@link LocationDto} object constructed from the provided {@link Location} object
      */
     @Override
-    public NetworkDto toNetDto(Network network) {
-        if (network == null){
-            return null;
-        }
-        NetworkDto networkDto = NetworkDto.builder()
-                .elementId(network.getElementId())
-                .code(network.getCode())
-                .name(network.getName())
+    public LocationDto toLocationDto(Location location) {
+        if (location == null) return null;
+        LocationDto locationDto =  LocationDto.builder()
+                .elementId(location.getElementId())
+                .name(location.getName())
+                .streetAddress(location.getStreetAddress())
+                .secondaryAddress(location.getSecondaryAddress())
+                .city(location.getCity())
+                .state(location.getState())
+                .zipCode(location.getZipCode())
                 .build();
-        if (network.getPartOfProducts() != null && !network.getPartOfProducts().isEmpty()) {
-            networkDto.setPartOfProducts(productMapper.toProductDtoList(network.getPartOfProducts()));
+        if (location.getNetworkServiceInfo() != null){
+            LocationNetworkDto locationNetworkDto = toLocationNetworkDto(location.getNetworkServiceInfo());
+            locationDto.setLocationNetwork(locationNetworkDto);
         }
-        if (network.getPartOfLinesOfBusiness() != null && !network.getPartOfLinesOfBusiness().isEmpty()) {
-            networkDto.setPartOfLineOfBusinesses(lineOfBusinessMapper.toLineOfBusinessDtoList(network.getPartOfLinesOfBusiness()));
-        }
-        if (network.getNetworkServiceInfo() != null){
-            LocationNetworkDto locationNetworkDto = toLocationNetworkDto(network.getNetworkServiceInfo());
-            networkDto.setLocationNetwork(locationNetworkDto);
-        }
-        return networkDto;
+        return locationDto;
     }
 
     /**
-     * Converts a list of Network entities into a list of NetworkDto objects.
+     * Converts a list of {@link Location} objects into a list of {@link LocationDto} objects.
      *
-     * @param networks the list of Network entities to be converted
-     * @return a list of NetworkDto objects corresponding to the provided Network entities
+     * @param locations the list of {@link Location} objects to be converted
+     * @return a list of {@link LocationDto} objects constructed from the provided {@link Location} list
      */
     @Override
-    public List<NetworkDto> toNetDtoList(List<Network> networks) {
-        return networks.stream().map(this::toNetDto).toList();
+    public List<LocationDto> toLocationDtoList(List<Location> locations) {
+        return locations.stream().map(this::toLocationDto).toList();
     }
 
     /**

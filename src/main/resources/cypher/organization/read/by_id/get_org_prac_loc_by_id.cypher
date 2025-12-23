@@ -112,19 +112,19 @@ CALL (prac, ri) {
 }
 
 // Location details
-CALL (loc, ri, net){
-  WITH loc, ri, net
-  WHERE loc IS NOT NULL
+CALL (loc, ri){
+  WITH loc, ri
+  WHERE loc IS NOT NULL AND ri IS NOT NULL
+  OPTIONAL CALL (ri) {
+    WITH ri
+    WHERE ri IS NOT NULL
+    OPTIONAL MATCH (ri)-[:PERFORMED_AT]->(rl:RoleLocation)-[:LOCATION_IS]->(loc)
+    RETURN DISTINCT rl
+  }
   OPTIONAL CALL (loc) {
     WITH loc
     OPTIONAL MATCH (loc)-[locRel]->(id:Identifier)
     RETURN collect(DISTINCT { relType: type(locRel), node: id }) AS identifiers
-  }
-  OPTIONAL CALL (ri, net){
-    WITH ri, net
-    OPTIONAL MATCH (ri)-[:PERFORMED_AT]->(rl:RoleLocation)-[LOCATION_IS]->(loc)
-    OPTIONAL MATCH (rl)-[rls:ROLE_LOCATION_SERVES]->(rn:RoleNetwork)-[:NETWORK_IS]->(net)
-    RETURN rl, collect(DISTINCT rls) as roleLocationServes
   }
   OPTIONAL CALL (rl) {
     WITH rl
@@ -151,8 +151,7 @@ CALL (loc, ri, net){
   }
   RETURN {
     identifiers: identifiers,
-    contacts: contacts,
-    roleLocationServes:roleLocationServes
+    contacts: contacts
   } AS locDetails
 }
 RETURN {

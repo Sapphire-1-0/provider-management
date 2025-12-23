@@ -84,6 +84,90 @@ public interface OrganizationAPI {
                                                                                        @PathVariable("netId") String netId);
 
     /**
+     * Retrieves the details of a specific organization and its associated location
+     * based on the provided organization ID and location ID.
+     *
+     * @param orgId the unique identifier of the organization to be retrieved
+     * @param locId the unique identifier of the location associated with the organization
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     *         which represents the details of the requested organization and location
+     */
+    @GetMapping("/{orgId}/location/{locId}")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationAndLocationById(@PathVariable("orgId") String orgId,
+                                                                                       @PathVariable("locId") String locId);
+
+    /**
+     * Retrieves the details of a specific organization, its associated network,
+     * and location based on the provided organization ID, network ID, and location ID.
+     *
+     * @param orgId the unique identifier of the organization to be retrieved
+     * @param netId the unique identifier of the network associated with the organization
+     * @param locId the unique identifier of the location associated with the organization
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     *         which represents the details of the organization, network, and location
+     */
+    @GetMapping("/{orgId}/network/{netId}/location/{locId}")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrgAndNetAndLocById(@PathVariable("orgId") String orgId,
+                                                                                @PathVariable("netId") String netId,
+                                                                                @PathVariable("locId") String locId);
+
+    /**
+     * Retrieves organization and practitioner details based on the given organization ID and practitioner ID.
+     *
+     * @param orgId the unique identifier for the organization
+     * @param pracId the unique identifier for the practitioner
+     * @return a ResponseEntity containing a SapphireAPIResponse with the organization details encapsulated in an OrganizationDto
+     */
+    @GetMapping("/{orgId}/practitioner/{pracId}")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrgAndPracById(@PathVariable("orgId") String orgId,
+                                                                            @PathVariable("pracId") String pracId);
+
+    /**
+     * Retrieves organization, practice, and location details based on the provided identifiers.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param pracId the unique identifier of the practice
+     * @param locId the unique identifier of the location
+     * @return a ResponseEntity containing the SapphireAPIResponse with OrganizationDto details
+     */
+    @GetMapping("/{orgId}/practitioner/{pracId}/location/{locId}")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrgAndPracAndLocById(@PathVariable("orgId") String orgId,
+                                                                                    @PathVariable("pracId") String pracId,
+                                                                                    @PathVariable("locId") String locId);
+
+    /**
+     * Retrieves organization, practitioner, and network details by their respective IDs.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param pracId the unique identifier of the practitioner
+     * @param netId the unique identifier of the network
+     * @return a ResponseEntity containing a SapphireAPIResponse with an OrganizationDto object,
+     *         representing the organization details along with related practitioner and network information
+     */
+    @GetMapping("/{orgId}/practitioner/{pracId}/network/{netId}")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrgAndPracAndNetById(@PathVariable("orgId") String orgId,
+                                                                                    @PathVariable("pracId") String pracId,
+                                                                                    @PathVariable("netId") String netId);
+
+    /**
+     * Retrieves detailed information about a specific organization, its associated practice,
+     * network, and location based on the provided organization ID, practice ID,
+     * network ID, and location ID.
+     *
+     * @param orgId the unique identifier of the organization to be retrieved
+     * @param pracId the unique identifier of the practice associated with the organization
+     * @param netId the unique identifier of the network associated with the organization and practice
+     * @param locId the unique identifier of the location associated with the organization, practice, and network
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     * which represents the details of the specified organization, practice, network, and location
+     */
+    @GetMapping("/{orgId}/practitioner/{pracId}/network/{netId}/location/{locId}")
+    ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrgAndPracAndNetAndLocById(@PathVariable("orgId") String orgId,
+                                                                                        @PathVariable("pracId") String pracId,
+                                                                                        @PathVariable("netId") String netId,
+                                                                                        @PathVariable("locId") String locId);
+
+    /**
      * Creates a new organization based on the provided organization details.
      *
      * @param organizationDto the DTO containing organization details to be created

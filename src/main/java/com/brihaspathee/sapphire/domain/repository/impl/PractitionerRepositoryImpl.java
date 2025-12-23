@@ -3,10 +3,7 @@ package com.brihaspathee.sapphire.domain.repository.impl;
 import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.PractitionerRepository;
-import com.brihaspathee.sapphire.domain.repository.util.BuildNetworkEntity;
-import com.brihaspathee.sapphire.domain.repository.util.BuildPractitionerEntity;
-import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
-import com.brihaspathee.sapphire.domain.repository.util.CypherQuery;
+import com.brihaspathee.sapphire.domain.repository.util.*;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
 import com.brihaspathee.sapphire.utils.CypherLoader;
 import lombok.RequiredArgsConstructor;
@@ -78,19 +75,6 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
     }
 
     /**
-     * Finds practitioners based on the criteria specified in the PractitionerSearchRequest.
-     *
-     * @param practitionerSearchRequest the search request containing criteria to filter practitioners
-     * @return a list of practitioners matching the search criteria; an empty list if no practitioners are found
-     */
-    @Override
-    public List<Practitioner> findPractitioners(PractitionerSearchRequest practitionerSearchRequest) {
-        CypherQuery cypherQuery = BuildPractitionerEntity.buildPractitionerSearchCypher(practitionerSearchRequest, true);
-        log.info("Practitioner search query: {}", cypherQuery);
-        return mapResults(cypherQuery);
-    }
-
-    /**
      * Retrieves a Practitioner entity based on the provided practitioner ID.
      *
      * @param practitionerId the unique identifier of the practitioner to be retrieved
@@ -119,7 +103,7 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
      * or null if no matching practitioner is found
      */
     @Override
-    public Practitioner findPractitionerByNetId(String practitionerId, String netId) {
+    public Practitioner findPracAndNetByElementId(String practitionerId, String netId) {
         String cypher = cypherLoader.load("get_prac_net_by_id.cypher");
         Map<String, Object> params = new HashMap<>();
         params.put("pracId", practitionerId);
@@ -132,6 +116,74 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
             return practitioner;
         });
         return practitioners.isEmpty() ? null : practitioners.getFirst();
+    }
+
+    /**
+     * Retrieves a Practitioner entity based on the provided practitioner ID and location ID.
+     *
+     * @param pracId the unique identifier of the practitioner
+     * @param locId the unique identifier of the location associated with the practitioner
+     * @return the Practitioner object matching the specified organization ID and location ID,
+     * or null if no matching practitioner is found
+     */
+    @Override
+    public Practitioner findPracAndLocByElementId(String pracId, String locId) {
+        String cypher = cypherLoader.load("get_prac_loc_by_id.cypher");
+        Map<String, Object> params = new HashMap<>();
+        params.put("pracId", pracId);
+        params.put("locId", locId);
+        List<Practitioner> practitioners = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Value pracInfo = record.get("pracInfo");
+            Practitioner practitioner = BuildPractitionerEntity.buildPractitioner(pracInfo);
+            Location location = BuildLocationEntity.buildLocation(record.get("locInfo"));
+            practitioner.setLocations(List.of(location));
+            return practitioner;
+        });
+        return practitioners.isEmpty() ? null : practitioners.getFirst();
+    }
+
+    /**
+     * Retrieves a Practitioner entity based on the provided practitioner ID, network ID, and location ID.
+     *
+     * @param pracId the unique identifier of the practitioner
+     * @param netId the unique identifier of the network associated with the practitioner
+     * @param locId the unique identifier of the location associated with the practitioner
+     * @return the Practitioner object matching the specified organization ID, network ID, and location ID,
+     * or null if no matching practitioner is found
+     */
+    @Override
+    public Practitioner findPracAndNetAndLocByElementId(String pracId, String netId, String locId) {
+        // Retrieve practitioner, network, and location based on given IDs
+        String cypher = cypherLoader.load("get_prac_net_loc_by_id.cypher");
+        Map<String, Object> params = new HashMap<>();
+        params.put("pracId", pracId);
+        params.put("netId", netId);
+        params.put("locId", locId);
+        List<Practitioner> practitioners = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Value pracInfo = record.get("pracInfo");
+            Practitioner practitioner = BuildPractitionerEntity.buildPractitioner(pracInfo);
+            Value netInfo = record.get("netInfo");
+            Network network = BuildNetworkEntity.buildNetwork(netInfo);
+            Value locInfo = record.get("locInfo");
+            Location location = BuildLocationEntity.buildLocation(locInfo);
+            network.setLocations(List.of(location));
+            practitioner.setNetworks(List.of(network));
+            return practitioner;
+        });
+        return practitioners.isEmpty() ? null : practitioners.getFirst();
+    }
+
+    /**
+     * Finds practitioners based on the criteria specified in the PractitionerSearchRequest.
+     *
+     * @param practitionerSearchRequest the search request containing criteria to filter practitioners
+     * @return a list of practitioners matching the search criteria; an empty list if no practitioners are found
+     */
+    @Override
+    public List<Practitioner> findPractitioners(PractitionerSearchRequest practitionerSearchRequest) {
+        CypherQuery cypherQuery = BuildPractitionerEntity.buildPractitionerSearchCypher(practitionerSearchRequest, true);
+        log.info("Practitioner search query: {}", cypherQuery);
+        return mapResults(cypherQuery);
     }
 
     /**

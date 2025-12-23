@@ -157,6 +157,157 @@ public class OrganizationAPIImpl implements OrganizationAPI {
     }
 
     /**
+     * Retrieves the details of a specific organization and its associated location
+     * based on the provided organization ID and location ID.
+     *
+     * @param orgId the unique identifier of the organization to be retrieved
+     * @param locId the unique identifier of the location associated with the organization
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     * which represents the details of the requested organization and location
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrganizationAndLocationById(String orgId, String locId) {
+        OrganizationDto organizationDto = organizationService.getOrgAndLocByElementId(orgId, locId);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .developerMessage("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Retrieves the details of a specific organization, its associated network,
+     * and location based on the provided organization ID, network ID, and location ID.
+     *
+     * @param orgId the unique identifier of the organization to be retrieved
+     * @param netId the unique identifier of the network associated with the organization
+     * @param locId the unique identifier of the location associated with the organization
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     * which represents the details of the organization, network, and location
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrgAndNetAndLocById(String orgId, String netId, String locId) {
+        OrganizationDto organizationDto = organizationService.getOrgAndNetAndLocByElementId(orgId, netId, locId);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .developerMessage("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Retrieves organization and practitioner details based on the given organization ID and practitioner ID.
+     *
+     * @param orgId  the unique identifier for the organization
+     * @param pracId the unique identifier for the practitioner
+     * @return a ResponseEntity containing a SapphireAPIResponse with the organization details encapsulated in an OrganizationDto
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrgAndPracById(String orgId, String pracId) {
+        OrganizationDto organizationDto = organizationService.getOrgAndPracByElementId(orgId, pracId);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .developerMessage("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Retrieves organization, practice, and location details based on the provided identifiers.
+     *
+     * @param orgId  the unique identifier of the organization
+     * @param pracId the unique identifier of the practice
+     * @param locId  the unique identifier of the location
+     * @return a ResponseEntity containing the SapphireAPIResponse with OrganizationDto details
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrgAndPracAndLocById(String orgId, String pracId, String locId) {
+        OrganizationDto organizationDto = organizationService.getOrgAndPracAndLocByElementId(orgId, pracId, locId);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .developerMessage("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Retrieves organization, practitioner, and network details by their respective IDs.
+     *
+     * @param orgId  the unique identifier of the organization
+     * @param pracId the unique identifier of the practitioner
+     * @param netId  the unique identifier of the network
+     * @return a ResponseEntity containing a SapphireAPIResponse with an OrganizationDto object,
+     * representing the organization details along with related practitioner and network information
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrgAndPracAndNetById(String orgId, String pracId, String netId) {
+        OrganizationDto organizationDto = organizationService.getOrgAndPracAndNetByElementId(orgId, pracId, netId);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .developerMessage("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Retrieves detailed information about a specific organization, its associated practice,
+     * network, and location based on the provided organization ID, practice ID,
+     * network ID, and location ID.
+     *
+     * @param orgId  the unique identifier of the organization to be retrieved
+     * @param pracId the unique identifier of the practice associated with the organization
+     * @param netId  the unique identifier of the network associated with the organization and practice
+     * @param locId  the unique identifier of the location associated with the organization, practice, and network
+     * @return a ResponseEntity containing a SapphireAPIResponse encapsulating an OrganizationDto,
+     * which represents the details of the specified organization, practice, network, and location
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<OrganizationDto>> getOrgAndPracAndNetAndLocById(String orgId, String pracId, String netId, String locId) {
+        OrganizationDto organizationDto = organizationService.getOrgAndPracAndNetAndLocByElementId(orgId, pracId, netId, locId);
+        SapphireAPIResponse<OrganizationDto> apiResponse =
+                SapphireAPIResponse.<OrganizationDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .response(organizationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .developerMessage("Organization matched with id" + orgId +" was Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
      * Retrieves a list of organizations based on the provided set of identifiers.
      *
      * @param organizationSearchRequest a map containing key-value pairs representing the identifiers used to filter organizations

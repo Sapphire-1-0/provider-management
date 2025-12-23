@@ -3,6 +3,8 @@ package com.brihaspathee.sapphire.mapper.impl;
 import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
+import com.brihaspathee.sapphire.mapper.interfaces.IdentifierMapper;
+import com.brihaspathee.sapphire.mapper.interfaces.LocationMapper;
 import com.brihaspathee.sapphire.mapper.interfaces.NetworkMapper;
 import com.brihaspathee.sapphire.mapper.interfaces.OrganizationMapper;
 import com.brihaspathee.sapphire.model.*;
@@ -42,6 +44,24 @@ public class OrganizationMapperImpl implements OrganizationMapper {
     private final NetworkMapper networkMapper;
 
     /**
+     * A mapper component used for converting {@link Location} entities to their corresponding
+     * DTO representations and vice versa. This field holds a reference to the {@link LocationMapper}
+     * implementation and is utilized to facilitate mapping operations involving Location objects.
+     */
+    private final LocationMapper locationMapper;
+
+    /**
+     * A mapper component utilized for converting Identifier entities to their corresponding
+     * DTO representations and vice versa. This field holds a reference to an {@link IdentifierMapper}
+     * implementation, which provides methods for mapping individual Identifier objects or
+     * lists of Identifier objects into their DTO equivalents.
+     *
+     * This mapper is specifically designed to facilitate mapping operations related
+     * to identifiers within the context of the OrganizationMapperImpl component.
+     */
+    private final IdentifierMapper identifierMapper;
+
+    /**
      * Converts an Organization entity to an OrganizationDto object.
      *
      * @param organization the Organization entity to be converted;
@@ -59,37 +79,13 @@ public class OrganizationMapperImpl implements OrganizationMapper {
         List<NetworkDto> networkDtos = null;
         List<LocationDto> locationDtos = null;
         if (organization.getIdentifiers() != null && !organization.getIdentifiers().isEmpty()){
-            identifierDtos = organization.getIdentifiers().stream().map(identifier -> {
-                return IdentifierDto.builder()
-                        .elementId(identifier.getElementId())
-                        .value(identifier.getValue())
-                        .type(identifier.getClass().getSimpleName())
-                        .startDate(identifier.getStartDate())
-                        .endDate(identifier.getEndDate())
-                        .additionalProperties(getAdditionalProperties(identifier))
-                        .build();
-            }).toList();
+            identifierDtos = identifierMapper.toIdentifierDtoList(organization.getIdentifiers());
         }
         if (organization.getNetworks() != null && !organization.getNetworks().isEmpty()) {
             networkDtos = organization.getNetworks().stream().map(network -> {
                 NetworkDto networkDto = networkMapper.toNetDto(network);
                 if (network.getLocations() != null && !network.getLocations().isEmpty()) {
-                    networkDto.setLocations(network.getLocations().stream().map(location -> {
-                        LocationDto locationDto =  LocationDto.builder()
-                                .elementId(location.getElementId())
-                                .name(location.getName())
-                                .streetAddress(location.getStreetAddress())
-                                .secondaryAddress(location.getSecondaryAddress())
-                                .city(location.getCity())
-                                .state(location.getState())
-                                .zipCode(location.getZipCode())
-                                .build();
-                        if (location.getNetworkServiceInfo() != null){
-                            LocationNetworkDto locationNetworkDto = toLocationNetworkDto(location.getNetworkServiceInfo());
-                            locationDto.setLocationNetwork(locationNetworkDto);
-                        }
-                        return locationDto;
-                    }).toList());
+                    networkDto.setLocations(locationMapper.toLocationDtoList(network.getLocations()));
                 }
                 return networkDto;
             }).toList();
@@ -109,15 +105,7 @@ public class OrganizationMapperImpl implements OrganizationMapper {
                         .build();
                 if (location.getNetworks() != null && !location.getNetworks().isEmpty()) {
                     locationDto.setNetworks(location.getNetworks().stream().map(network -> {
-                        NetworkDto networkDto =  NetworkDto.builder()
-                                .elementId(network.getElementId())
-                                .name(network.getName())
-                                .code(network.getCode())
-                                .build();
-                        if (network.getNetworkServiceInfo() != null){
-                            LocationNetworkDto locationNetworkDto = toLocationNetworkDto(network.getNetworkServiceInfo());
-                            networkDto.setLocationNetwork(locationNetworkDto);
-                        }
+                        NetworkDto networkDto =  networkMapper.toNetDto(network);
                         return networkDto;
                     }).toList());
                 }
@@ -199,68 +187,5 @@ public class OrganizationMapperImpl implements OrganizationMapper {
         }else{
             return null;
         }
-    }
-
-    /**
-     * Converts a {@code LocationNetworkServiceInfo} object to a {@code LocationNetworkDto}.
-     * Extracts and maps relevant data from the input object, including panel details,
-     * location network spans, and PCP status.
-     *
-     * @param locationNetworkServiceInfo an object containing information about the location network services
-     *                                   to be converted into a {@code LocationNetworkDto}
-     * @return a {@code LocationNetworkDto} object populated with data extracted from
-     *         the given {@code LocationNetworkServiceInfo}
-     */
-    private static LocationNetworkDto toLocationNetworkDto(LocationNetworkServiceInfo locationNetworkServiceInfo) {
-        LocationNetworkDto locationNetworkDto = LocationNetworkDto.builder().build();
-//        LocationNetworkServiceInfo locationNetworkServiceInfo = network.getNetworkServiceInfo();
-        HasPanel hasPanel = locationNetworkServiceInfo.getHasPanel();
-        List<RoleLocationServes> roleLocationServesList = locationNetworkServiceInfo.getRoleLocationServes();
-        if (hasPanel != null) {
-            PanelDto panelDto = PanelDto.builder()
-                    .genderLimitation(hasPanel.getGenderLimitation())
-                    .ageLimitation(hasPanel.getAgeLimitation())
-                    .highestAgeMonths(hasPanel.getHighestAgeMonths())
-                    .lowestAgeMonths(hasPanel.getLowestAgeMonths())
-                    .highestAgeYears(hasPanel.getHighestAgeYears())
-                    .lowestAgeYears(hasPanel.getLowestAgeYears())
-                    .status(hasPanel.getStatus())
-                    .build();
-            locationNetworkDto.setPanel(panelDto);
-        }
-        if (roleLocationServesList != null && !roleLocationServesList.isEmpty()) {
-            List<LocationNetworkSpanDto> spanDtos = new ArrayList<>();
-            for (RoleLocationServes roleLocationServes : roleLocationServesList) {
-                LocationNetworkSpanDto spanDto = LocationNetworkSpanDto.builder()
-                        .startDate(roleLocationServes.getStartDate())
-                        .endDate(roleLocationServes.getEndDate())
-                        .termReason(roleLocationServes.getTermReason())
-                        .build();
-                spanDtos.add(spanDto);
-            }
-            locationNetworkDto.setSpans(spanDtos);
-        }
-        locationNetworkDto.setIsPCP(locationNetworkServiceInfo.getIsPCP());
-        return locationNetworkDto;
-//        networkDto.setLocationNetwork(locationNetworkDto);
-    }
-
-    /**
-     * Constructs a map of additional properties based on the type of the provided identifier.
-     * If the identifier is of type {@code MedicaidID}, its state is added to the map.
-     * If the identifier is of type {@code TIN}, its legal name is added to the map.
-     *
-     * @param identifier the identifier whose additional properties need to be collected
-     * @return a map containing additional properties specific to the identifier type
-     */
-    private Map<String, Object> getAdditionalProperties(Identifier identifier) {
-        Map<String, Object> additionalProperties = new HashMap<>();
-        if (identifier instanceof MedicaidID medicaidID) {
-            additionalProperties.put("state",medicaidID.getState());
-        }
-        if (identifier instanceof TIN tin) {
-            additionalProperties.put("legalName", tin.getLegalName());
-        }
-        return additionalProperties;
     }
 }

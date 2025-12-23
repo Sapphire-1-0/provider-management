@@ -101,6 +101,16 @@ public class Organization {
     private List<Location> locations;
 
     /**
+     * Represents the list of practitioners associated with an organization.
+     * Each practitioner in the list provides detailed information such
+     * as personal information (e.g., first name, last name, gender),
+     * identifiers (e.g., NPI, TIN), qualifications, networks, and locations.
+     * This property allows the organization to manage and track practitioners
+     * that are affiliated or associated with it.
+     */
+    private List<Practitioner> practitioners;
+
+    /**
      * Provides a string representation of the Organization object, including key attributes
      * such as elementId, name, aliasName, type, atypical, capitated, and pcpPractitionerRequired.
      *

@@ -1,9 +1,12 @@
 package com.brihaspathee.sapphire.domain.repository.util;
 
+import com.brihaspathee.sapphire.domain.entity.Identifier;
 import com.brihaspathee.sapphire.domain.entity.Location;
+import com.brihaspathee.sapphire.domain.entity.Organization;
 import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import lombok.extern.slf4j.Slf4j;
+import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 
@@ -23,6 +26,26 @@ import java.util.Map;
  */
 @Slf4j
 public class BuildLocationEntity {
+
+    /**
+     * Constructs and returns a {@link Location} object populated with data extracted from the provided {@link Value}.
+     * The method processes the given {@link Value}, retrieves nested data, and builds a {@link Location} object
+     * by mapping its properties, including identifiers, which are constructed from a list of maps.
+     *
+     * @param locationInfo the {@link Value} containing the location data and its details. It is expected to include:
+     *                     - "loc": a {@link Node} representing the location details.
+     *                     - "locDetails": additional details such as "identifiers", which is a list of maps.
+     * @return a {@link Location} object constructed using the provided data, including its identifiers.
+     */
+    public static Location buildLocation(Value locationInfo) {
+        Node locNode = locationInfo.get("loc").asNode();
+        Location loc = buildLocation(locNode);
+        Value locDetails = locationInfo.get("locDetails");
+        List<Map<String, Object>> idList = locDetails.get("identifiers").asList(Value::asMap);
+        List<Identifier> identifiers = BuilderUtil.buildIdentifiers(idList);
+        loc.setIdentifiers(identifiers);
+        return loc;
+    }
 
     /**
      * Constructs and returns a {@link Location} object populated with data extracted from the provided Neo4j {@link Node}.

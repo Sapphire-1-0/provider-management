@@ -25,6 +25,45 @@ public interface PractitionerService {
     PractitionerDto getPractitionerByCode(String practitionerCode);
 
     /**
+     * Retrieves the details of a practitioner based on the provided practitioner ID.
+     *
+     * @param practitionerId the unique identifier of the practitioner whose details are to be retrieved
+     * @return an instance of {@code PractitionerDto} containing the details of the practitioner
+     */
+    PractitionerDto getPractitionerById(String practitionerId);
+
+    /**
+     * Retrieves information about a practitioner and network based on their respective element IDs.
+     *
+     * @param pracId the unique identifier for the practitioner
+     * @param netId the unique identifier for the network
+     * @return an instance of {@code PractitionerDto} containing the details of the associated
+     *         practitioner and network, or {@code null} if not found
+     */
+    PractitionerDto getPracAndNetByElementId(String pracId, String netId);
+
+    /**
+     * Retrieves a practitioner's details and location information based on the provided practitioner ID and location ID.
+     *
+     * @param pracId the unique identifier for the practitioner
+     * @param locId the unique identifier for the location
+     * @return an instance of {@code PractitionerDto} containing the practitioner's details and associated location information,
+     *         or {@code null} if no matching record is found
+     */
+    PractitionerDto getPracAndLocByElementId(String pracId, String locId);
+
+    /**
+     * Retrieves information about a practitioner, network, and location based on their respective element IDs.
+     *
+     * @param pracId the unique identifier for the practitioner
+     * @param netId the unique identifier for the network
+     * @param locId the unique identifier for the location
+     * @return an instance of {@code PractitionerDto} containing the details of the practitioner,
+     *         network, and location, or {@code null} if no matching record is found
+     */
+    PractitionerDto getPracAndNetAndLocByElementId(String pracId, String netId, String locId);
+
+    /**
      * Retrieves a list of practitioners based on the specified search criteria.
      *
      * @param practitionerSearchRequest an instance of {@code PractitionerSearchRequest} containing
@@ -35,11 +74,4 @@ public interface PractitionerService {
      */
     PractitionerList getPractitioners(PractitionerSearchRequest practitionerSearchRequest);
 
-    /**
-     * Retrieves the details of a practitioner based on the provided practitioner ID.
-     *
-     * @param practitionerId the unique identifier of the practitioner whose details are to be retrieved
-     * @return an instance of {@code PractitionerDto} containing the details of the practitioner
-     */
-    PractitionerDto getPractitionerById(String practitionerId);
 }

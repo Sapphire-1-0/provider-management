@@ -110,4 +110,81 @@ public class PractitionerAPIImpl implements PractitionerAPI {
                         .build();
         return ResponseEntity.ok(apiResponse);
     }
+
+    /**
+     * Retrieves the details of a practitioner and associated network based on the provided IDs.
+     *
+     * @param practitionerId the unique identifier of the practitioner to be retrieved
+     * @param netId          the unique identifier of the network associated with the practitioner
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates a PractitionerDto,
+     * representing the details of the requested practitioner
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerAndNetById(String practitionerId, String netId) {
+        PractitionerDto practitionerDto = practitionerService.getPracAndNetByElementId(practitionerId, netId);
+        SapphireAPIResponse<PractitionerDto> apiResponse =
+                SapphireAPIResponse.<PractitionerDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Practitioner Retrieved successfully")
+                        .response(practitionerDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Practitioner Retrieved successfully")
+                        .developerMessage("Practitioner Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Retrieves the details of a practitioner along with the associated location information
+     * based on the provided practitioner and location IDs.
+     *
+     * @param practitionerId the unique identifier of the practitioner to be retrieved
+     * @param locId          the unique identifier of the location associated with the practitioner
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates
+     * a PractitionerDto, representing the details of the requested practitioner
+     * along with associated location details
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerAndLocById(String practitionerId, String locId) {
+        PractitionerDto practitionerDto = practitionerService.getPracAndLocByElementId(practitionerId, locId);
+        SapphireAPIResponse<PractitionerDto> apiResponse =
+                SapphireAPIResponse.<PractitionerDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Practitioner Retrieved successfully")
+                        .response(practitionerDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Practitioner Retrieved successfully")
+                        .developerMessage("Practitioner Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Retrieves the details of a practitioner, including associated network and location information,
+     * based on the provided practitioner, network, and location IDs.
+     *
+     * @param practitionerId the unique identifier of the practitioner to be retrieved
+     * @param netId          the unique identifier of the network associated with the practitioner
+     * @param locId          the unique identifier of the location associated with the practitioner
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates
+     * a PractitionerDto, representing the details of the requested practitioner
+     * along with associated network and location details
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerAndNetAndLocById(String practitionerId, String netId, String locId) {
+        PractitionerDto practitionerDto = practitionerService.getPracAndNetAndLocByElementId(practitionerId, netId, locId);
+        SapphireAPIResponse<PractitionerDto> apiResponse =
+                SapphireAPIResponse.<PractitionerDto>builder()
+                        .statusCode(200)
+                        .status(HttpStatus.OK)
+                        .message("Practitioner Retrieved successfully")
+                        .response(practitionerDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Practitioner Retrieved successfully")
+                        .developerMessage("Practitioner Retrieved successfully")
+                        .build();
+        return ResponseEntity.ok(apiResponse);
+    }
 }

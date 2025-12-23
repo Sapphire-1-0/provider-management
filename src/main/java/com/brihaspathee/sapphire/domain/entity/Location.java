@@ -88,6 +88,15 @@ public class Location {
     private String countyFIPS;
 
     /**
+     * Represents a collection of identifiers associated with a location.
+     * Identifiers can include unique attributes like NPI (National Provider Identifier),
+     * TIN (Tax Identification Number), or other domain-specific identifiers.
+     * These are used to uniquely identify and differentiate the location
+     * in various contexts and operations within the system.
+     */
+    private List<Identifier> identifiers;
+
+    /**
      * Represents the collection of networks associated with the location.
      * Each network in the list provides detailed information such as its
      * unique identifier, code, name, classification as an HNET or vendor network,

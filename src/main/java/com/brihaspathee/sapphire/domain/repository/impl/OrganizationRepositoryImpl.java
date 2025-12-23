@@ -276,6 +276,190 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         return organizations.isEmpty() ? null : organizations.getFirst();
     }
 
+    /**
+     * Retrieves an organization and its associated locations based on the provided organization ID and location ID.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param locId the unique identifier of the location
+     * @return an Organization object containing the details of the organization and its associated locations,
+     * or null if no matching organization is found
+     */
+    @Override
+    public Organization findOrgAndLocByElementId(String orgId, String locId) {
+        String cypher = cypherLoader.load("get_org_loc_by_id.cypher");
+        log.info("Cypher: {}", cypher);
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        params.put("locId", locId);
+        List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Value orgInfo = record.get("orgInfo");
+            Organization organization = BuildOrganizationEntity.buildOrganization(orgInfo);
+            Value locInfo = record.get("locInfo");
+            Location location = BuildLocationEntity.buildLocation(locInfo);
+            organization.setLocations(List.of(location));
+            return organization;
+        });
+        return organizations.isEmpty() ? null : organizations.getFirst();
+    }
+
+    /**
+     * Retrieves the organization, its associated networks, and locations based on the specified identifiers.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param netId the unique identifier of the network
+     * @param locId the unique identifier of the location
+     * @return an Organization object containing the details of the organization, its networks, and locations,
+     * or null if no matching organization is found
+     */
+    @Override
+    public Organization findOrgAndNetAndLocByElementId(String orgId, String netId, String locId) {
+        String cypher = cypherLoader.load("get_org_net_loc_by_id.cypher");
+        log.info("Cypher: {}", cypher);
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        params.put("netId", netId);
+        params.put("locId", locId);
+        List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Value orgInfo = record.get("orgInfo");
+            Organization organization = BuildOrganizationEntity.buildOrganization(orgInfo);
+            Value netInfo = record.get("netInfo");
+            Network network = BuildNetworkEntity.buildNetwork(netInfo);
+            Value locInfo = record.get("locInfo");
+            Location location = BuildLocationEntity.buildLocation(locInfo);
+            network.setLocations(List.of(location));
+            organization.setNetworks(List.of(network));
+            return organization;
+        });
+        return organizations.isEmpty() ? null : organizations.getFirst();
+    }
+
+    /**
+     * Retrieves an organization and its associated practices based on the specified organization ID and practice ID.
+     *
+     * @param orgId  the unique identifier of the organization
+     * @param pracId the unique identifier of the practice
+     * @return an Organization object containing the organization details and its associated practices,
+     * or null if no matching organization is found
+     */
+    @Override
+    public Organization findOrgAndPracByElementId(String orgId, String pracId) {
+        String cypher = cypherLoader.load("get_org_prac_by_id.cypher");
+        log.info("Cypher: {}", cypher);
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        params.put("pracId", pracId);
+        List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Value orgInfo = record.get("orgInfo");
+            Organization organization = BuildOrganizationEntity.buildOrganization(orgInfo);
+            Value pracInfo = record.get("pracInfo");
+            Practitioner practitioner = BuildPractitionerEntity.buildPractitioner(pracInfo);
+            organization.setPractitioners(List.of(practitioner));
+            return organization;
+        });
+        return organizations.isEmpty() ? null : organizations.getFirst();
+    }
+
+    /**
+     * Retrieves an organization along with its associated practices and locations
+     * based on the specified identifiers.
+     *
+     * @param orgId  the unique identifier of the organization
+     * @param pracId the unique identifier of the practice
+     * @param locId  the unique identifier of the location
+     * @return an Organization object containing the details of the organization,
+     * its practices, and locations, or null if no matching organization is found
+     */
+    @Override
+    public Organization findOrgAndPracAndLocByElementId(String orgId, String pracId, String locId) {
+        String cypher = cypherLoader.load("get_org_prac_loc_by_id.cypher");
+        log.info("Cypher: {}", cypher);
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        params.put("pracId", pracId);
+        params.put("locId", locId);
+        List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Value orgInfo = record.get("orgInfo");
+            Organization organization = BuildOrganizationEntity.buildOrganization(orgInfo);
+            Value pracInfo = record.get("pracInfo");
+            Practitioner practitioner = BuildPractitionerEntity.buildPractitioner(pracInfo);
+            Value locInfo = record.get("locInfo");
+            Location location = BuildLocationEntity.buildLocation(locInfo);
+            practitioner.setLocations(List.of(location));
+            organization.setPractitioners(List.of(practitioner));
+            return organization;
+        });
+        return organizations.isEmpty() ? null : organizations.getFirst();
+    }
+
+    /**
+     * Retrieves an organization along with its associated practices and networks
+     * based on the specified organization ID, practice ID, and network ID.
+     *
+     * @param orgId  the unique identifier of the organization
+     * @param pracId the unique identifier of the practice
+     * @param netId  the unique identifier of the network
+     * @return an Organization object containing the details of the organization,
+     * its practices, and networks, or null if no matching organization is found
+     */
+    @Override
+    public Organization findOrgAndPracAndNetByElementId(String orgId, String pracId, String netId) {
+        String cypher = cypherLoader.load("get_org_prac_net_by_id.cypher");
+        log.info("Cypher: {}", cypher);
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        params.put("pracId", pracId);
+        params.put("netId", netId);
+        List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Value orgInfo = record.get("orgInfo");
+            Organization organization = BuildOrganizationEntity.buildOrganization(orgInfo);
+            Value pracInfo = record.get("pracInfo");
+            Practitioner practitioner = BuildPractitionerEntity.buildPractitioner(pracInfo);
+            Value netInfo = record.get("netInfo");
+            Network network = BuildNetworkEntity.buildNetwork(netInfo);
+            practitioner.setNetworks(List.of(network));
+            organization.setPractitioners(List.of(practitioner));
+            return organization;
+        });
+        return organizations.isEmpty() ? null : organizations.getFirst();
+    }
+
+    /**
+     * Retrieves an organization along with its associated practices, networks, and locations
+     * based on the provided identifiers.
+     *
+     * @param orgId  the unique identifier of the organization
+     * @param pracId the unique identifier of the practice
+     * @param netId  the unique identifier of the network
+     * @param locId  the unique identifier of the location
+     * @return an Organization object containing the organization details, practices, networks,
+     * and locations, or null if no matching organization is found
+     */
+    @Override
+    public Organization findOrgAndPracAndNetAndLocByElementId(String orgId, String pracId, String netId, String locId) {
+        String cypher = cypherLoader.load("get_org_prac_net_loc_by_id.cypher");
+        log.info("Cypher: {}", cypher);
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        params.put("pracId", pracId);
+        params.put("netId", netId);
+        params.put("locId", locId);
+        List<Organization> organizations = queryExecutor.executeReadQuery(cypher, params, record -> {
+            Value orgInfo = record.get("orgInfo");
+            Organization organization = BuildOrganizationEntity.buildOrganization(orgInfo);
+            Value pracInfo = record.get("pracInfo");
+            Practitioner practitioner = BuildPractitionerEntity.buildPractitioner(pracInfo);
+            Value netInfo = record.get("netInfo");
+            Network network = BuildNetworkEntity.buildNetwork(netInfo);
+            Value locInfo = record.get("locInfo");
+            Location location = BuildLocationEntity.buildLocation(locInfo);
+            network.setLocations(List.of(location));
+            practitioner.setNetworks(List.of(network));
+            organization.setPractitioners(List.of(practitioner));
+            return organization;
+        });
+        return organizations.isEmpty() ? null : organizations.getFirst();
+    }
+
 
     /**
      * Maps the results of a Neo4j Cypher query to a list of Organization objects.

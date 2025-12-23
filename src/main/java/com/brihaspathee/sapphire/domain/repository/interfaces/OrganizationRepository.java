@@ -28,6 +28,92 @@ public interface OrganizationRepository {
     List<Organization> findByCode(String code);
 
     /**
+     * Retrieves an organization based on the provided unique element ID.
+     *
+     * @param elementId the unique identifier of the organization element to be retrieved
+     * @return an Organization object that corresponds to the specified element ID,
+     *         or null if no organization matches the given ID
+     */
+    Organization findOrganizationByElementId(String elementId);
+
+    /**
+     * Retrieves the organization and its associated networks based on the specified organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param netId the unique identifier of the network
+     * @return an Organization object containing the organization details and its associated networks
+     */
+    Organization findOrgAndNetByElementId(String orgId, String netId);
+
+    /**
+     * Retrieves an organization and its associated locations based on the provided organization ID and location ID.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param locId the unique identifier of the location
+     * @return an Organization object containing the details of the organization and its associated locations,
+     *         or null if no matching organization is found
+     */
+    Organization findOrgAndLocByElementId(String orgId, String locId);
+
+    /**
+     * Retrieves the organization, its associated networks, and locations based on the specified identifiers.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param netId the unique identifier of the network
+     * @param locId the unique identifier of the location
+     * @return an Organization object containing the details of the organization, its networks, and locations,
+     *         or null if no matching organization is found
+     */
+    Organization findOrgAndNetAndLocByElementId(String orgId, String netId, String locId);
+
+    /**
+     * Retrieves an organization and its associated practices based on the specified organization ID and practice ID.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param pracId the unique identifier of the practice
+     * @return an Organization object containing the organization details and its associated practices,
+     *         or null if no matching organization is found
+     */
+    Organization findOrgAndPracByElementId(String orgId, String pracId);
+
+    /**
+     * Retrieves an organization along with its associated practices and locations
+     * based on the specified identifiers.
+     *
+     * @param orgId  the unique identifier of the organization
+     * @param pracId the unique identifier of the practice
+     * @param locId  the unique identifier of the location
+     * @return an Organization object containing the details of the organization,
+     *         its practices, and locations, or null if no matching organization is found
+     */
+    Organization findOrgAndPracAndLocByElementId(String orgId, String pracId, String locId);
+
+    /**
+     * Retrieves an organization along with its associated practices and networks
+     * based on the specified organization ID, practice ID, and network ID.
+     *
+     * @param orgId  the unique identifier of the organization
+     * @param pracId the unique identifier of the practice
+     * @param netId  the unique identifier of the network
+     * @return an Organization object containing the details of the organization,
+     *         its practices, and networks, or null if no matching organization is found
+     */
+    Organization findOrgAndPracAndNetByElementId(String orgId, String pracId, String netId);
+
+    /**
+     * Retrieves an organization along with its associated practices, networks, and locations
+     * based on the provided identifiers.
+     *
+     * @param orgId the unique identifier of the organization
+     * @param pracId the unique identifier of the practice
+     * @param netId the unique identifier of the network
+     * @param locId the unique identifier of the location
+     * @return an Organization object containing the organization details, practices, networks,
+     *         and locations, or null if no matching organization is found
+     */
+    Organization findOrgAndPracAndNetAndLocByElementId(String orgId, String pracId, String netId, String locId);
+
+    /**
      * Retrieves a list of all organizations.
      *
      * @return a list of Organization objects representing all organizations in the repository
@@ -99,21 +185,4 @@ public interface OrganizationRepository {
      */
     Organization createOrganization(OrganizationDto organizationDto);
 
-    /**
-     * Retrieves an organization based on the provided unique element ID.
-     *
-     * @param elementId the unique identifier of the organization element to be retrieved
-     * @return an Organization object that corresponds to the specified element ID,
-     *         or null if no organization matches the given ID
-     */
-    Organization findOrganizationByElementId(String elementId);
-
-    /**
-     * Retrieves the organization and its associated networks based on the specified organization ID and network ID.
-     *
-     * @param orgId the unique identifier of the organization
-     * @param netId the unique identifier of the network
-     * @return an Organization object containing the organization details and its associated networks
-     */
-    Organization findOrgAndNetByElementId(String orgId, String netId);
 }

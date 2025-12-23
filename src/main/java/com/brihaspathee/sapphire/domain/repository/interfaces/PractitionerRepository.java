@@ -26,15 +26,6 @@ public interface PractitionerRepository {
     Practitioner findPractitionerByCode(String code);
 
     /**
-     * Retrieves a list of practitioners based on the specified search criteria.
-     *
-     * @param practitionerSearchRequest the search request containing the criteria
-     *                                   for filtering practitioners, such as identifiers or other attributes
-     * @return a list of Practitioner objects that match the provided search criteria
-     */
-    List<Practitioner> findPractitioners(PractitionerSearchRequest practitionerSearchRequest);
-
-    /**
      * Retrieves a Practitioner entity based on the provided practitioner ID.
      *
      * @param practitionerId the unique identifier of the practitioner to be retrieved
@@ -50,5 +41,35 @@ public interface PractitionerRepository {
      * @return the Practitioner object corresponding to the specified practitioner ID and network ID,
      *         or null if no matching practitioner is found
      */
-    Practitioner findPractitionerByNetId(String practitionerId, String netId);
+    Practitioner findPracAndNetByElementId(String practitionerId, String netId);
+
+    /**
+     * Retrieves a Practitioner entity based on the provided practitioner ID and location ID.
+     *
+     * @param pracId the unique identifier of the practitioner
+     * @param locId the unique identifier of the location associated with the practitioner
+     * @return the Practitioner object matching the specified organization ID and location ID,
+     *         or null if no matching practitioner is found
+     */
+    Practitioner findPracAndLocByElementId(String pracId, String locId);
+
+    /**
+     * Retrieves a Practitioner entity based on the provided practitioner ID, network ID, and location ID.
+     *
+     * @param pracId the unique identifier of the practitioner
+     * @param netId the unique identifier of the network associated with the practitioner
+     * @param locId the unique identifier of the location associated with the practitioner
+     * @return the Practitioner object matching the specified organization ID, network ID, and location ID,
+     *         or null if no matching practitioner is found
+     */
+    Practitioner findPracAndNetAndLocByElementId(String pracId, String netId, String locId);
+
+    /**
+     * Retrieves a list of practitioners based on the specified search criteria.
+     *
+     * @param practitionerSearchRequest the search request containing the criteria
+     *                                   for filtering practitioners, such as identifiers or other attributes
+     * @return a list of Practitioner objects that match the provided search criteria
+     */
+    List<Practitioner> findPractitioners(PractitionerSearchRequest practitionerSearchRequest);
 }

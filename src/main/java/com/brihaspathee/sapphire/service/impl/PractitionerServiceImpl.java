@@ -56,6 +56,66 @@ public class PractitionerServiceImpl implements PractitionerService {
     }
 
     /**
+     * Retrieves the details of a practitioner based on the provided practitioner ID.
+     *
+     * @param practitionerId the unique identifier of the practitioner whose details are to be retrieved
+     * @return an instance of {@code PractitionerDto} containing the details of the practitioner
+     */
+    @Override
+    public PractitionerDto getPractitionerById(String practitionerId) {
+        Practitioner practitioner = practitionerRepository.findPractitionerById(practitionerId);
+        log.info("Practitioner in service: {}", practitioner);
+        for (Identifier identifier : practitioner.getIdentifiers()) {
+            log.info("Practitioner Identifier: {}", identifier);
+            log.info("Practitioner Identifier Value: {}", identifier.getValue());
+        }
+        return practitionerMapper.toPractitionerDto(practitioner);
+    }
+
+    /**
+     * Retrieves information about a practitioner and network based on their respective element IDs.
+     *
+     * @param pracId the unique identifier for the practitioner
+     * @param netId  the unique identifier for the network
+     * @return an instance of {@code PractitionerDto} containing the details of the associated
+     * practitioner and network, or {@code null} if not found
+     */
+    @Override
+    public PractitionerDto getPracAndNetByElementId(String pracId, String netId) {
+        Practitioner practitioner = practitionerRepository.findPracAndNetByElementId(pracId, netId);
+        return practitionerMapper.toPractitionerDto(practitioner);
+    }
+
+    /**
+     * Retrieves a practitioner's details and location information based on the provided practitioner ID and location ID.
+     *
+     * @param pracId the unique identifier for the practitioner
+     * @param locId  the unique identifier for the location
+     * @return an instance of {@code PractitionerDto} containing the practitioner's details and associated location information,
+     * or {@code null} if no matching record is found
+     */
+    @Override
+    public PractitionerDto getPracAndLocByElementId(String pracId, String locId) {
+        Practitioner practitioner = practitionerRepository.findPracAndLocByElementId(pracId, locId);
+        return practitionerMapper.toPractitionerDto(practitioner);
+    }
+
+    /**
+     * Retrieves information about a practitioner, network, and location based on their respective element IDs.
+     *
+     * @param pracId the unique identifier for the practitioner
+     * @param netId  the unique identifier for the network
+     * @param locId  the unique identifier for the location
+     * @return an instance of {@code PractitionerDto} containing the details of the practitioner,
+     * network, and location, or {@code null} if no matching record is found
+     */
+    @Override
+    public PractitionerDto getPracAndNetAndLocByElementId(String pracId, String netId, String locId) {
+        Practitioner practitioner = practitionerRepository.findPracAndNetAndLocByElementId(pracId, netId, locId);
+        return practitionerMapper.toPractitionerDto(practitioner);
+    }
+
+    /**
      * Retrieves a list of practitioners based on the provided search criteria.
      *
      * @param practitionerSearchRequest the search request containing criteria such as identifiers
@@ -73,40 +133,5 @@ public class PractitionerServiceImpl implements PractitionerService {
                 .build();
     }
 
-    /**
-     * Retrieves the details of a practitioner based on the provided practitioner ID.
-     *
-     * @param practitionerId the unique identifier of the practitioner whose details are to be retrieved
-     * @return an instance of {@code PractitionerDto} containing the details of the practitioner
-     */
-    @Override
-    public PractitionerDto getPractitionerById(String practitionerId) {
-        Practitioner practitioner = practitionerRepository.findPractitionerById(practitionerId);
-        log.info("Practitioner in service: {}", practitioner);
-        for (Identifier identifier : practitioner.getIdentifiers()) {
-            log.info("Practitioner Identifier: {}", identifier);
-            log.info("Practitioner Identifier Value: {}", identifier.getValue());
-        }
-        return practitionerMapper.toPractitionerDto(practitioner);
-    }
 
-//    /**
-//     * Converts a {@link Practitioner} entity into a {@link PractitionerDto}.
-//     *
-//     * @param practitioner the Practitioner entity to be converted
-//     * @return a PractitionerDto containing the mapped fields from the Practitioner entity
-//     */
-//    private PractitionerDto toPractitionerDto(Practitioner practitioner) {
-//        PractitionerDto practitionerDto = PractitionerDto.builder().build();
-//        practitionerDto.setElementId(practitioner.getElementId());
-//        practitionerDto.setFirstName(practitioner.getFirstName());
-//        practitionerDto.setLastName(practitioner.getLastName());
-//        practitionerDto.setMiddleName(practitioner.getMiddleName());
-//        practitionerDto.setBirthDate(practitioner.getBirthDate());
-//        practitionerDto.setGender(practitioner.getGender());
-//        practitionerDto.setAltFirstName(practitioner.getAltFirstName());
-//        practitionerDto.setAltMiddleName(practitioner.getAltMiddleName());
-//        practitionerDto.setAltLastName(practitioner.getAltLastName());
-//        return practitionerDto;
-//    }
 }

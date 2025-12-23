@@ -26,6 +26,100 @@ public interface OrganizationService {
     OrganizationDto getOrganizationByCode(String code);
 
     /**
+     * Retrieves the details of an organization based on the provided element ID.
+     *
+     * @param orgId the unique identifier of the element associated with the organization
+     * @return an instance of {@code OrganizationDto} containing the details of the
+     *         organization that corresponds to the specified element ID, or {@code null}
+     *         if no such organization exists
+     */
+    OrganizationDto getOrganizationByElementId(String orgId);
+
+    /**
+     * Retrieves the organization details along with its associated network information
+     * based on the provided organization ID and network ID.
+     *
+     * @param orgId the unique identifier of the organization for which the details are being retrieved
+     * @param netId the unique identifier of the network associated with the specified organization
+     * @return an instance of {@code OrganizationDto} containing the details of the organization,
+     *         including its associated network information
+     */
+    OrganizationDto getOrgAndNetByElementId(String orgId, String netId);
+
+    /**
+     * Retrieves the organization details along with its associated location information
+     * based on the provided organization ID and location ID.
+     *
+     * @param orgId the unique identifier of the organization for which the details are being retrieved
+     * @param locId the unique identifier of the location associated with the specified organization
+     * @return an instance of {@code OrganizationDto} containing the details of the organization,
+     *         including its associated location information, or {@code null} if no such organization exists
+     */
+    OrganizationDto getOrgAndLocByElementId(String orgId, String locId);
+
+    /**
+     * Retrieves the organization details, including its network and location information,
+     * based on the provided organization ID, network ID, and location ID.
+     *
+     * @param orgId the unique identifier of the organization for which details are being retrieved
+     * @param netId the unique identifier of the network associated with the specified organization
+     * @param locId the unique identifier of the location associated with the specified organization
+     * @return an instance of {@code OrganizationDto} containing the details of the organization,
+     *         including its associated network and location information, or {@code null} if
+     *         no such organization exists
+     */
+    OrganizationDto getOrgAndNetAndLocByElementId(String orgId, String netId, String locId);
+
+    /**
+     * Retrieves the organization details along with its associated practice information
+     * based on the provided organization ID and practice ID.
+     *
+     * @param orgId the unique identifier of the organization for which the details are being retrieved
+     * @param pracId the unique identifier of the practice associated with the specified organization
+     * @return an instance of {@code OrganizationDto} containing the details of the organization,
+     *         including its associated practice information, or {@code null} if no such organization exists
+     */
+    OrganizationDto getOrgAndPracByElementId(String orgId, String pracId);
+
+    /**
+     * Retrieves the organization details, including its associated practices and locations,
+     * based on the provided organization ID, practice ID, and location ID.
+     *
+     * @param orgId the unique identifier of the organization for which details are being retrieved
+     * @param pracId the unique identifier of the practice associated with the specified organization
+     * @param locId the unique identifier of the location associated with the specified organization
+     * @return an instance of {@code OrganizationDto} containing the details of the organization,
+     *         including its associated practices and locations, or {@code null} if no such organization exists
+     */
+    OrganizationDto getOrgAndPracAndLocByElementId(String orgId, String pracId, String locId);
+
+    /**
+     * Retrieves the details of an organization, including its associated practices
+     * and networks, based on the provided organization ID, practice ID, and network ID.
+     *
+     * @param orgId the unique identifier of the organization for which the details are being retrieved
+     * @param pracId the unique identifier of the practice associated with the specified organization
+     * @param netId the unique identifier of the network associated with the specified organization
+     * @return an instance of {@code OrganizationDto} containing the details of the organization,
+     *         including its associated practices and networks, or {@code null} if no such organization exists
+     */
+    OrganizationDto getOrgAndPracAndNetByElementId(String orgId, String pracId, String netId);
+
+    /**
+     * Retrieves the details of an organization, including its associated practices, networks,
+     * and locations, based on the provided organization ID, practice ID, network ID, and location ID.
+     *
+     * @param orgId the unique identifier of the organization for which the details are being retrieved
+     * @param pracId the unique identifier of the practice associated with the specified organization
+     * @param netId the unique identifier of the network associated with the specified organization
+     * @param locId the unique identifier of the location associated with the specified organization
+     * @return an instance of {@code OrganizationDto} containing the details of the organization,
+     *         including its associated practices, networks, and locations, or {@code null} if no such
+     *         organization exists
+     */
+    OrganizationDto getOrgAndPracAndNetAndLocByElementId(String orgId, String pracId, String netId, String locId);
+
+    /**
      * Inserts a new organization or updates an existing one based on the provided organization details.
      *
      * @param organizationDto an instance of {@code OrganizationDto} containing the details of the organization
@@ -98,25 +192,4 @@ public interface OrganizationService {
      *         including its associated locations and networks
      */
     OrganizationDto getOrganizationLocationNetworks(String orgId, String locId);
-
-    /**
-     * Retrieves the details of an organization based on the provided element ID.
-     *
-     * @param orgId the unique identifier of the element associated with the organization
-     * @return an instance of {@code OrganizationDto} containing the details of the
-     *         organization that corresponds to the specified element ID, or {@code null}
-     *         if no such organization exists
-     */
-    OrganizationDto getOrganizationByElementId(String orgId);
-
-    /**
-     * Retrieves the organization details along with its associated network information
-     * based on the provided organization ID and network ID.
-     *
-     * @param orgId the unique identifier of the organization for which the details are being retrieved
-     * @param netId the unique identifier of the network associated with the specified organization
-     * @return an instance of {@code OrganizationDto} containing the details of the organization,
-     *         including its associated network information
-     */
-    OrganizationDto getOrgAndNetByElementId(String orgId, String netId);
 }

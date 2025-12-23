@@ -42,6 +42,48 @@ public interface PractitionerAPI {
     ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerById(@PathVariable(name = "pracId") String practitionerId);
 
     /**
+     * Retrieves the details of a practitioner and associated network based on the provided IDs.
+     *
+     * @param practitionerId the unique identifier of the practitioner to be retrieved
+     * @param netId the unique identifier of the network associated with the practitioner
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates a PractitionerDto,
+     *         representing the details of the requested practitioner
+     */
+    @GetMapping("/{pracId}/network/{netId}")
+    ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerAndNetById(@PathVariable(name = "pracId") String practitionerId,
+                                                                                    @PathVariable(name = "netId") String netId);
+
+    /**
+     * Retrieves the details of a practitioner along with the associated location information
+     * based on the provided practitioner and location IDs.
+     *
+     * @param practitionerId the unique identifier of the practitioner to be retrieved
+     * @param locId the unique identifier of the location associated with the practitioner
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates
+     *         a PractitionerDto, representing the details of the requested practitioner
+     *         along with associated location details
+     */
+    @GetMapping("/{pracId}/location/{locId}")
+    ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerAndLocById(@PathVariable(name = "pracId") String practitionerId,
+                                                                                    @PathVariable(name = "locId") String locId);
+
+    /**
+     * Retrieves the details of a practitioner, including associated network and location information,
+     * based on the provided practitioner, network, and location IDs.
+     *
+     * @param practitionerId the unique identifier of the practitioner to be retrieved
+     * @param netId the unique identifier of the network associated with the practitioner
+     * @param locId the unique identifier of the location associated with the practitioner
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates
+     *         a PractitionerDto, representing the details of the requested practitioner
+     *         along with associated network and location details
+     */
+    @GetMapping("/{pracId}/network/{netId}/location/{locId}")
+    ResponseEntity<SapphireAPIResponse<PractitionerDto>> getPractitionerAndNetAndLocById(@PathVariable(name = "pracId") String practitionerId,
+                                                                                         @PathVariable(name = "netId") String netId,
+                                                                                         @PathVariable(name = "locId") String locId);
+
+    /**
      * Retrieves a list of practitioners based on the search criteria provided in the request.
      *
      * @param practitionerSearchRequest the request object containing search criteria such as
