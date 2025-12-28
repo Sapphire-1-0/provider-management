@@ -1,9 +1,6 @@
 package com.brihaspathee.sapphire.domain.repository.util;
 
-import com.brihaspathee.sapphire.domain.entity.Identifier;
-import com.brihaspathee.sapphire.domain.entity.Organization;
-import com.brihaspathee.sapphire.domain.entity.Practitioner;
-import com.brihaspathee.sapphire.domain.entity.Qualification;
+import com.brihaspathee.sapphire.domain.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
@@ -47,6 +44,20 @@ public class BuildOrganizationEntity {
         List<Node> qualNodes = orgDetails.get("qualifications").asList(Value::asNode);
         List<Qualification> qualifications = BuilderUtil.buildQualifications(qualNodes);
         organization.setQualifications(qualifications);
+        List<Value> networks = orgDetails.get("networks").asList(v->v);
+        for (Value network : networks) {
+            Network net = BuildNetworkEntity.buildNetwork(network);
+            List<Value> locations = network.get("locations").asList(v->v);
+            if (locations != null && !locations.isEmpty()) {
+                List<Location> locList = new ArrayList<>();
+                for (Value location : locations) {
+                    Location loc = BuildLocationEntity.buildLocation(location);
+                    locList.add(loc);
+                }
+                net.setLocations(locList);
+            }
+
+        }
         return organization;
     }
 
@@ -69,7 +80,7 @@ public class BuildOrganizationEntity {
         return Organization.builder()
                 .elementId(orgNode.elementId())
                 .name(orgNode.get("name").asString())
-                .aliasName(orgNode.get("alias").asString())
+                .aliasName(orgNode.get("aliasName").asString())
                 .type(orgNode.get("type").asString())
                 .atypical(orgNode.get("atypical").asBoolean())
                 .capitated(orgNode.get("capitated").asBoolean())

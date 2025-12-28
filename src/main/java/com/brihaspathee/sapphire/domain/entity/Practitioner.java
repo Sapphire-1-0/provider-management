@@ -120,22 +120,29 @@ public class Practitioner {
     private List<Qualification> qualifications;
 
     /**
-     * Represents the list of networks associated with the practitioner.
-     * Each network in the list contains specific information such as
-     * unique identifier, network code, network name, and type
-     * (e.g., HNET network or vendor network). This property facilitates
-     * the management and classification of healthcare or service
-     * networks relevant to the practitioner within the application.
+     * Represents a collection of organizations with which the practitioner has a contracted relationship.
+     * These organizations might function as partners or entities where the practitioner
+     * has formal agreements to provide services.
+     * This property allows tracking of contractual associations relevant to the practitioner.
+     */
+    private List<Organization> contractedOrgs;
+
+    /**
+     * Represents a collection of networks associated with a practitioner.
+     * Each network in the list provides detailed information such as its
+     * element ID, code, name, association with products, business lines,
+     * and geographic locations. Networks may also contain additional
+     * metadata regarding their types (e.g., health network or vendor network)
+     * and service-related roles and offerings.
      */
     private List<Network> networks;
 
     /**
-     * Represents the list of locations associated with a practitioner.
-     * Each location in the list provides detailed information such as
-     * name, address, city, state, ZIP code, county, county FIPS, and
-     * associated networks or network service information. This property
-     * allows for managing and tracking multiple practice locations for
-     * a practitioner within the application.
+     * Represents a collection of locations associated with the practitioner.
+     * Each location contains detailed information such as identifiers, address details,
+     * networks, and service-related roles or limitations. This property facilitates
+     * the management and identification of multiple locations connected to the practitioner
+     * and supports various operations like geographic and service-level classification.
      */
     private List<Location> locations;
 

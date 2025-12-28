@@ -14,38 +14,51 @@
               "identifiers": [
                 {
                   "identifierType": "PPG_ID",
-                  "identifierValue": "MS0912"
+                  "identifierValue": "PPG00001"
                 },
                 {
                   "identifierType": "NPI",
-                  "identifierValue": "235625546"
+                  "identifierValue": "1234567890"
                 }
               ]
             },
             "expectedOrganizationList" : {
               "organizationList": [
                 {
-                  "name": "St.Joseph Hospital",
-                  "aliasName": "St.Joseph Hospital",
-                  "description": "St.Joseph Hospital",
+                  "name": "River Valley Medical Partners",
+                  "aliasName": "River Valley Partners",
                   "type": "PPG",
                   "atypical": false,
                   "capitated": false,
-                  "pcpPractitionerRequired": true,
+                  "pcpPractitionerRequired": false,
                   "identifiers": [
                     {
-                      "value": "235625546",
+                      "value": "1234567890",
                       "type": "NPI",
-                      "startDate": "2019-01-01"
+                      "startDate": "2020-01-01",
+                      "endDate": "4000-01-01"
                     },
                     {
-                      "value": "43-5343234",
+                      "value": "111111111",
                       "type": "TIN",
-                      "legalName": "Kaptured Inc"
+                      "legalName": "River Valley Medical Partners Legal Entity"
                     },
                     {
-                      "value": "FL34634359",
+                      "value": "100001",
                       "type": "MEDICARE_ID"
+                    },
+                    {
+                      "value": "2000001",
+                      "state": "CA",
+                      "type": "MEDICAID_ID",
+                      "startDate": "2019-01-01",
+                      "endDate": "4000-01-01"
+                    },
+                    {
+                      "value": "D1234567",
+                      "type": "DEA_NUMBER",
+                      "startDate": "2018-01-01",
+                      "endDate": "4000-01-01"
                     }
                   ]
                 }
@@ -64,7 +77,7 @@
             "testCaseDescription": "Find networks for organization",
             "exceptionExpected": false,
             "httpStatusCode": "200",
-            "organizationCode": "MGCX6OROA9LFTCX",
+            "organizationCode": "RVMP1234567890",
             "orgSearchRequest": {
               "identifiers": [
                 {
@@ -80,27 +93,40 @@
             "expectedOrganizationList" : {
               "organizationList": [
                 {
-                  "name": "St.Joseph Hospital",
-                  "aliasName": "St.Joseph Hospital",
-                  "description": "St.Joseph Hospital",
+                  "name": "River Valley Medical Partners",
+                  "aliasName": "River Valley Partners",
                   "type": "PPG",
                   "atypical": false,
                   "capitated": false,
-                  "pcpPractitionerRequired": true,
+                  "pcpPractitionerRequired": false,
                   "identifiers": [
                     {
-                      "value": "235625546",
+                      "value": "1234567890",
                       "type": "NPI",
-                      "startDate": "2019-01-01"
+                      "startDate": "2020-01-01",
+                      "endDate": "4000-01-01"
                     },
                     {
-                      "value": "43-5343234",
+                      "value": "111111111",
                       "type": "TIN",
-                      "legalName": "Kaptured Inc"
+                      "legalName": "River Valley Medical Partners Legal Entity"
                     },
                     {
-                      "value": "FL34634359",
+                      "value": "100001",
                       "type": "MEDICARE_ID"
+                    },
+                    {
+                      "value": "2000001",
+                      "state": "CA",
+                      "type": "MEDICAID_ID",
+                      "startDate": "2019-01-01",
+                      "endDate": "4000-01-01"
+                    },
+                    {
+                      "value": "D1234567",
+                      "type": "DEA_NUMBER",
+                      "startDate": "2018-01-01",
+                      "endDate": "4000-01-01"
                     }
                   ]
                 }
@@ -119,7 +145,7 @@
             "testCaseDescription": "Find network and locations for organization",
             "exceptionExpected": false,
             "httpStatusCode": "200",
-            "organizationCode": "MGCX6OROA9LFTCX",
+            "organizationCode": "RVMP1234567890",
             "orgSearchRequest": {
               "identifiers": [
                 {
@@ -132,31 +158,44 @@
                 }
               ]
             },
-            "networkCode": "3258",
+            "networkCode": "2650",
             "expectedOrganizationList" : {
               "organizationList": [
                 {
-                  "name": "St.Joseph Hospital",
-                  "aliasName": "St.Joseph Hospital",
-                  "description": "St.Joseph Hospital",
+                  "name": "River Valley Medical Partners",
+                  "aliasName": "River Valley Partners",
                   "type": "PPG",
                   "atypical": false,
                   "capitated": false,
-                  "pcpPractitionerRequired": true,
+                  "pcpPractitionerRequired": false,
                   "identifiers": [
                     {
-                      "value": "235625546",
+                      "value": "1234567890",
                       "type": "NPI",
-                      "startDate": "2019-01-01"
+                      "startDate": "2020-01-01",
+                      "endDate": "4000-01-01"
                     },
                     {
-                      "value": "43-5343234",
+                      "value": "111111111",
                       "type": "TIN",
-                      "legalName": "Kaptured Inc"
+                      "legalName": "River Valley Medical Partners Legal Entity"
                     },
                     {
-                      "value": "FL34634359",
+                      "value": "100001",
                       "type": "MEDICARE_ID"
+                    },
+                    {
+                      "value": "2000001",
+                      "state": "CA",
+                      "type": "MEDICAID_ID",
+                      "startDate": "2019-01-01",
+                      "endDate": "4000-01-01"
+                    },
+                    {
+                      "value": "D1234567",
+                      "type": "DEA_NUMBER",
+                      "startDate": "2018-01-01",
+                      "endDate": "4000-01-01"
                     }
                   ]
                 }
@@ -175,7 +214,7 @@
             "testCaseDescription": "Find networks for organization",
             "exceptionExpected": false,
             "httpStatusCode": "200",
-            "organizationCode": "MGCX6OROA9LFTCX",
+            "organizationCode": "RVMP1234567890",
             "orgSearchRequest": {
               "identifiers": [
                 {
@@ -191,27 +230,40 @@
             "expectedOrganizationList" : {
               "organizationList": [
                 {
-                  "name": "St.Joseph Hospital",
-                  "aliasName": "St.Joseph Hospital",
-                  "description": "St.Joseph Hospital",
+                  "name": "River Valley Medical Partners",
+                  "aliasName": "River Valley Partners",
                   "type": "PPG",
                   "atypical": false,
                   "capitated": false,
-                  "pcpPractitionerRequired": true,
+                  "pcpPractitionerRequired": false,
                   "identifiers": [
                     {
-                      "value": "235625546",
+                      "value": "1234567890",
                       "type": "NPI",
-                      "startDate": "2019-01-01"
+                      "startDate": "2020-01-01",
+                      "endDate": "4000-01-01"
                     },
                     {
-                      "value": "43-5343234",
+                      "value": "111111111",
                       "type": "TIN",
-                      "legalName": "Kaptured Inc"
+                      "legalName": "River Valley Medical Partners Legal Entity"
                     },
                     {
-                      "value": "FL34634359",
+                      "value": "100001",
                       "type": "MEDICARE_ID"
+                    },
+                    {
+                      "value": "2000001",
+                      "state": "CA",
+                      "type": "MEDICAID_ID",
+                      "startDate": "2019-01-01",
+                      "endDate": "4000-01-01"
+                    },
+                    {
+                      "value": "D1234567",
+                      "type": "DEA_NUMBER",
+                      "startDate": "2018-01-01",
+                      "endDate": "4000-01-01"
                     }
                   ]
                 }
@@ -230,7 +282,7 @@
             "testCaseDescription": "Find network and locations for organization",
             "exceptionExpected": false,
             "httpStatusCode": "200",
-            "organizationCode": "MGCX6OROA9LFTCX",
+            "organizationCode": "RVMP1234567890",
             "orgSearchRequest": {
               "identifiers": [
                 {
@@ -243,31 +295,44 @@
                 }
               ]
             },
-            "locationName": "Lone Star Family Health Center",
+            "locationName": "River Valley Clinic 1",
             "expectedOrganizationList" : {
               "organizationList": [
                 {
-                  "name": "St.Joseph Hospital",
-                  "aliasName": "St.Joseph Hospital",
-                  "description": "St.Joseph Hospital",
+                  "name": "River Valley Medical Partners",
+                  "aliasName": "River Valley Partners",
                   "type": "PPG",
                   "atypical": false,
                   "capitated": false,
-                  "pcpPractitionerRequired": true,
+                  "pcpPractitionerRequired": false,
                   "identifiers": [
                     {
-                      "value": "235625546",
+                      "value": "1234567890",
                       "type": "NPI",
-                      "startDate": "2019-01-01"
+                      "startDate": "2020-01-01",
+                      "endDate": "4000-01-01"
                     },
                     {
-                      "value": "43-5343234",
+                      "value": "111111111",
                       "type": "TIN",
-                      "legalName": "Kaptured Inc"
+                      "legalName": "River Valley Medical Partners Legal Entity"
                     },
                     {
-                      "value": "FL34634359",
+                      "value": "100001",
                       "type": "MEDICARE_ID"
+                    },
+                    {
+                      "value": "2000001",
+                      "state": "CA",
+                      "type": "MEDICAID_ID",
+                      "startDate": "2019-01-01",
+                      "endDate": "4000-01-01"
+                    },
+                    {
+                      "value": "D1234567",
+                      "type": "DEA_NUMBER",
+                      "startDate": "2018-01-01",
+                      "endDate": "4000-01-01"
                     }
                   ]
                 }

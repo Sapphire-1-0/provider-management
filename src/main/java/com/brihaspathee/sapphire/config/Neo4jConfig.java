@@ -1,5 +1,7 @@
 package com.brihaspathee.sapphire.config;
 
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * Package Name: com.brihaspathee.sapphire.config
  * To change this template use File | Settings | File and Code Template
  */
+@Slf4j
 @Configuration
 public class Neo4jConfig {
 
@@ -68,6 +71,11 @@ public class Neo4jConfig {
     @Bean
     public String neo4jDatabase() {
         return database;
+    }
+
+    @PostConstruct
+    public void logDatabaseName() {
+        log.info("Connecting to Neo4j database: {}", database);
     }
 
 

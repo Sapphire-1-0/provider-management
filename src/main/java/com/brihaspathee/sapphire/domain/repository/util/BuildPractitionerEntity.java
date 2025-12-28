@@ -1,8 +1,6 @@
 package com.brihaspathee.sapphire.domain.repository.util;
 
-import com.brihaspathee.sapphire.domain.entity.Identifier;
-import com.brihaspathee.sapphire.domain.entity.Practitioner;
-import com.brihaspathee.sapphire.domain.entity.Qualification;
+import com.brihaspathee.sapphire.domain.entity.*;
 import com.brihaspathee.sapphire.model.web.IdentifierInfo;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +42,34 @@ public class BuildPractitionerEntity {
         List<Node> qualNodes = pracDetails.get("qualifications").asList(Value::asNode);
         List<Qualification> qualifications = BuilderUtil.buildQualifications(qualNodes);
         practitioner.setQualifications(qualifications);
+        List<Value> contractedOrgs = pracInfo.get("roleInstanceDetails").asList(v->v);
+        if (contractedOrgs!=null && !contractedOrgs.isEmpty()){
+            List<Organization> organizations = new ArrayList<>();
+            for (Value contractedOrg: contractedOrgs){
+                Node orgNode = contractedOrg.get("org").asNode();
+                Organization organization = BuildOrganizationEntity.buildOrganization(orgNode);
+                List<Value> networkValues = contractedOrg.get("networks").asList(v->v);
+                if (networkValues!=null && !networkValues.isEmpty()){
+                    List<Network> networks = new ArrayList<>();
+                    for (Value networkValue: networkValues){
+                        Network network = BuildNetworkEntity.buildNetwork(networkValue);
+                        List<Value> locationValues = networkValue.get("locations").asList(v->v);
+                        if (locationValues != null && !locationValues.isEmpty()){
+                            List<Location> locations = new ArrayList<>();
+                            for (Value locationValue: locationValues){
+                                Location location = BuildLocationEntity.buildLocation(locationValue);
+                                locations.add(location);
+                            }
+                            network.setLocations(locations);
+                        }
+                        networks.add(network);
+                    }
+                    organization.setNetworks(networks);
+                }
+                organizations.add(organization);
+            }
+            practitioner.setContractedOrgs(organizations);
+        }
         return practitioner;
     }
 
