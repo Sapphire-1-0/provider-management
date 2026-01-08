@@ -96,4 +96,18 @@ public interface PractitionerAPI {
     ResponseEntity<SapphireAPIResponse<PractitionerList>> getPractitioners(
             @RequestBody PractitionerSearchRequest practitionerSearchRequest);
 
+
+    /**
+     * Creates a new practitioner in the system.
+     *
+     * @param practitionerDto the data transfer object containing the details
+     *                        of the practitioner to be created, such as personal
+     *                        information, identifiers, and qualifications.
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates
+     *         a PractitonerDto object indicating the result of the create operation,
+     *         such as success or failure.
+     */
+    @PostMapping("/upsert")
+    ResponseEntity<SapphireAPIResponse<PractitionerDto>> createPractitioner(@RequestBody PractitionerDto practitionerDto);
+
 }

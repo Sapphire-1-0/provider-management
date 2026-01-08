@@ -1,6 +1,7 @@
 package com.brihaspathee.sapphire.domain.repository.interfaces;
 
 import com.brihaspathee.sapphire.domain.entity.Practitioner;
+import com.brihaspathee.sapphire.model.PractitionerDto;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
 
 import java.util.List;
@@ -72,4 +73,13 @@ public interface PractitionerRepository {
      * @return a list of Practitioner objects that match the provided search criteria
      */
     List<Practitioner> findPractitioners(PractitionerSearchRequest practitionerSearchRequest);
+
+    /**
+     * Creates a new practitioner in the system using the provided data.
+     *
+     * @param practitionerDto the DTO containing practitioner details such as
+     *                        element ID, code, name, birth date, gender,
+     *                        identifiers, and qualifications
+     */
+    void createPractitioner(PractitionerDto practitionerDto);
 }

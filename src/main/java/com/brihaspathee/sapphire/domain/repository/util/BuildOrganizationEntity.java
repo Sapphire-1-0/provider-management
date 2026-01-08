@@ -80,6 +80,7 @@ public class BuildOrganizationEntity {
         return Organization.builder()
                 .elementId(orgNode.elementId())
                 .name(orgNode.get("name").asString())
+                .code(orgNode.get("code").asString())
                 .aliasName(orgNode.get("aliasName").asString())
                 .type(orgNode.get("type").asString())
                 .atypical(orgNode.get("atypical").asBoolean())

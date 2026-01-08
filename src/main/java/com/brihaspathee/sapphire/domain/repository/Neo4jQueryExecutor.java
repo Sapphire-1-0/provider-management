@@ -95,7 +95,10 @@ public class Neo4jQueryExecutor {
      */
     public void executeWriteQuery(String cypher, Map<String, Object> parameters){
         try (Session session = driver.session(SessionConfig.forDatabase(database))) {
-            session.executeWrite(tx -> tx.run(cypher, parameters));
+            session.executeWrite(tx -> {
+                tx.run(cypher, parameters).consume();
+                return null;
+            });
         }
     }
 

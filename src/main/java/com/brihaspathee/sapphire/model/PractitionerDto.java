@@ -1,6 +1,5 @@
 package com.brihaspathee.sapphire.model;
 
-import com.brihaspathee.sapphire.model.web.IdentifierInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -113,6 +112,15 @@ public class PractitionerDto {
      * within the system for professional or regulatory purposes.
      */
     private List<QualificationDto> qualifications;
+
+    /**
+     * Represents a list of organizations with which the practitioner is contracted.
+     * This variable is used to store and manage details about the organizations
+     * that maintain a formal contractual relationship with the practitioner.
+     * Each organization in the list provides information such as name, type,
+     * identifiers, qualifications, networks, and associated practitioners or locations.
+     */
+    private List<OrganizationDto> contractedOrganizations;
 
     /**
      * Returns a string representation of the PractitionerDto object.

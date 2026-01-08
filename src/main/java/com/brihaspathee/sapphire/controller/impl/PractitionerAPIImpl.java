@@ -89,6 +89,34 @@ public class PractitionerAPIImpl implements PractitionerAPI {
     }
 
     /**
+     * Creates a new practitioner in the system.
+     *
+     * @param practitionerDto the data transfer object containing the details
+     *                        of the practitioner to be created, such as personal
+     *                        information, identifiers, and qualifications.
+     * @return a ResponseEntity containing a SapphireAPIResponse that encapsulates
+     * a String message indicating the result of the create operation,
+     * such as success or failure.
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<PractitionerDto>> createPractitioner(PractitionerDto practitionerDto) {
+        practitionerService.createPractitioner(practitionerDto);
+        SapphireAPIResponse<PractitionerDto> apiResponse =
+                SapphireAPIResponse.<PractitionerDto>builder()
+                        .statusCode(201)
+                        .status(HttpStatus.CREATED)
+                        .message("Practitioner Retrieved successfully")
+                        .response(PractitionerDto.builder()
+                                .code("123456")
+                                .build())
+                        .timestamp(LocalDateTime.now())
+                        .reason("Practitioner Retrieved successfully")
+                        .developerMessage("Practitioner Retrieved successfully")
+                        .build();
+        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+    }
+
+    /**
      * Retrieves a practitioner based on the provided practitioner ID.
      *
      * @param practitionerId the unique identifier of the practitioner to be retrieved

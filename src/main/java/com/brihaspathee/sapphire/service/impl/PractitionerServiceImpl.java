@@ -133,5 +133,18 @@ public class PractitionerServiceImpl implements PractitionerService {
                 .build();
     }
 
+    /**
+     * Creates a new practitioner in the system with the provided details.
+     *
+     * @param practitionerDto an instance of {@code PractitionerDto} containing
+     *                        the details of the practitioner to be created.
+     *                        This includes attributes such as personal information,
+     *                        identifiers, and qualifications.
+     */
+    @Override
+    public void createPractitioner(PractitionerDto practitionerDto) {
+        practitionerRepository.createPractitioner(practitionerDto);
+    }
+
 
 }

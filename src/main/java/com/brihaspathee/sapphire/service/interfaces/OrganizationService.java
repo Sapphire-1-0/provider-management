@@ -192,4 +192,15 @@ public interface OrganizationService {
      *         including its associated locations and networks
      */
     OrganizationDto getOrganizationLocationNetworks(String orgId, String locId);
+
+    /**
+     * Creates a new organization based on the provided organization details.
+     *
+     * @param organizationDto an instance of {@code OrganizationDto} containing the details of the organization
+     *                        to be created, including its identifiers, name, type, and associated information
+     *                        such as locations and networks.
+     * @return an instance of {@code OrganizationDto} representing the newly created organization, including
+     *         its identifier and any additional generated information.
+     */
+    OrganizationDto createOrganization(OrganizationDto organizationDto);
 }

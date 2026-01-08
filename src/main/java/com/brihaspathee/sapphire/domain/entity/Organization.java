@@ -29,6 +29,15 @@ public class Organization {
     private String elementId;
 
     /**
+     * Represents a code that is associated with the organization.
+     *
+     * This code serves as a unique identifier or categorization mechanism for the
+     * organization and may be used in various system processes where an
+     * organization-specific code is required.
+     */
+    private String code;
+
+    /**
      * Represents the official name of the organization.
      * This property serves as the primary identifier for the organization in terms of its name.
      */

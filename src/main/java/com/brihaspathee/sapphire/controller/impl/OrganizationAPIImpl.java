@@ -68,14 +68,13 @@ public class OrganizationAPIImpl implements OrganizationAPI {
     @Override
     public ResponseEntity<SapphireAPIResponse<OrganizationDto>> createOrganization(
             OrganizationDto organizationDto) {
+        OrganizationDto createdOrganizationDto = organizationService.createOrganization(organizationDto);
         SapphireAPIResponse<OrganizationDto> apiResponse =
                 SapphireAPIResponse.<OrganizationDto>builder()
                         .statusCode(201)
                         .status(HttpStatus.CREATED)
                         .message("Organization created successfully")
-                        .response(OrganizationDto.builder()
-                                .name("Test Organization")
-                                .build())
+                        .response(createdOrganizationDto)
                         .timestamp(LocalDateTime.now())
                         .reason("Organization created successfully")
                         .developerMessage("Organization created successfully")

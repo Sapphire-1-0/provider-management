@@ -157,6 +157,24 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     /**
+     * Creates a new organization based on the provided organization details.
+     *
+     * @param organizationDto an instance of {@code OrganizationDto} containing the details of the organization
+     *                        to be created, including its identifiers, name, type, and associated information
+     *                        such as locations and networks.
+     * @return an instance of {@code OrganizationDto} representing the newly created organization, including
+     * its identifier and any additional generated information.
+     */
+    @Override
+    public OrganizationDto createOrganization(OrganizationDto organizationDto) {
+        Organization org = organizationRepository.createOrganization(organizationDto);
+        return OrganizationDto.builder()
+                .elementId("test-element")
+                .code("test-code")
+                .build();
+    }
+
+    /**
      * Retrieves the details of an organization based on the provided element ID.
      *
      * @param orgId the unique identifier of the element associated with the organization

@@ -6,14 +6,16 @@ import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository
 import com.brihaspathee.sapphire.domain.repository.interfaces.NetworkRepository;
 import com.brihaspathee.sapphire.domain.repository.interfaces.OrganizationRepository;
 import com.brihaspathee.sapphire.domain.repository.util.*;
-import com.brihaspathee.sapphire.model.OrganizationDto;
+import com.brihaspathee.sapphire.model.*;
 import com.brihaspathee.sapphire.utils.CypherLoader;
+import com.brihaspathee.sapphire.utils.RandomStringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.Node;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -196,33 +198,42 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
     public Organization createOrganization(OrganizationDto organizationDto) {
         String cypher = cypherLoader.load("create_organization.cypher");
         Map<String, Object> params = new HashMap<>();
+        params.put("code", RandomStringUtil.generateRandomAlphaNumeric());
         params.put("name", organizationDto.getName());
+        params.put("description", organizationDto.getDescription());
+        params.put("type", organizationDto.getType());
+        params.put("aliasName", organizationDto.getAliasName());
 
-        Map<String, String> tin = new HashMap<>();
-        tin.put("type", "TIN");
-        tin.put("value", "TestTIN");
-        tin.put("legalName", "TestLegalName");
+        // NPI identifiers
+        params.put("npiList", List.of(
+                Map.of("value", "1234567890", "startDate", LocalDate.of(2020,1,1)),
+                Map.of("value", "9876543210") // second NPI optional dates
+        ));
 
-        Map<String, String> npi = new HashMap<>();
-        tin.put("type", "NPI");
-        tin.put("value", "TestNPI");
+        // Medicare identifiers
+        params.put("medicareList", List.of(
+                Map.of("value", "MCR12345", "startDate", LocalDate.of(2022,6,1))
+        ));
 
-        Map<String, String> medicaidId = new HashMap<>();
-        tin.put("type", "MEDICAID_ID");
-        tin.put("value", "TestMedicaidId");
-        tin.put("state", "FL");
+        // Medicaid identifiers (state-specific)
+        params.put("medicaidList", List.of(
+                Map.of("value", "MD123", "state", "NY", "startDate", LocalDate.of(2021,1,1)),
+                Map.of("value", "MD456", "state", "CA")
+        ));
 
-        List<Map<String, String>> identifiers = Arrays.asList(tin, npi, medicaidId);
-        params.put("identifiers", identifiers);
+        if(organizationDto.getContacts() != null && !organizationDto.getContacts().isEmpty()){
+            // Practitioner Organization Contacts
+            List<Map<String, Object>> contacts = getContacts(organizationDto.getContacts());
+            params.put("contacts", contacts);
+        }
 
-        queryExecutor.executeReadQuery(cypher, params,
-                record -> {
-                    Node node = record.get("o").asNode();
-                    log.info("Organization name: {}", node.get("name").asString());
-                    log.info("Element id of the Org:{}", node.elementId());
-//                    Organization org = BuilderUtil.buildOrganization(node);
-                    return node;
-                });
+        // Networks
+        if (organizationDto.getNetworks() != null && !organizationDto.getNetworks().isEmpty()){
+            List<Map<String, Object>> networks = getNetworks(organizationDto.getNetworks());
+            params.put("networks", networks);
+        }
+
+        queryExecutor.executeWriteQuery(cypher, params);
 
         return null;
     }
@@ -479,7 +490,106 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         });
     }
 
+    /**
+     * Converts a list of ContactDto objects into a list of maps containing information about contacts,
+     * including their use, address, telecom details, and personal details.
+     *
+     * @param contactList a list of ContactDto objects containing contact information to be transformed
+     * @return a list of maps where each map represents a contact, and contains nested maps for address,
+     * telecom, and person details
+     */
+    private List<Map<String, Object>> getContacts(List<ContactDto> contactList) {
+        List<Map<String, Object>> contacts = new ArrayList<>();
+        for (ContactDto contact : contactList) {
+            Map<String, Object> contactMap = new HashMap<>();
+            contactMap.put("use", contact.getUse());
+            Map<String, Object> address = new HashMap<>();
+            address.put("streetAddress", contact.getAddress().getStreetAddress());
+            address.put("secondaryAddress", contact.getAddress().getSecondaryAddress());
+            address.put("city", contact.getAddress().getCity());
+            address.put("state", contact.getAddress().getState());
+            address.put("zipCode", contact.getAddress().getZipCode());
+            address.put("county", contact.getAddress().getCounty());
+            address.put("countyFIPS", contact.getAddress().getCountyFIPS());
+            contactMap.put("address", address);
 
+            Map<String, Object> telecom = new HashMap<>();
+            telecom.put("phone", contact.getTelecom().getPhone());
+            telecom.put("tty", contact.getTelecom().getTty());
+            telecom.put("afterHoursNumber", contact.getTelecom().getAfterHoursNumber());
+            telecom.put("fax", contact.getTelecom().getFax());
+            telecom.put("email", contact.getTelecom().getEmail());
+            telecom.put("website", contact.getTelecom().getWebsite());
+            contactMap.put("telecom", telecom);
 
+            Map<String, Object> person = new HashMap<>();
+            person.put("firstName", contact.getPerson().getFirstName());
+            person.put("lastName", contact.getPerson().getLastName());
+            person.put("middleName", contact.getPerson().getMiddleName());
+            person.put("title", contact.getPerson().getTitle());
+            contactMap.put("person", person);
+            contacts.add(contactMap);
+        }
+        return contacts;
+    }
+
+    /**
+     * Converts a list of NetworkDto objects into a list of maps,
+     * where each map represents a network and its associated details.
+     * Each map contains the element ID of the network and, if available,
+     * the transformed list of associated location details.
+     *
+     * @param networkList a list of NetworkDto objects representing the networks
+     *                    to be transformed
+     * @return a list of maps where each map contains the transformed details of
+     *         a network and its associated locations
+     */
+    private List<Map<String, Object>> getNetworks(List<NetworkDto> networkList) {
+        List<Map<String, Object>> networks = new ArrayList<>();
+        for (NetworkDto network: networkList){
+            Map<String, Object> netMap = new HashMap<>();
+            netMap.put("elementId", network.getElementId());
+            if (network.getLocations() != null && !network.getLocations().isEmpty()){
+                List<Map<String, Object>> locations = getLocations(network.getLocations());
+                netMap.put("locations", locations);
+            }
+            networks.add(netMap);
+        }
+        return networks;
+    }
+
+    /**
+     * This method transforms a list of LocationDto objects into a list of maps
+     * containing location and network span details. Each map represents a location
+     * with its associated properties, such as elementId and role location serves
+     * (if any).
+     *
+     * @param networkList a list of LocationDto objects representing the locations
+     *                    to be transformed
+     * @return a list of maps where each map contains the transformed details of
+     *         a location and its associated network spans
+     */
+    private List<Map<String, Object>> getLocations(List<LocationDto> networkList) {
+        List<Map<String, Object>> locations = new ArrayList<>();
+        for (LocationDto location: networkList){
+            Map<String, Object> locMap = new HashMap<>();
+            locMap.put("elementId", location.getElementId());
+            if (location.getLocationNetwork() != null){
+                LocationNetworkDto locationNetworkDto = location.getLocationNetwork();
+                if (locationNetworkDto.getSpans() != null && !locationNetworkDto.getSpans().isEmpty()){
+                    List<Map<String, Object>> roleLocationServes = new ArrayList<>();
+                    for (LocationNetworkSpanDto span: locationNetworkDto.getSpans()){
+                        Map<String, Object> rlsMap = new HashMap<>();
+                        rlsMap.put("rlsStartDate", span.getStartDate());
+                        rlsMap.put("rlsEndDate", span.getEndDate());
+                        roleLocationServes.add(rlsMap);
+                    }
+                    locMap.put("rls", roleLocationServes);
+                }
+            }
+            locations.add(locMap);
+        }
+        return locations;
+    }
 
 }

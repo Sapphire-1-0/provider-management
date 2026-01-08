@@ -1,38 +1,39 @@
 // ===============================
-// Create Organization
+// Create Practitioner
 // ===============================
 
-CREATE (org:Organization {
+CREATE (p:Practitioner {
   code: $code,
-  name: $name,
-  type: $type
+  firstName: $firstName,
+  lastName: $lastName
 })
-SET org += {
-  aliasName: $aliasName,
-  description: $description
+SET p += {
+  middleName: $middleName,
+  gender: $gender,
+  birthDate: $birthDate
 }
 // ===============================
 // Identifiers
 // ===============================
 
 // NPI
-WITH org
+WITH p
 UNWIND $npiList AS npiMap
 MERGE (npi:NPI:Identifier {value: npiMap.value})
 SET npi += {
   startDate: npiMap.startDate,
   endDate: npiMap.endDate
 }
-MERGE (org)-[:HAS_NPI]->(npi)
+MERGE (p)-[:HAS_NPI]->(npi)
 
 // Medicare
-WITH org
+WITH p
 UNWIND $medicareList as medicareMap
 MERGE (medicareId: MedicareID: Identifier {value: medicareMap.value})
-MERGE (org)-[:HAS_MEDICARE_ID]->(medicareId)
+MERGE (p)-[:HAS_MEDICARE_ID]->(medicareId)
 
 // MedicaidID
-WITH org
+WITH p
 UNWIND $medicaidList as medicaidMap
 MERGE (medicaid: MedicaidID: Identifier {
     value: medicaidMap.value,
@@ -42,17 +43,51 @@ SET medicaid += {
   startDate: medicaidMap.startDate,
   endDate: medicaidMap.endDate
 }
-MERGE (org)-[:HAS_MEDICAID_ID]->(medicaid)
+MERGE (p)-[:HAS_MEDICAID_ID]->(medicaid)
+
+// ===============================
+// Organization + RoleInstance + Contacts
+// ===============================
+
+WITH DISTINCT p
+UNWIND coalesce($organizationList, []) AS orgMap
+
+// Match to an existing Organization
+MATCH (org:Organization)
+WHERE elementId(org) = orgMap.elementId
+
+// RoleInstance (one per Practitioner-Organization pair)
+CREATE (ri:RoleInstance)
+MERGE (p)-[:HAS_ROLE]->(ri)
+MERGE (ri)-[:CONTRACTED_BY]->(org)
+
+// Specialties
+with DISTINCT p, ri, orgMap
+UNWIND coalesce(orgMap.specialties, []) AS specialtyMap
+CREATE (s:Specialty {
+  specialty: specialtyMap.specialty,
+  taxonomy: specialtyMap.taxonomy
+})
+MERGE (ri)-[:SPECIALIZES]->(s)
+
+// Conditionally create PRIMARY edge
+FOREACH (_ IN CASE
+  WHEN specialtyMap.isPrimary = true OR specialtyMap.isPrimary = 'Y'
+  THEN [1]
+  ELSE []
+END |
+  MERGE (ri)-[:PRIMARY_SPECIALTY_IS]->(s)
+)
 
 // Contacts
-WITH DISTINCT org
-UNWIND $contacts AS contactMap
+with DISTINCT p, ri, orgMap
+UNWIND coalesce(orgMap.contacts, []) AS contactMap
 CREATE (c:Contact {
   use: contactMap.use
 })
-MERGE (org)-[:HAS_ORGANIZATION_CONTACT]->(c)
+MERGE (ri)-[:HAS_PRACTITIONER_CONTACT]->(c)
 // Contact Address
-WITH DISTINCT org, c, contactMap
+WITH DISTINCT p, ri, orgMap, c, contactMap
 FOREACH (_ IN CASE WHEN contactMap.address IS NOT NULL THEN [1] ELSE [] END |
   CREATE (a:Address {
     streetAddress: contactMap.address.streetAddress,
@@ -65,7 +100,7 @@ FOREACH (_ IN CASE WHEN contactMap.address IS NOT NULL THEN [1] ELSE [] END |
   MERGE (c)-[:ADDRESS_IS]->(a)
 )
 // Contact Telecoms
-WITH DISTINCT org, c, contactMap
+WITH DISTINCT p, ri, orgMap, c, contactMap
 FOREACH (_ IN CASE WHEN contactMap.telecom IS NOT NULL THEN [1] ELSE [] END |
   CREATE (t:Telecom {
     phone: contactMap.telecom.phone,
@@ -78,7 +113,7 @@ FOREACH (_ IN CASE WHEN contactMap.telecom IS NOT NULL THEN [1] ELSE [] END |
   MERGE (c)-[:TELECOM_IS]->(t)
 )
 // Contact Person
-WITH DISTINCT org, c, contactMap
+WITH DISTINCT p, ri, orgMap, c, contactMap
 FOREACH (_ IN CASE WHEN contactMap.person IS NOT NULL THEN [1] ELSE [] END |
   CREATE (per:Person {
     firstName: contactMap.person.firstName,
@@ -88,17 +123,9 @@ FOREACH (_ IN CASE WHEN contactMap.person IS NOT NULL THEN [1] ELSE [] END |
   MERGE (c)-[:PERSON_IS]->(per)
 )
 
-// ===============================
-// Create RoleInstance
-// ===============================
-
-WITH DISTINCT org
-CREATE (ri:RoleInstance)
-MERGE (org)-[:HAS_ROLE]->(ri)
-
 // Networks
-with DISTINCT org, ri
-UNWIND coalesce($networks, []) AS networkMap
+with DISTINCT p, ri, orgMap
+UNWIND coalesce(orgMap.networks, []) AS networkMap
 // Match to existing Network
 MATCH (n:Network)
 WHERE elementId(n) = networkMap.elementId
@@ -107,7 +134,7 @@ MERGE (ri)-[:SERVES]->(rn)
 MERGE (rn)-[:NETWORK_IS]->(n)
 
 // Network Locations
-with DISTINCT org, ri, networkMap, rn, n
+with DISTINCT p, ri, orgMap, networkMap, rn, n
 UNWIND coalesce(networkMap.locations, []) AS locationMap
 // Match to existing Location
 MATCH (loc:Location)
@@ -117,9 +144,9 @@ MERGE (ri)-[:PERFORMED_AT]->(rl)
 MERGE (rl)-[:LOCATION_IS]->(loc)
 
 // Role Location Serves
-with DISTINCT org, ri, networkMap, rn, n, locationMap, rl
+with DISTINCT p, ri, orgMap, networkMap, rn, n, locationMap, rl
 UNWIND coalesce(locationMap.rls, []) AS rlsMap
 MERGE (rl)-[:ROLE_LOCATION_SERVES {
   startDate: rlsMap.rlsStartDate,
   endDate: rlsMap.rlsEndDate}]->(rn)
-RETURN org
+RETURN p

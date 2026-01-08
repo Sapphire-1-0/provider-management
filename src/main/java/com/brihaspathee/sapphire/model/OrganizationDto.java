@@ -27,6 +27,13 @@ public class OrganizationDto {
     @Schema(description = "Unique identifier for an element within the system",
             example = "123456789")
     private String elementId;
+
+    /**
+     * Represents the code associated with the organization.
+     * This variable is used to store a unique identifier or reference
+     * for the organization within the system.
+     */
+    private String code;
     /**
      * Represents the name of the organization.
      * This variable is used to store the name of an organization
@@ -106,6 +113,23 @@ public class OrganizationDto {
      * that belong to or are related to the organization in various contexts.
      */
     private List<LocationDto> locations;
+
+    /**
+     * Represents a collection of contacts associated with the organization.
+     * This variable stores a list of ContactDto objects, where each ContactDto
+     * encapsulates details about a specific contact, such as their use, address,
+     * telecom information, and personal details. It is used to manage and organize
+     * contact-related data for the organization.
+     */
+    private List<ContactDto> contacts;
+
+    /**
+     * Represents a list of specialties associated with an organization.
+     * This variable holds a collection of SpecialtyDto objects, which provide
+     * detailed information about each specialty, including its unique identifier,
+     * taxonomy code, and area of practice or expertise.
+     */
+    private List<SpecialtyDto> specialties;
 
     @Override
     public String toString() {
