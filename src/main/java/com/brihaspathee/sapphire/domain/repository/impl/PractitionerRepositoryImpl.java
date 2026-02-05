@@ -6,6 +6,7 @@ import com.brihaspathee.sapphire.domain.repository.interfaces.PractitionerReposi
 import com.brihaspathee.sapphire.domain.repository.util.*;
 import com.brihaspathee.sapphire.model.*;
 import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
+import com.brihaspathee.sapphire.service.interfaces.RefDataValidationService;
 import com.brihaspathee.sapphire.utils.CypherLoader;
 import com.brihaspathee.sapphire.utils.RandomStringUtil;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +16,7 @@ import org.neo4j.driver.types.Node;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created in Intellij IDEA
@@ -53,6 +51,14 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
      * queries used in database operations by the repository implementation.
      */
     private final CypherLoader cypherLoader;
+
+    /**
+     * An instance of {@code RefDataValidationService} used to validate reference data.
+     * This service performs validation checks on provided reference data to ensure
+     * adherence to specific rules or constraints. It helps in identifying errors,
+     * warnings, and issues related to the validity of the data.
+     */
+    private final RefDataValidationService refDataValidationService;
 
     /**
      * Retrieves a Practitioner entity based on the provided practitioner code.
@@ -207,22 +213,95 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
         params.put("lastName", practitionerDto.getLastName());
         params.put("birthDate", practitionerDto.getBirthDate());
         params.put("gender", practitionerDto.getGender());
-        // NPI identifiers
-        params.put("npiList", List.of(
-                Map.of("value", "1234567890", "startDate", LocalDate.of(2020,1,1)),
-                Map.of("value", "9876543210") // second NPI optional dates
-        ));
-
-        // Medicare identifiers
-        params.put("medicareList", List.of(
-                Map.of("value", "MCR12345", "startDate", LocalDate.of(2022,6,1))
-        ));
-
-        // Medicaid identifiers (state-specific)
-        params.put("medicaidList", List.of(
-                Map.of("value", "MD123", "state", "NY", "startDate", LocalDate.of(2021,1,1)),
-                Map.of("value", "MD456", "state", "CA")
-        ));
+        Map<String, List<String>> referenceDataValidations = Map.of(
+                "DD_IdentifierType", List.of("NPI", "MCID", "MDID"),
+                "DD_OrganizationType", List.of("HOSP", "PPG", "O")
+        );
+        refDataValidationService.validateRefData(referenceDataValidations);
+        List<IdentifierDto> identifiers = practitionerDto.getIdentifiers();
+        Map<String, List<Map<String,Object>>> identifierMap = DataExtractor.getIdentifiers(identifiers);
+        params.putAll(identifierMap);
+//        if(identifiers != null && !identifiers.isEmpty()){
+//            for (IdentifierDto identifier: identifiers){
+//                switch(identifier.getType()){
+//                    case "NPI":
+//                        Map<String, Object> npiMap = new HashMap<>();
+//                        npiMap.put("value", identifier.getValue());
+//                        npiMap.put("startDate", identifier.getStartDate());
+//                        npiMap.put("endDate",
+//                                Optional.ofNullable(identifier.getEndDate())
+//                                        .orElse(LocalDate.of(4000, 1, 1))
+//                        );
+//                        @SuppressWarnings("unchecked")
+//                        List<Map<String, Object>> npiList =
+//                                (List<Map<String, Object>>) params.computeIfAbsent(
+//                                        "npiList", k -> new ArrayList<>()
+//                                );
+//
+//                        npiList.add(npiMap);
+////                        params.put("npiList", List.of(
+////                                Map.of("value", "1234567890", "startDate", LocalDate.of(2020,1,1)),
+////                                Map.of("value", "9876543210") // second NPI optional dates
+////                        ));
+//                        break;
+//                    case "MEDICARE_ID":
+//                        // Medicare identifiers
+//                        Map<String, Object> medicareIdMap = new HashMap<>();
+//                        medicareIdMap.put("value", identifier.getValue());
+//                        @SuppressWarnings("unchecked")
+//                        List<Map<String, Object>> medicareList =
+//                                (List<Map<String, Object>>) params.computeIfAbsent(
+//                                        "medicareList", k -> new ArrayList<>()
+//                                );
+//
+//                        medicareList.add(medicareIdMap);
+//                        break;
+////                        params.put("medicareList", List.of(
+////                                Map.of("value", "MCR12345", "startDate", LocalDate.of(2022,6,1))
+////                        ));
+//                    case "MEDICAID_ID":
+//                        // Medicaid identifiers (state-specific)
+//                        Map<String, Object> medicaidIdMap = new HashMap<>();
+//                        medicaidIdMap.put("value", identifier.getValue());
+//                        medicaidIdMap.put("state", identifier.getAdditionalProperties().get("state"));
+//                        medicaidIdMap.put("startDate", identifier.getStartDate());
+//                        medicaidIdMap.put("endDate",
+//                                Optional.ofNullable(identifier.getEndDate())
+//                                        .orElse(LocalDate.of(4000, 1, 1))
+//                        );
+//                        @SuppressWarnings("unchecked")
+//                        List<Map<String, Object>> medicaidList =
+//                                (List<Map<String, Object>>) params.computeIfAbsent(
+//                                        "medicaidList", k -> new ArrayList<>()
+//                                );
+//
+//                        medicaidList.add(medicaidIdMap);
+//                        break;
+////                        params.put("medicaidList", List.of(
+////                                Map.of("value", "MD123", "state", "NY", "startDate", LocalDate.of(2021,1,1)),
+////                                Map.of("value", "MD456", "state", "CA")
+////                        ));
+//
+//                }
+//            }
+//
+//        }
+//        // NPI identifiers
+//        params.put("npiList", List.of(
+//                Map.of("value", "1234567890", "startDate", LocalDate.of(2020,1,1)),
+//                Map.of("value", "9876543210") // second NPI optional dates
+//        ));
+//
+//        // Medicare identifiers
+//        params.put("medicareList", List.of(
+//                Map.of("value", "MCR12345", "startDate", LocalDate.of(2022,6,1))
+//        ));
+//
+//        // Medicaid identifiers (state-specific)
+//        params.put("medicaidList", List.of(
+//                Map.of("value", "MD123", "state", "NY", "startDate", LocalDate.of(2021,1,1)),
+//                Map.of("value", "MD456", "state", "CA")
+//        ));
 
         // Contracted Organizations
         List<Map<String, Object>> contractedOrgs = new ArrayList<>();

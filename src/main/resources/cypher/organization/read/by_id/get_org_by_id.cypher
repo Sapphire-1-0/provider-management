@@ -116,12 +116,12 @@ CALL (org, ri) {
       }) AS networks
   }
 
-  RETURN COLLECT(DISTINCT{
+  RETURN {
     identifiers: identifiers,
     qualifications: qualifications,
     contacts: contacts,
     networks: networks
-  }) as orgDetails
+  } as orgDetails
 }
 RETURN {
           org: org,

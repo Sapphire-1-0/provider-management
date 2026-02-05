@@ -45,18 +45,22 @@ public class BuildOrganizationEntity {
         List<Qualification> qualifications = BuilderUtil.buildQualifications(qualNodes);
         organization.setQualifications(qualifications);
         List<Value> networks = orgDetails.get("networks").asList(v->v);
-        for (Value network : networks) {
-            Network net = BuildNetworkEntity.buildNetwork(network);
-            List<Value> locations = network.get("locations").asList(v->v);
-            if (locations != null && !locations.isEmpty()) {
-                List<Location> locList = new ArrayList<>();
-                for (Value location : locations) {
-                    Location loc = BuildLocationEntity.buildLocation(location);
-                    locList.add(loc);
+        if(networks!=null && !networks.isEmpty()){
+            List<Network> networkList = new ArrayList<>();
+            for (Value network : networks) {
+                Network net = BuildNetworkEntity.buildNetwork(network);
+                List<Value> locations = network.get("locations").asList(v->v);
+                if (locations != null && !locations.isEmpty()) {
+                    List<Location> locList = new ArrayList<>();
+                    for (Value location : locations) {
+                        Location loc = BuildLocationEntity.buildLocation(location);
+                        locList.add(loc);
+                    }
+                    net.setLocations(locList);
                 }
-                net.setLocations(locList);
+                networkList.add(net);
             }
-
+            organization.setNetworks(networkList);
         }
         return organization;
     }
