@@ -46,6 +46,61 @@ SET medicaid += {
 MERGE (p)-[:HAS_MEDICAID_ID]->(medicaid)
 
 // ===============================
+// Credentials
+// ===============================
+
+with DISTINCT p
+UNWIND coalesce($credentials, []) AS credentialMap
+CREATE (cred:Credential {
+  type: credentialMap.type,
+  geographyDescription: credentialMap.geographyDescription,
+  FIPS: credentialMap.FIPS,
+  committeeDate: credentialMap.committeeDate,
+  endDate: credentialMap.endDate
+})
+MERGE (p)-[:HAS_CREDENTIALING]->(cred)
+
+// ===============================
+// Languages
+// ===============================
+
+with DISTINCT p
+UNWIND coalesce($languages, []) AS languageMap
+CREATE (lang:Language {
+  value: languageMap.value
+})
+MERGE (p)-[:COMMUNICATES]->(lang)
+
+// ===============================
+// Qualifications
+// ===============================
+
+with DISTINCT p
+UNWIND coalesce($qualifications, []) AS qualificationMap
+CREATE (q:Qualification {
+  type: qualificationMap.type,
+  issuer: qualificationMap.issuer,
+  startDate: qualificationMap.startDate,
+  endDate: qualificationMap.endDate,
+  level: qualificationMap.level,
+  value: qualificationMap.value
+})
+MERGE (p)-[:HAS_QUALIFICATION]->(q)
+
+// ===============================
+// Hospital Privileges
+// ===============================
+
+with DISTINCT p
+UNWIND coalesce($privileges, []) AS privilegeMap
+MATCH (prvOrg:Organization)
+WHERE elementId(prvOrg) = privilegeMap.organizationElementId
+
+MERGE (p)-[:HAS_PRIVILEGE{
+  type: privilegeMap.type
+}]->(prvOrg)
+
+// ===============================
 // Organization + RoleInstance + Contacts
 // ===============================
 
@@ -78,6 +133,28 @@ FOREACH (_ IN CASE
 END |
   MERGE (ri)-[:PRIMARY_SPECIALTY_IS]->(s)
 )
+
+// Disorders
+with DISTINCT p, ri, orgMap
+UNWIND coalesce(orgMap.disorders, []) AS disorderMap
+CREATE (disorder:Disorder {
+  type: disorderMap.type
+})
+MERGE (ri)-[:TREATS_DISORDER]->(disorder)
+
+// Healthcare Services
+with DISTINCT p, ri, orgMap
+UNWIND coalesce(orgMap.healthcareServices, []) AS healthcareServiceMap
+MERGE (hs:HealthcareService {type: healthcareServiceMap.type})
+SET hs += {
+  type: healthcareServiceMap.type,
+  state: healthcareServiceMap.state,
+  servicePopulation: healthcareServiceMap.servicePopulation,
+  startDate: healthcareServiceMap.startDate,
+  endDate: healthcareServiceMap.endDate
+}
+MERGE (ri)-[:OFFERS_SERVICE]->(hs)
+
 
 // Contacts
 with DISTINCT p, ri, orgMap

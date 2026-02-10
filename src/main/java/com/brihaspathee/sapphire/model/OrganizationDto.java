@@ -131,6 +131,28 @@ public class OrganizationDto {
      */
     private List<SpecialtyDto> specialties;
 
+    /**
+     * Represents a list of credentialing information associated with an organization.
+     * This variable is used to store and manage multiple instances of credentialing details
+     * for the organization within the system's context.
+     */
+    private List<CredentialingDto> credentials;
+
+    /**
+     * Represents a collection of healthcare services associated with an organization.
+     * This variable is used to store a list of healthcare service details encapsulated
+     * within HealthcareServiceDto objects. It provides information related to the various
+     * services available, their attributes, and any associated metadata.
+     */
+    private List<HealthcareServiceDto> healthcareServices;
+
+    /**
+     * Represents a list of disorders associated with an organization.
+     * This variable is used to store and manage a collection of disorder
+     * records, each defined by a DisorderDto object.
+     */
+    private List<DisorderDto> disorders;
+
     @Override
     public String toString() {
         return "OrganizationDto{" +

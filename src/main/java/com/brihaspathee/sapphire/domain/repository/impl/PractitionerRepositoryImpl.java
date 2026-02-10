@@ -218,96 +218,42 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
                 "DD_OrganizationType", List.of("HOSP", "PPG", "O")
         );
         refDataValidationService.validateRefData(referenceDataValidations);
+
+        // Identifiers
         List<IdentifierDto> identifiers = practitionerDto.getIdentifiers();
         Map<String, List<Map<String,Object>>> identifierMap = DataExtractor.getIdentifiers(identifiers);
         params.putAll(identifierMap);
-//        if(identifiers != null && !identifiers.isEmpty()){
-//            for (IdentifierDto identifier: identifiers){
-//                switch(identifier.getType()){
-//                    case "NPI":
-//                        Map<String, Object> npiMap = new HashMap<>();
-//                        npiMap.put("value", identifier.getValue());
-//                        npiMap.put("startDate", identifier.getStartDate());
-//                        npiMap.put("endDate",
-//                                Optional.ofNullable(identifier.getEndDate())
-//                                        .orElse(LocalDate.of(4000, 1, 1))
-//                        );
-//                        @SuppressWarnings("unchecked")
-//                        List<Map<String, Object>> npiList =
-//                                (List<Map<String, Object>>) params.computeIfAbsent(
-//                                        "npiList", k -> new ArrayList<>()
-//                                );
-//
-//                        npiList.add(npiMap);
-////                        params.put("npiList", List.of(
-////                                Map.of("value", "1234567890", "startDate", LocalDate.of(2020,1,1)),
-////                                Map.of("value", "9876543210") // second NPI optional dates
-////                        ));
-//                        break;
-//                    case "MEDICARE_ID":
-//                        // Medicare identifiers
-//                        Map<String, Object> medicareIdMap = new HashMap<>();
-//                        medicareIdMap.put("value", identifier.getValue());
-//                        @SuppressWarnings("unchecked")
-//                        List<Map<String, Object>> medicareList =
-//                                (List<Map<String, Object>>) params.computeIfAbsent(
-//                                        "medicareList", k -> new ArrayList<>()
-//                                );
-//
-//                        medicareList.add(medicareIdMap);
-//                        break;
-////                        params.put("medicareList", List.of(
-////                                Map.of("value", "MCR12345", "startDate", LocalDate.of(2022,6,1))
-////                        ));
-//                    case "MEDICAID_ID":
-//                        // Medicaid identifiers (state-specific)
-//                        Map<String, Object> medicaidIdMap = new HashMap<>();
-//                        medicaidIdMap.put("value", identifier.getValue());
-//                        medicaidIdMap.put("state", identifier.getAdditionalProperties().get("state"));
-//                        medicaidIdMap.put("startDate", identifier.getStartDate());
-//                        medicaidIdMap.put("endDate",
-//                                Optional.ofNullable(identifier.getEndDate())
-//                                        .orElse(LocalDate.of(4000, 1, 1))
-//                        );
-//                        @SuppressWarnings("unchecked")
-//                        List<Map<String, Object>> medicaidList =
-//                                (List<Map<String, Object>>) params.computeIfAbsent(
-//                                        "medicaidList", k -> new ArrayList<>()
-//                                );
-//
-//                        medicaidList.add(medicaidIdMap);
-//                        break;
-////                        params.put("medicaidList", List.of(
-////                                Map.of("value", "MD123", "state", "NY", "startDate", LocalDate.of(2021,1,1)),
-////                                Map.of("value", "MD456", "state", "CA")
-////                        ));
-//
-//                }
-//            }
-//
-//        }
-//        // NPI identifiers
-//        params.put("npiList", List.of(
-//                Map.of("value", "1234567890", "startDate", LocalDate.of(2020,1,1)),
-//                Map.of("value", "9876543210") // second NPI optional dates
-//        ));
-//
-//        // Medicare identifiers
-//        params.put("medicareList", List.of(
-//                Map.of("value", "MCR12345", "startDate", LocalDate.of(2022,6,1))
-//        ));
-//
-//        // Medicaid identifiers (state-specific)
-//        params.put("medicaidList", List.of(
-//                Map.of("value", "MD123", "state", "NY", "startDate", LocalDate.of(2021,1,1)),
-//                Map.of("value", "MD456", "state", "CA")
-//        ));
+
+        // Credentials
+        List<Map<String,Object>> creds = getCredentials(practitionerDto.getCredentials());
+        params.put("credentials", creds);
+
+        // Languages
+        List<Map<String,Object>> languages = getLanguages(practitionerDto.getLanguages());
+        params.put("languages", languages);
+
+        // Hospital Privileges
+        List<Map<String,Object>> privileges = getHospitalPrivileges(practitionerDto.getHospitalPrivileges());
+        params.put("privileges", privileges);
+
+        // Qualifications
+        List<Map<String,Object>> qualifications = getQualifications(practitionerDto.getQualifications());
+        params.put("qualifications", qualifications);
 
         // Contracted Organizations
         List<Map<String, Object>> contractedOrgs = new ArrayList<>();
         for (OrganizationDto contractedOrg: practitionerDto.getContractedOrganizations()){
             Map<String, Object> orgMap = new HashMap<>();
             orgMap.put("elementId", contractedOrg.getElementId());
+
+            // Disorders
+            List<Map<String, Object>> disorders = getDisorders(contractedOrg.getDisorders());
+            orgMap.put("disorders", disorders);
+
+            // Healthcare Services
+            List<Map<String, Object>> healthcareServices = getHealthcareServices(contractedOrg.getHealthcareServices());
+            orgMap.put("healthcareServices", healthcareServices);
+
             if(contractedOrg.getContacts() != null && !contractedOrg.getContacts().isEmpty()){
                 // Practitioner Organization Contacts
                 List<Map<String, Object>> contacts = getContacts(contractedOrg.getContacts());
@@ -474,6 +420,185 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
             specialties.add(specialtyMap);
         }
         return specialties;
+    }
+
+    /**
+     * Converts a list of CredentialingDto objects into a structured representation as a list of maps.
+     * Each map contains details about a credential, including specialty, taxonomy code, and primary status.
+     *
+     * @param credentialList the list of CredentialingDto objects to be converted. Each object contains
+     *                    information about a credential, such as associated specialties and their details.
+     * @return a list of maps where each map represents a credential, with keys such as:
+     *         "specialty" (the name of the specialty), "taxonomy" (the taxonomy code),
+     *         and "isPrimary" (a boolean indicating if it is the primary specialty).
+     */
+    private List<Map<String, Object>> getCredentials(List<CredentialingDto> credentialList) {
+        List<Map<String, Object>> credentials = new ArrayList<>();
+        for (CredentialingDto credential: credentialList){
+            Map<String, Object> credentialMap = new HashMap<>();
+            credentialMap.put("type", credential.getCredentialingType());
+            credentialMap.put("geographyDescription", credential.getGeography());
+            credentialMap.put("FIPS", credential.getFips());
+            credentialMap.put("committeeDate", credential.getCommitteeDate());
+            credentialMap.put("endDate", credential.getEndDate());
+            credentials.add(credentialMap);
+        }
+//        Map<String, Object> credentialMap1 = new HashMap<>();
+//        credentialMap1.put("type", "INITIAL");
+//        credentialMap1.put("geographyDescription", "FL");
+//        credentialMap1.put("FIPS", "12");
+//        credentialMap1.put("committeeDate", LocalDate.of(2015, 1, 4));
+//        credentialMap1.put("endDate", LocalDate.of(2019, 12, 31));
+//        credentials.add(credentialMap1);
+//        Map<String, Object> credentialMap2 = new HashMap<>();
+//        credentialMap2.put("type", "RECRED");
+//        credentialMap2.put("geographyDescription", "FL");
+//        credentialMap2.put("FIPS", "12");
+//        credentialMap2.put("committeeDate", LocalDate.of(2020, 1, 1));
+//        credentialMap2.put("endDate", LocalDate.of(2023, 12, 31));
+//        credentials.add(credentialMap2);
+        return credentials;
+    }
+
+    /**
+     * Converts a list of DisorderDto objects into a structured representation as a list of maps.
+     * Each map contains details about a disorder, including its type and related attributes.
+     *
+     * @param disorderList the list of DisorderDto objects to be converted. Each object represents
+     *                     information about a specific disorder or condition.
+     * @return a list of maps where each map represents a disorder. Each map contains key-value pairs
+     *         representing disorder attributes, such as "type" or other specific details.
+     */
+    private List<Map<String, Object>> getDisorders(List<DisorderDto> disorderList) {
+        List<Map<String, Object>> disorders = new ArrayList<>();
+        for (DisorderDto disorder: disorderList){
+            Map<String, Object> disorderMap = new HashMap<>();
+            disorderMap.put("type", disorder.getDisorderType());
+            disorders.add(disorderMap);
+        }
+//        Map<String, Object> disorderMap1 = new HashMap<>();
+//        disorderMap1.put("type", "TEST-DISORDER-1");
+//        disorders.add(disorderMap1);
+//        Map<String, Object> disorderMap2 = new HashMap<>();
+//        disorderMap2.put("type", "TEST-DISORDER-2");
+//        disorders.add(disorderMap2);
+        return disorders;
+    }
+
+    /**
+     * Retrieves a list of healthcare services as maps containing service details.
+     *
+     * @param healthcareServiceList a list of HealthcareServiceDto objects representing the input data
+     *                              for processing the healthcare services.
+     * @return a list of maps where each map represents a healthcare service with key-value pairs
+     *         describing its details.
+     */
+    private List<Map<String, Object>> getHealthcareServices(List<HealthcareServiceDto> healthcareServiceList) {
+        List<Map<String, Object>> healthcareServices = new ArrayList<>();
+        for (HealthcareServiceDto healthcareService: healthcareServiceList){
+            Map<String, Object> healthcareServiceMap = new HashMap<>();
+            healthcareServiceMap.put("type", healthcareService.getHealthcareServiceType());
+            healthcareServiceMap.put("servicePopulation", healthcareService.getServicePopulation());
+            healthcareServiceMap.put("state", healthcareService.getState());
+            healthcareServiceMap.put("startDate", healthcareService.getStartDate());
+            healthcareServiceMap.put("endDate", healthcareService.getEndDate());
+            healthcareServices.add(healthcareServiceMap);
+        }
+//        Map<String, Object> healthcareServiceMap1 = new HashMap<>();
+//        healthcareServiceMap1.put("type", "TEST-HS-1");
+//        healthcareServiceMap1.put("servicePopulation", List.of("TEST-POP-1", "TEST-POP-2"));
+//        healthcareServices.add(healthcareServiceMap1);
+//        Map<String, Object> healthcareServiceMap2 = new HashMap<>();
+//        healthcareServiceMap2.put("type", "TEST-HS-2");
+//        healthcareServices.add(healthcareServiceMap2);
+        return healthcareServices;
+    }
+
+    /**
+     * Retrieves a list of languages along with their associated details.
+     *
+     * @param languageList a list of LanguageDto objects representing the languages to process
+     * @return a list of maps, where each map contains key-value pairs representing the details of a language
+     */
+    private List<Map<String, Object>> getLanguages(List<LanguageDto> languageList) {
+        List<Map<String, Object>> languages = new ArrayList<>();
+        for (LanguageDto language: languageList){
+            Map<String, Object> languageMap = new HashMap<>();
+            languageMap.put("value", language.getValue());
+            languages.add(languageMap);
+        }
+//        Map<String, Object> languageMap1 = new HashMap<>();
+//        languageMap1.put("value", "eng");
+//        languages.add(languageMap1);
+//        Map<String, Object> languageMap2 = new HashMap<>();
+//        languageMap2.put("value", "spa");
+//        languages.add(languageMap2);
+        return languages;
+    }
+
+    /**
+     * Processes the given list of qualifications and generates a list of maps containing
+     * structured information about each qualification, including type, issuer, start date,
+     * end date, level, and value.
+     *
+     * @param qualificationList a list of QualificationDto objects representing the qualifications to be processed
+     * @return a list of maps where each map represents a qualification with related details
+     */
+    private List<Map<String, Object>> getQualifications(List<QualificationDto> qualificationList) {
+        List<Map<String, Object>> qualifications = new ArrayList<>();
+        for (QualificationDto qualification: qualificationList){
+            Map<String, Object> qualificationMap = new HashMap<>();
+            qualificationMap.put("type", qualification.getType());
+            qualificationMap.put("issuer", qualification.getIssuer());
+            qualificationMap.put("startDate", qualification.getStartDate());
+            qualificationMap.put("endDate", qualification.getEndDate());
+            qualificationMap.put("level", qualification.getLevel());
+            qualificationMap.put("value", qualification.getValue());
+            qualifications.add(qualificationMap);
+        }
+//        Map<String, Object> qualificationMap1 = new HashMap<>();
+//        qualificationMap1.put("type", "Qual-1");
+//        qualificationMap1.put("issuer", "Issuer-1");
+//        qualificationMap1.put("startDate", LocalDate.of(2015, 1, 4));
+//        qualificationMap1.put("endDate", LocalDate.of(2019, 12, 31));
+//        qualificationMap1.put("level", List.of("Level-1", "Level-2"));
+//        qualificationMap1.put("value", "value-1");
+//        qualifications.add(qualificationMap1);
+//        Map<String, Object> qualificationMap2 = new HashMap<>();
+//        qualificationMap2.put("type", "Qual-2");
+//        qualificationMap2.put("issuer", "Issuer-2");
+//        qualificationMap2.put("startDate", LocalDate.of(2015, 1, 4));
+//        qualificationMap2.put("endDate", LocalDate.of(2019, 12, 31));
+//        qualificationMap2.put("level", List.of("Level-3", "Level-4"));
+//        qualificationMap2.put("value", "value-2");
+//        qualifications.add(qualificationMap2);
+        return qualifications;
+    }
+
+    /**
+     * Retrieves a list of hospital privileges based on the provided privilege data.
+     * Each privilege is represented as a map containing details such as organization element ID and privilege type.
+     *
+     * @param privilegeList a list of HospitalPrivilegeDto objects containing data needed to determine hospital privileges
+     * @return a list of maps, where each map represents a hospital privilege with specific details (e.g., organization ID, type)
+     */
+    private List<Map<String, Object>> getHospitalPrivileges(List<HospitalPrivilegeDto> privilegeList) {
+        List<Map<String, Object>> privileges = new ArrayList<>();
+        for (HospitalPrivilegeDto privilege: privilegeList){
+            Map<String, Object> privilegeMap = new HashMap<>();
+            privilegeMap.put("organizationElementId", privilege.getOrgElementId());
+            privilegeMap.put("type", privilege.getHospitalPrivilegeType());
+            privileges.add(privilegeMap);
+        }
+//        Map<String, Object> privilegeMap1 = new HashMap<>();
+//        privilegeMap1.put("organizationElementId", "4:584fe225-8704-4f61-b2b6-1cce33b0b662:369");
+//        privilegeMap1.put("type", "ADMIT-PRIVILEGES");
+//        privileges.add(privilegeMap1);
+//        Map<String, Object> privilegeMap2 = new HashMap<>();
+//        privilegeMap2.put("organizationElementId", "4:584fe225-8704-4f61-b2b6-1cce33b0b662:369");
+//        privilegeMap2.put("type", "CONSULT-PRIVILEGES");
+//        privileges.add(privilegeMap2);
+        return privileges;
     }
 
 }

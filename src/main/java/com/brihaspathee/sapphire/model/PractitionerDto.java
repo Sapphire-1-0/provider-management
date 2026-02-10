@@ -123,6 +123,29 @@ public class PractitionerDto {
     private List<OrganizationDto> contractedOrganizations;
 
     /**
+     * Represents a list of credentialing details associated with the practitioner.
+     * This variable is used to manage and store information related to the
+     * credentialing processes, such as type, geography, and relevant dates.
+     */
+    private List<CredentialingDto> credentials;
+
+    /**
+     * Represents the list of languages associated with a practitioner.
+     * This variable is used to store multiple instances of LanguageDto,
+     * each of which provides information about a language including its
+     * unique identifier and value (e.g., code or name).
+     */
+    private List<LanguageDto> languages;
+
+    /**
+     * Represents the list of hospital privileges associated with the practitioner.
+     * Each hospital privilege is encapsulated as an instance of the HospitalPrivilegeDto class
+     * and details the specific types of privileges granted by hospitals, such as admitting,
+     * attending, or consulting privileges.
+     */
+    private List<HospitalPrivilegeDto> hospitalPrivileges;
+
+    /**
      * Returns a string representation of the PractitionerDto object.
      * The string includes the values of the properties such as elementId,
      * firstName, lastName, middleName, birthDate, gender, altFirstName,
