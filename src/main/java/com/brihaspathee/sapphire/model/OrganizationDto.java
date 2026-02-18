@@ -97,6 +97,15 @@ public class OrganizationDto {
     private List<IdentifierDto> identifiers;
 
     /**
+     * Represents the list of qualifications associated with the organization.
+     * Each qualification in the list captures specific details such as type,
+     * issuer, associated taxonomy, applicable state, and validity period.
+     * This variable is used to store and manage a collection of qualifications
+     * that are relevant to the organization within the system.
+     */
+    private List<QualificationDto> qualifications;
+
+    /**
      * Represents a list of network information associated with an organization.
      * Each network is represented by an instance of NetworkDto, which contains attributes
      * such as the network's name, code, and specific classifications or properties.

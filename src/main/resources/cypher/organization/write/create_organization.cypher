@@ -44,7 +44,40 @@ SET medicaid += {
 }
 MERGE (org)-[:HAS_MEDICAID_ID]->(medicaid)
 
+// ===============================
+// Credentials
+// ===============================
+
+with DISTINCT p
+UNWIND coalesce($credentials, []) AS credentialMap
+CREATE (cred:Credential {
+  type: credentialMap.type,
+  geographyDescription: credentialMap.geographyDescription,
+  FIPS: credentialMap.FIPS,
+  committeeDate: credentialMap.committeeDate,
+  endDate: credentialMap.endDate
+})
+MERGE (p)-[:HAS_CREDENTIALING]->(cred)
+
+// ===============================
+// Qualifications
+// ===============================
+
+with DISTINCT p
+UNWIND coalesce($qualifications, []) AS qualificationMap
+CREATE (q:Qualification {
+  type: qualificationMap.type,
+  issuer: qualificationMap.issuer,
+  startDate: qualificationMap.startDate,
+  endDate: qualificationMap.endDate,
+  level: qualificationMap.level,
+  value: qualificationMap.value
+})
+MERGE (p)-[:HAS_QUALIFICATION]->(q)
+
+// ===============================
 // Contacts
+// ===============================
 WITH DISTINCT org
 UNWIND $contacts AS contactMap
 CREATE (c:Contact {
@@ -115,6 +148,16 @@ WHERE elementId(loc) = locationMap.elementId
 CREATE (rl:RoleLocation)
 MERGE (ri)-[:PERFORMED_AT]->(rl)
 MERGE (rl)-[:LOCATION_IS]->(loc)
+
+// Specialties
+with DISTINCT org, ri, networkMap, rn, n, locationMap, rl
+UNWIND coalesce(locationMap.specialties, []) AS specialtyMap
+CREATE (s:Specialty {
+  specialty: specialtyMap.specialty,
+  taxonomy: specialtyMap.taxonomy
+})
+MERGE (ri)-[:SPECIALIZES]->(s)
+MERGE (s)-[:PRACTICED_AT]->(rl)
 
 // Role Location Serves
 with DISTINCT org, ri, networkMap, rn, n, locationMap, rl

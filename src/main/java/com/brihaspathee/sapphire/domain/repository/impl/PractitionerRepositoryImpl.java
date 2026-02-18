@@ -9,6 +9,7 @@ import com.brihaspathee.sapphire.model.web.PractitionerSearchRequest;
 import com.brihaspathee.sapphire.service.interfaces.RefDataValidationService;
 import com.brihaspathee.sapphire.utils.CypherLoader;
 import com.brihaspathee.sapphire.utils.RandomStringUtil;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.Value;
@@ -225,19 +226,19 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
         params.putAll(identifierMap);
 
         // Credentials
-        List<Map<String,Object>> creds = getCredentials(practitionerDto.getCredentials());
+        List<Map<String,Object>> creds = DataExtractor.getCredentials(practitionerDto.getCredentials());
         params.put("credentials", creds);
 
         // Languages
-        List<Map<String,Object>> languages = getLanguages(practitionerDto.getLanguages());
+        List<Map<String,Object>> languages = DataExtractor.getLanguages(practitionerDto.getLanguages());
         params.put("languages", languages);
 
         // Hospital Privileges
-        List<Map<String,Object>> privileges = getHospitalPrivileges(practitionerDto.getHospitalPrivileges());
+        List<Map<String,Object>> privileges = DataExtractor.getHospitalPrivileges(practitionerDto.getHospitalPrivileges());
         params.put("privileges", privileges);
 
         // Qualifications
-        List<Map<String,Object>> qualifications = getQualifications(practitionerDto.getQualifications());
+        List<Map<String,Object>> qualifications = DataExtractor.getQualifications(practitionerDto.getQualifications());
         params.put("qualifications", qualifications);
 
         // Contracted Organizations
@@ -247,26 +248,26 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
             orgMap.put("elementId", contractedOrg.getElementId());
 
             // Disorders
-            List<Map<String, Object>> disorders = getDisorders(contractedOrg.getDisorders());
+            List<Map<String, Object>> disorders = DataExtractor.getDisorders(contractedOrg.getDisorders());
             orgMap.put("disorders", disorders);
 
             // Healthcare Services
-            List<Map<String, Object>> healthcareServices = getHealthcareServices(contractedOrg.getHealthcareServices());
+            List<Map<String, Object>> healthcareServices = DataExtractor.getHealthcareServices(contractedOrg.getHealthcareServices());
             orgMap.put("healthcareServices", healthcareServices);
 
             if(contractedOrg.getContacts() != null && !contractedOrg.getContacts().isEmpty()){
                 // Practitioner Organization Contacts
-                List<Map<String, Object>> contacts = getContacts(contractedOrg.getContacts());
+                List<Map<String, Object>> contacts = DataExtractor.getContacts(contractedOrg.getContacts());
                 orgMap.put("contacts", contacts);
             }
             // Check to see if there are specialties of the practitioner associated with the organization
             if (contractedOrg.getSpecialties() != null && !contractedOrg.getSpecialties().isEmpty()){
-                List<Map<String, Object>> specialties = getSpecialties(contractedOrg.getSpecialties());
+                List<Map<String, Object>> specialties = DataExtractor.getSpecialties(contractedOrg.getSpecialties());
                 orgMap.put("specialties", specialties);
             }
             // Networks
             if (contractedOrg.getNetworks() != null && !contractedOrg.getNetworks().isEmpty()){
-                List<Map<String, Object>> networks = getNetworks(contractedOrg.getNetworks());
+                List<Map<String, Object>> networks = DataExtractor.getNetworks(contractedOrg.getNetworks());
                 orgMap.put("networks", networks);
             }
             contractedOrgs.add(orgMap);
@@ -292,313 +293,4 @@ public class PractitionerRepositoryImpl implements PractitionerRepository {
             return prac;
         });
     }
-
-    /**
-     * Converts a list of ContactDto objects into a list of maps containing structured contact data.
-     * The method processes each contact object to extract details about the usage (use),
-     * address, telecommunications, and personal information and organizes them into
-     * separate maps which are then added to the result list.
-     *
-     * @param contactList the list of ContactDto objects representing contacts. Each object
-     *                    contains details about the contact's usage, address, telecommunications,
-     *                    and personal information.
-     * @return a list of maps where each map represents a contact with its structured details.
-     *         The map includes keys such as "use", "address", "telecom", and "person",
-     *         each containing data extracted from the provided ContactDto objects.
-     */
-    private List<Map<String, Object>> getContacts(List<ContactDto> contactList) {
-        List<Map<String, Object>> contacts = new ArrayList<>();
-        for (ContactDto contact : contactList) {
-            Map<String, Object> contactMap = new HashMap<>();
-            contactMap.put("use", contact.getUse());
-            Map<String, Object> address = new HashMap<>();
-            address.put("streetAddress", contact.getAddress().getStreetAddress());
-            address.put("secondaryAddress", contact.getAddress().getSecondaryAddress());
-            address.put("city", contact.getAddress().getCity());
-            address.put("state", contact.getAddress().getState());
-            address.put("zipCode", contact.getAddress().getZipCode());
-            address.put("county", contact.getAddress().getCounty());
-            address.put("countyFIPS", contact.getAddress().getCountyFIPS());
-            contactMap.put("address", address);
-
-            Map<String, Object> telecom = new HashMap<>();
-            telecom.put("phone", contact.getTelecom().getPhone());
-            telecom.put("tty", contact.getTelecom().getTty());
-            telecom.put("afterHoursNumber", contact.getTelecom().getAfterHoursNumber());
-            telecom.put("fax", contact.getTelecom().getFax());
-            telecom.put("email", contact.getTelecom().getEmail());
-            telecom.put("website", contact.getTelecom().getWebsite());
-            contactMap.put("telecom", telecom);
-
-            Map<String, Object> person = new HashMap<>();
-            person.put("firstName", contact.getPerson().getFirstName());
-            person.put("lastName", contact.getPerson().getLastName());
-            person.put("middleName", contact.getPerson().getMiddleName());
-            person.put("title", contact.getPerson().getTitle());
-            contactMap.put("person", person);
-            contacts.add(contactMap);
-        }
-        return contacts;
-    }
-
-    /**
-     * Converts a list of NetworkDto objects into a structured representation as a list of maps.
-     * Each map contains information about the network, its associated locations, and related data.
-     *
-     * @param networkList the list of NetworkDto objects to be converted. Each object contains data about
-     *                    networks including their element ID, locations, and location networks.
-     * @return a list of maps where each map represents a network and includes keys such as "elementId"
-     *         and "locations". The "locations" key contains a list of maps, each representing a location
-     *         with keys like "elementId" and "rls", where "rls" contains details about role location
-     *         serves including start and end dates.
-     */
-    private List<Map<String, Object>> getNetworks(List<NetworkDto> networkList) {
-        List<Map<String, Object>> networks = new ArrayList<>();
-        for (NetworkDto network: networkList){
-            Map<String, Object> netMap = new HashMap<>();
-            netMap.put("elementId", network.getElementId());
-            if (network.getLocations() != null && !network.getLocations().isEmpty()){
-                List<Map<String, Object>> locations = getLocations(network.getLocations());
-                netMap.put("locations", locations);
-            }
-            networks.add(netMap);
-        }
-        return networks;
-    }
-
-    /**
-     * Converts a list of LocationDto objects into a list of maps containing structured location data.
-     * The method processes each location object to extract details about its element ID, location network,
-     * and spans, and organizes them into a structured format for further use.
-     *
-     * @param networkList the list of LocationDto objects to be converted.
-     *                    Each object contains information about a location and its associated network.
-     * @return a list of maps where each map represents a location, including keys such as "elementId" and "rls".
-     *         The "rls" key contains a list of maps, each representing role location serves with details like
-     *         "rlsStartDate" and "rlsEndDate".
-     */
-    private List<Map<String, Object>> getLocations(List<LocationDto> networkList) {
-        List<Map<String, Object>> locations = new ArrayList<>();
-        for (LocationDto location: networkList){
-            Map<String, Object> locMap = new HashMap<>();
-            locMap.put("elementId", location.getElementId());
-            if (location.getLocationNetwork() != null){
-                LocationNetworkDto locationNetworkDto = location.getLocationNetwork();
-                if (locationNetworkDto.getSpans() != null && !locationNetworkDto.getSpans().isEmpty()){
-                    List<Map<String, Object>> roleLocationServes = new ArrayList<>();
-                    for (LocationNetworkSpanDto span: locationNetworkDto.getSpans()){
-                        Map<String, Object> rlsMap = new HashMap<>();
-                        rlsMap.put("rlsStartDate", span.getStartDate());
-                        rlsMap.put("rlsEndDate", span.getEndDate());
-                        roleLocationServes.add(rlsMap);
-                    }
-                    locMap.put("rls", roleLocationServes);
-                }
-            }
-            locations.add(locMap);
-        }
-        return locations;
-    }
-
-    /**
-     * Converts a list of SpecialtyDto objects into a structured representation as a list of maps.
-     * Each map contains details about the specialty, taxonomy code, and whether it is the primary specialty.
-     *
-     * @param specialtyList the list of SpecialtyDto objects to be converted. Each object contains
-     *                      information about a specialty, including its name, taxonomy code, and primary status.
-     * @return a list of maps where each map represents a specialty. Keys in the map include:
-     *         "specialty" (the name of the specialty), "taxonomy" (the taxonomy code),
-     *         and "isPrimary" (a boolean indicating if it is the primary specialty).
-     */
-    private List<Map<String, Object>> getSpecialties(List<SpecialtyDto> specialtyList) {
-        List<Map<String, Object>> specialties = new ArrayList<>();
-        for (SpecialtyDto specialty: specialtyList){
-            Map<String, Object> specialtyMap = new HashMap<>();
-            specialtyMap.put("specialty", specialty.getSpecialty());
-            specialtyMap.put("taxonomy", specialty.getTaxonomyCode());
-            specialtyMap.put("isPrimary", specialty.getIsPrimary());
-            specialties.add(specialtyMap);
-        }
-        return specialties;
-    }
-
-    /**
-     * Converts a list of CredentialingDto objects into a structured representation as a list of maps.
-     * Each map contains details about a credential, including specialty, taxonomy code, and primary status.
-     *
-     * @param credentialList the list of CredentialingDto objects to be converted. Each object contains
-     *                    information about a credential, such as associated specialties and their details.
-     * @return a list of maps where each map represents a credential, with keys such as:
-     *         "specialty" (the name of the specialty), "taxonomy" (the taxonomy code),
-     *         and "isPrimary" (a boolean indicating if it is the primary specialty).
-     */
-    private List<Map<String, Object>> getCredentials(List<CredentialingDto> credentialList) {
-        List<Map<String, Object>> credentials = new ArrayList<>();
-        for (CredentialingDto credential: credentialList){
-            Map<String, Object> credentialMap = new HashMap<>();
-            credentialMap.put("type", credential.getCredentialingType());
-            credentialMap.put("geographyDescription", credential.getGeography());
-            credentialMap.put("FIPS", credential.getFips());
-            credentialMap.put("committeeDate", credential.getCommitteeDate());
-            credentialMap.put("endDate", credential.getEndDate());
-            credentials.add(credentialMap);
-        }
-//        Map<String, Object> credentialMap1 = new HashMap<>();
-//        credentialMap1.put("type", "INITIAL");
-//        credentialMap1.put("geographyDescription", "FL");
-//        credentialMap1.put("FIPS", "12");
-//        credentialMap1.put("committeeDate", LocalDate.of(2015, 1, 4));
-//        credentialMap1.put("endDate", LocalDate.of(2019, 12, 31));
-//        credentials.add(credentialMap1);
-//        Map<String, Object> credentialMap2 = new HashMap<>();
-//        credentialMap2.put("type", "RECRED");
-//        credentialMap2.put("geographyDescription", "FL");
-//        credentialMap2.put("FIPS", "12");
-//        credentialMap2.put("committeeDate", LocalDate.of(2020, 1, 1));
-//        credentialMap2.put("endDate", LocalDate.of(2023, 12, 31));
-//        credentials.add(credentialMap2);
-        return credentials;
-    }
-
-    /**
-     * Converts a list of DisorderDto objects into a structured representation as a list of maps.
-     * Each map contains details about a disorder, including its type and related attributes.
-     *
-     * @param disorderList the list of DisorderDto objects to be converted. Each object represents
-     *                     information about a specific disorder or condition.
-     * @return a list of maps where each map represents a disorder. Each map contains key-value pairs
-     *         representing disorder attributes, such as "type" or other specific details.
-     */
-    private List<Map<String, Object>> getDisorders(List<DisorderDto> disorderList) {
-        List<Map<String, Object>> disorders = new ArrayList<>();
-        for (DisorderDto disorder: disorderList){
-            Map<String, Object> disorderMap = new HashMap<>();
-            disorderMap.put("type", disorder.getDisorderType());
-            disorders.add(disorderMap);
-        }
-//        Map<String, Object> disorderMap1 = new HashMap<>();
-//        disorderMap1.put("type", "TEST-DISORDER-1");
-//        disorders.add(disorderMap1);
-//        Map<String, Object> disorderMap2 = new HashMap<>();
-//        disorderMap2.put("type", "TEST-DISORDER-2");
-//        disorders.add(disorderMap2);
-        return disorders;
-    }
-
-    /**
-     * Retrieves a list of healthcare services as maps containing service details.
-     *
-     * @param healthcareServiceList a list of HealthcareServiceDto objects representing the input data
-     *                              for processing the healthcare services.
-     * @return a list of maps where each map represents a healthcare service with key-value pairs
-     *         describing its details.
-     */
-    private List<Map<String, Object>> getHealthcareServices(List<HealthcareServiceDto> healthcareServiceList) {
-        List<Map<String, Object>> healthcareServices = new ArrayList<>();
-        for (HealthcareServiceDto healthcareService: healthcareServiceList){
-            Map<String, Object> healthcareServiceMap = new HashMap<>();
-            healthcareServiceMap.put("type", healthcareService.getHealthcareServiceType());
-            healthcareServiceMap.put("servicePopulation", healthcareService.getServicePopulation());
-            healthcareServiceMap.put("state", healthcareService.getState());
-            healthcareServiceMap.put("startDate", healthcareService.getStartDate());
-            healthcareServiceMap.put("endDate", healthcareService.getEndDate());
-            healthcareServices.add(healthcareServiceMap);
-        }
-//        Map<String, Object> healthcareServiceMap1 = new HashMap<>();
-//        healthcareServiceMap1.put("type", "TEST-HS-1");
-//        healthcareServiceMap1.put("servicePopulation", List.of("TEST-POP-1", "TEST-POP-2"));
-//        healthcareServices.add(healthcareServiceMap1);
-//        Map<String, Object> healthcareServiceMap2 = new HashMap<>();
-//        healthcareServiceMap2.put("type", "TEST-HS-2");
-//        healthcareServices.add(healthcareServiceMap2);
-        return healthcareServices;
-    }
-
-    /**
-     * Retrieves a list of languages along with their associated details.
-     *
-     * @param languageList a list of LanguageDto objects representing the languages to process
-     * @return a list of maps, where each map contains key-value pairs representing the details of a language
-     */
-    private List<Map<String, Object>> getLanguages(List<LanguageDto> languageList) {
-        List<Map<String, Object>> languages = new ArrayList<>();
-        for (LanguageDto language: languageList){
-            Map<String, Object> languageMap = new HashMap<>();
-            languageMap.put("value", language.getValue());
-            languages.add(languageMap);
-        }
-//        Map<String, Object> languageMap1 = new HashMap<>();
-//        languageMap1.put("value", "eng");
-//        languages.add(languageMap1);
-//        Map<String, Object> languageMap2 = new HashMap<>();
-//        languageMap2.put("value", "spa");
-//        languages.add(languageMap2);
-        return languages;
-    }
-
-    /**
-     * Processes the given list of qualifications and generates a list of maps containing
-     * structured information about each qualification, including type, issuer, start date,
-     * end date, level, and value.
-     *
-     * @param qualificationList a list of QualificationDto objects representing the qualifications to be processed
-     * @return a list of maps where each map represents a qualification with related details
-     */
-    private List<Map<String, Object>> getQualifications(List<QualificationDto> qualificationList) {
-        List<Map<String, Object>> qualifications = new ArrayList<>();
-        for (QualificationDto qualification: qualificationList){
-            Map<String, Object> qualificationMap = new HashMap<>();
-            qualificationMap.put("type", qualification.getType());
-            qualificationMap.put("issuer", qualification.getIssuer());
-            qualificationMap.put("startDate", qualification.getStartDate());
-            qualificationMap.put("endDate", qualification.getEndDate());
-            qualificationMap.put("level", qualification.getLevel());
-            qualificationMap.put("value", qualification.getValue());
-            qualifications.add(qualificationMap);
-        }
-//        Map<String, Object> qualificationMap1 = new HashMap<>();
-//        qualificationMap1.put("type", "Qual-1");
-//        qualificationMap1.put("issuer", "Issuer-1");
-//        qualificationMap1.put("startDate", LocalDate.of(2015, 1, 4));
-//        qualificationMap1.put("endDate", LocalDate.of(2019, 12, 31));
-//        qualificationMap1.put("level", List.of("Level-1", "Level-2"));
-//        qualificationMap1.put("value", "value-1");
-//        qualifications.add(qualificationMap1);
-//        Map<String, Object> qualificationMap2 = new HashMap<>();
-//        qualificationMap2.put("type", "Qual-2");
-//        qualificationMap2.put("issuer", "Issuer-2");
-//        qualificationMap2.put("startDate", LocalDate.of(2015, 1, 4));
-//        qualificationMap2.put("endDate", LocalDate.of(2019, 12, 31));
-//        qualificationMap2.put("level", List.of("Level-3", "Level-4"));
-//        qualificationMap2.put("value", "value-2");
-//        qualifications.add(qualificationMap2);
-        return qualifications;
-    }
-
-    /**
-     * Retrieves a list of hospital privileges based on the provided privilege data.
-     * Each privilege is represented as a map containing details such as organization element ID and privilege type.
-     *
-     * @param privilegeList a list of HospitalPrivilegeDto objects containing data needed to determine hospital privileges
-     * @return a list of maps, where each map represents a hospital privilege with specific details (e.g., organization ID, type)
-     */
-    private List<Map<String, Object>> getHospitalPrivileges(List<HospitalPrivilegeDto> privilegeList) {
-        List<Map<String, Object>> privileges = new ArrayList<>();
-        for (HospitalPrivilegeDto privilege: privilegeList){
-            Map<String, Object> privilegeMap = new HashMap<>();
-            privilegeMap.put("organizationElementId", privilege.getOrgElementId());
-            privilegeMap.put("type", privilege.getHospitalPrivilegeType());
-            privileges.add(privilegeMap);
-        }
-//        Map<String, Object> privilegeMap1 = new HashMap<>();
-//        privilegeMap1.put("organizationElementId", "4:584fe225-8704-4f61-b2b6-1cce33b0b662:369");
-//        privilegeMap1.put("type", "ADMIT-PRIVILEGES");
-//        privileges.add(privilegeMap1);
-//        Map<String, Object> privilegeMap2 = new HashMap<>();
-//        privilegeMap2.put("organizationElementId", "4:584fe225-8704-4f61-b2b6-1cce33b0b662:369");
-//        privilegeMap2.put("type", "CONSULT-PRIVILEGES");
-//        privileges.add(privilegeMap2);
-        return privileges;
-    }
-
 }

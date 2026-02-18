@@ -92,6 +92,14 @@ public class LocationDto {
     private String countyFIPS;
 
     /**
+     * Represents a list of specialties associated with a location.
+     * This variable is used to store multiple SpecialtyDto objects, where each
+     * object defines details about a specific specialty, including taxonomy code
+     * and whether it is the primary specialty.
+     */
+    private List<SpecialtyDto> specialties;
+
+    /**
      * Represents a collection of networks associated with a specific location.
      * This variable is used to store a list of {@link NetworkDto} objects, each
      * representing details about an individual network, such as its name, code,
