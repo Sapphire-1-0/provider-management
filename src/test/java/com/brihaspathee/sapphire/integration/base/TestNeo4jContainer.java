@@ -1,5 +1,6 @@
 package com.brihaspathee.sapphire.integration.base;
 
+import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.Neo4jContainer;
 
 /**
@@ -11,6 +12,7 @@ import org.testcontainers.containers.Neo4jContainer;
  * Package Name: com.brihaspathee.sapphire.integration.base
  * To change this template use File | Settings | File and Code Template
  */
+@Slf4j
 public class TestNeo4jContainer {
 
     private static final Neo4jContainer<?> container =
@@ -19,13 +21,15 @@ public class TestNeo4jContainer {
                     .withEnv("NEO4JLABS_PLUGINS", "apoc")
                     .withEnv("NEO4J_AUTH", "neo4j/password")
                     .withEnv("NEO4J_apoc_export_file_enabled", "true")
-                    .withExposedPorts(7687);
+                    .withExposedPorts(7687)
+                    .waitingFor(org.testcontainers.containers.wait.strategy.Wait.forListeningPort());
 
     static {
         container.start();
     }
 
     public static Neo4jContainer<?> getInstance() {
+        log.error("Neo4j container started");
         return container;
     }
 }

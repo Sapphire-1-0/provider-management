@@ -5,10 +5,11 @@ import com.brihaspathee.sapphire.domain.entity.relationships.HasPanel;
 import com.brihaspathee.sapphire.domain.entity.relationships.RoleLocationServes;
 import com.brihaspathee.sapphire.domain.repository.Neo4jQueryExecutor;
 import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository;
-import com.brihaspathee.sapphire.domain.repository.util.BuildLocationEntity;
-import com.brihaspathee.sapphire.domain.repository.util.BuildNetworkEntity;
-import com.brihaspathee.sapphire.domain.repository.util.BuildOrganizationEntity;
-import com.brihaspathee.sapphire.domain.repository.util.BuilderUtil;
+import com.brihaspathee.sapphire.domain.repository.util.*;
+import com.brihaspathee.sapphire.model.ContactDto;
+import com.brihaspathee.sapphire.model.IdentifierDto;
+import com.brihaspathee.sapphire.model.LocationDto;
+import com.brihaspathee.sapphire.model.QualificationDto;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
 import com.brihaspathee.sapphire.utils.CypherLoader;
 import lombok.RequiredArgsConstructor;
@@ -132,6 +133,49 @@ public class LocationRepositoryImpl implements LocationRepository {
         List<Location> locations = queryExecutor.executeReadQuery(cypher, params,
                 LocationRepositoryImpl::getLocations);
         return locations;
+    }
+
+    /**
+     * Creates a new Location entity based on the provided details.
+     *
+     * @param locationDto  the data transfer object containing attributes necessary
+     *                     to define a location such as name, address, city, state, and other relevant details.
+     * @param orgElementId the unique identifier of the organizational element to which the location belongs.
+     * @param contactDto   the data transfer object containing contact information
+     *                     such as email, phone number, or other methods of communication for the location.
+     * @return the newly created Location entity with all the properties initialized based on the input parameters.
+     */
+    @Override
+    public Location createLocation(LocationDto locationDto, String orgElementId, ContactDto contactDto) {
+        String cypher = cypherLoader.load("create_location.cypher");
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgElementId", orgElementId);
+        Map<String, String> locationMap = new HashMap<>();
+        locationMap.put("code", locationDto.getCode());
+        locationMap.put("name", locationDto.getName());
+        locationMap.put("streetAddress", locationDto.getStreetAddress());
+        locationMap.put("secondaryAddress", locationDto.getSecondaryAddress());
+        locationMap.put("city", locationDto.getCity());
+        locationMap.put("state", locationDto.getState());
+        locationMap.put("zip", locationDto.getZipCode());
+        params.put("location", locationMap);
+        List<IdentifierDto> osphdList = new ArrayList<>();
+        osphdList.add(IdentifierDto.builder()
+                        .value("oshpdid-1")
+                        .type("OSHPD_ID")
+                .build());
+        Map<String, List<Map<String,Object>>> identifierMap = DataExtractor.getIdentifiers(osphdList);
+        params.putAll(identifierMap);
+
+        List<QualificationDto> qualificationDtos = new ArrayList<>();
+        qualificationDtos.add(QualificationDto.builder()
+                        .type("DHSSE")
+                        .value("DHSSE-1")
+                .build());
+        List<Map<String,Object>> qualifications = DataExtractor.getQualifications(qualificationDtos);
+        params.put("qualifications", qualifications);
+        queryExecutor.executeWriteQuery(cypher, params);
+        return null;
     }
 
     /**

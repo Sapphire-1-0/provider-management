@@ -64,6 +64,17 @@ public class DataExtractor {
 
                         medicaidList.add(medicaidIdMap);
                         break;
+                    case "OSHPD_ID":
+                        // OSHPD Identifier
+                        Map<String, Object> oshpdIdMap = new HashMap<>();
+                        oshpdIdMap.put("value", identifier.getValue());
+                        List<Map<String, Object>> oshpdIdList =
+                                (List<Map<String, Object>>) params.computeIfAbsent(
+                                        "oshpdIdList", k -> new ArrayList<>()
+                                );
+
+                        oshpdIdList.add(oshpdIdMap);
+                        break;
 
                 }
             }

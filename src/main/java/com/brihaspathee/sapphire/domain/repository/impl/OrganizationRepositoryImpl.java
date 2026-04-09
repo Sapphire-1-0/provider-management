@@ -226,6 +226,8 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         if(organizationDto.getCredentials() != null && !organizationDto.getCredentials().isEmpty()){
             List<Map<String, Object>> credentials = DataExtractor.getCredentials(organizationDto.getCredentials());
             params.put("credentials", credentials);
+        }else{
+            params.put("credentials", new ArrayList<>());
         }
 
         // -----------------------------------------------------------------------------------
@@ -234,6 +236,8 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
         if(organizationDto.getQualifications() != null && !organizationDto.getQualifications().isEmpty()){
             List<Map<String, Object>> qualifications = DataExtractor.getQualifications(organizationDto.getQualifications());
             params.put("qualifications", qualifications);
+        }else{
+            params.put("qualifications", new ArrayList<>());
         }
 
         // Networks

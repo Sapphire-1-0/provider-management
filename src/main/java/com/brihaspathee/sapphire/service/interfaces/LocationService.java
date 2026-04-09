@@ -1,6 +1,7 @@
 package com.brihaspathee.sapphire.service.interfaces;
 
 import com.brihaspathee.sapphire.model.LocationDto;
+import com.brihaspathee.sapphire.model.web.LocationCreateRequest;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
 
 import java.util.List;
@@ -35,4 +36,14 @@ public interface LocationService {
      *         the search criteria
      */
     List<LocationDto> getLocations(LocationSearchRequest locationSearchRequest);
+
+    /**
+     * Creates a new location using the details provided in the location creation request.
+     *
+     * @param locationCreateRequest an instance of {@code LocationCreateRequest} containing the necessary
+     *                              details to create a new location, such as location data, organizational
+     *                              element ID, and contact information
+     * @return an instance of {@code LocationDto} containing the details of the created location
+     */
+    LocationDto createLocation(LocationCreateRequest locationCreateRequest);
 }

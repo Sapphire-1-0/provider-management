@@ -2,6 +2,9 @@ package com.brihaspathee.sapphire.domain.repository.interfaces;
 
 import com.brihaspathee.sapphire.domain.entity.Location;
 import com.brihaspathee.sapphire.domain.entity.Organization;
+import com.brihaspathee.sapphire.model.ContactDto;
+import com.brihaspathee.sapphire.model.LocationDto;
+import com.brihaspathee.sapphire.model.OrganizationDto;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
 
 import java.util.List;
@@ -51,4 +54,17 @@ public interface LocationRepository {
      * @return a list of Location objects that match the provided search criteria
      */
     List<Location> findLocations(LocationSearchRequest locationSearchRequest);
+
+
+    /**
+     * Creates a new Location entity based on the provided details.
+     *
+     * @param locationDto the data transfer object containing attributes necessary
+     *                    to define a location such as name, address, city, state, and other relevant details.
+     * @param orgElementId the unique identifier of the organizational element to which the location belongs.
+     * @param contactDto the data transfer object containing contact information
+     *                   such as email, phone number, or other methods of communication for the location.
+     * @return the newly created Location entity with all the properties initialized based on the input parameters.
+     */
+    Location createLocation(LocationDto locationDto, String orgElementId, ContactDto contactDto);
 }

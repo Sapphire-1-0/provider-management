@@ -3,6 +3,7 @@ package com.brihaspathee.sapphire.controller.impl;
 import com.brihaspathee.sapphire.controller.interfaces.LocationAPI;
 import com.brihaspathee.sapphire.model.LocationDto;
 import com.brihaspathee.sapphire.model.LocationList;
+import com.brihaspathee.sapphire.model.web.LocationCreateRequest;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
 import com.brihaspathee.sapphire.service.interfaces.LocationService;
 import com.brihaspathee.sapphire.web.response.SapphireAPIResponse;
@@ -89,5 +90,31 @@ public class LocationAPIImpl implements LocationAPI {
                         .developerMessage("Location Retrieved successfully")
                         .build();
         return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Creates a new location in the system based on the provided location creation request data.
+     *
+     * @param locationCreateRequest the request object containing details about the location to be created,
+     *                              including its name, address, specialties, network associations, and other
+     *                              relevant information encapsulated in a {@link LocationCreateRequest}.
+     * @return a ResponseEntity containing a SapphireAPIResponse with a {@link LocationDto} object
+     * that represents the newly created location, including its unique identifier and
+     * associated details.
+     */
+    @Override
+    public ResponseEntity<SapphireAPIResponse<LocationDto>> createLocation(LocationCreateRequest locationCreateRequest) {
+        LocationDto locationDto = locationService.createLocation(locationCreateRequest);
+        SapphireAPIResponse<LocationDto> apiResponse =
+                SapphireAPIResponse.<LocationDto>builder()
+                        .statusCode(201)
+                        .status(HttpStatus.CREATED)
+                        .message("Location Created successfully")
+                        .response(locationDto)
+                        .timestamp(LocalDateTime.now())
+                        .reason("Location Created successfully")
+                        .developerMessage("Location Created successfully")
+                        .build();
+        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 }

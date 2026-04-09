@@ -32,6 +32,13 @@ public class LocationDto {
     private String elementId;
 
     /**
+     * Represents a specific code associated with the location.
+     * This variable is used to store a unique or identifying code
+     * related to the location's details within the system.
+     */
+    private String code;
+
+    /**
      * Represents the name associated with a location.
      * This variable is used to store the name or descriptive title
      * that identifies a specific location within a given context.

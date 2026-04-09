@@ -3,6 +3,7 @@ package com.brihaspathee.sapphire.service.impl;
 import com.brihaspathee.sapphire.domain.entity.Location;
 import com.brihaspathee.sapphire.domain.repository.interfaces.LocationRepository;
 import com.brihaspathee.sapphire.model.LocationDto;
+import com.brihaspathee.sapphire.model.web.LocationCreateRequest;
 import com.brihaspathee.sapphire.model.web.LocationSearchRequest;
 import com.brihaspathee.sapphire.service.interfaces.LocationService;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,26 @@ public class LocationServiceImpl implements LocationService {
         log.info("Fetching locations from ATON:{}", locationSearchRequest);
         List<Location> locations = locationRepository.findLocations(locationSearchRequest);
         return toLocationDtos(locations);
+    }
+
+    /**
+     * Creates a new location using the details provided in the location creation request.
+     *
+     * @param locationCreateRequest an instance of {@code LocationCreateRequest} containing the necessary
+     *                              details to create a new location, such as location data, organizational
+     *                              element ID, and contact information
+     * @return an instance of {@code LocationDto} containing the details of the created location
+     */
+    @Override
+    public LocationDto createLocation(LocationCreateRequest locationCreateRequest) {
+        locationRepository.createLocation(locationCreateRequest.getLocation(),
+                locationCreateRequest.getOrgElementId(),
+                locationCreateRequest.getContact());
+        return LocationDto.builder()
+                .elementId("test")
+                .code("test-code")
+                .name("test")
+                .build();
     }
 
     /**

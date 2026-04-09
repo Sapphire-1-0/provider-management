@@ -29,6 +29,14 @@ public class Location {
     private String elementId;
 
     /**
+     * Represents the unique code assigned to a location.
+     * This property is used to uniquely identify and categorize
+     * a specific location within the system, ensuring consistency
+     * and traceability in location-related operations or data management.
+     */
+    private String locationCode;
+
+    /**
      * Represents the name of the location.
      * This property is used to store a human-readable identifier
      * or descriptor for the location, providing additional context
