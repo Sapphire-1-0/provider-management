@@ -9,6 +9,24 @@ tags:
 - name: Organizations
   description: APIs for managing organizations
 paths:
+  /api/v1/sapphire/practitioner/upsert:
+    post:
+      tags:
+      - practitioner-api-impl
+      operationId: createPractitioner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PractitionerDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponsePractitionerDto"
   /api/v1/sapphire/practitioner/_search:
     post:
       tags:
@@ -162,6 +180,24 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseNetworkList"
+  /api/v1/sapphire/location/_upsert:
+    post:
+      tags:
+      - location-api-impl
+      operationId: createLocation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LocationCreateRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseLocationDto"
   /api/v1/sapphire/location/_search:
     post:
       tags:
@@ -192,7 +228,117 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseWelcomeDto"
-  /api/v1/sapphire/organization/{organizationId}:
+  /api/v1/sapphire/practitioner/{pracId}:
+    get:
+      tags:
+      - practitioner-api-impl
+      operationId: getPractitionerById
+      parameters:
+      - name: pracId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponsePractitionerDto"
+  /api/v1/sapphire/practitioner/{pracId}/network/{netId}:
+    get:
+      tags:
+      - practitioner-api-impl
+      operationId: getPractitionerAndNetById
+      parameters:
+      - name: pracId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: netId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponsePractitionerDto"
+  /api/v1/sapphire/practitioner/{pracId}/network/{netId}/location/{locId}:
+    get:
+      tags:
+      - practitioner-api-impl
+      operationId: getPractitionerAndNetAndLocById
+      parameters:
+      - name: pracId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: netId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: locId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponsePractitionerDto"
+  /api/v1/sapphire/practitioner/{pracId}/location/{locId}:
+    get:
+      tags:
+      - practitioner-api-impl
+      operationId: getPractitionerAndLocById
+      parameters:
+      - name: pracId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: locId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponsePractitionerDto"
+  /api/v1/sapphire/practitioner/code/{pracCode}:
+    get:
+      tags:
+      - practitioner-api-impl
+      operationId: getPractitionerByCode
+      parameters:
+      - name: pracCode
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponsePractitionerDto"
+  /api/v1/sapphire/organization/{orgId}:
     get:
       tags:
       - Organizations
@@ -203,8 +349,11 @@ paths:
       operationId: getOrganizationById
       parameters:
       - name: organizationId
-        in: path
+        in: query
         description: The unique identifier of the organization to be retrieved.
+        required: true
+      - name: orgId
+        in: path
         required: true
         schema:
           type: string
@@ -217,6 +366,192 @@ paths:
                 $ref: "#/components/schemas/OrganizationDto"
         "400":
           description: The provided organization ID is invalid.
+  /api/v1/sapphire/organization/{orgId}/practitioner/{pracId}:
+    get:
+      tags:
+      - Organizations
+      operationId: getOrgAndPracById
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: pracId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/organization/{orgId}/practitioner/{pracId}/network/{netId}:
+    get:
+      tags:
+      - Organizations
+      operationId: getOrgAndPracAndNetById
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: pracId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: netId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/organization/{orgId}/practitioner/{pracId}/network/{netId}/location/{locId}:
+    get:
+      tags:
+      - Organizations
+      operationId: getOrgAndPracAndNetAndLocById
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: pracId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: netId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: locId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/organization/{orgId}/practitioner/{pracId}/location/{locId}:
+    get:
+      tags:
+      - Organizations
+      operationId: getOrgAndPracAndLocById
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: pracId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: locId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/organization/{orgId}/network/{netId}:
+    get:
+      tags:
+      - Organizations
+      operationId: getOrganizationAndNetworkById
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: netId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/organization/{orgId}/network/{netId}/location/{locId}:
+    get:
+      tags:
+      - Organizations
+      operationId: getOrgAndNetAndLocById
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: netId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: locId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/organization/{orgId}/location/{locId}:
+    get:
+      tags:
+      - Organizations
+      operationId: getOrganizationAndLocationById
+      parameters:
+      - name: orgId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: locId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
   /api/v1/sapphire/organization/get-orgs:
     get:
       tags:
@@ -229,139 +564,122 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SapphireAPIResponseOrganizationList"
+  /api/v1/sapphire/organization/code/{orgCode}:
+    get:
+      tags:
+      - Organizations
+      operationId: getOrganizationByCode
+      parameters:
+      - name: orgCode
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseOrganizationDto"
+  /api/v1/sapphire/location/code/{locCode}:
+    get:
+      tags:
+      - location-api-impl
+      operationId: getLocationByCode
+      parameters:
+      - name: locCode
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SapphireAPIResponseLocationDto"
 components:
   schemas:
-    IdentifierInfo:
+    AddressDto:
       type: object
       properties:
-        identifierType:
+        streetAddress:
           type: string
-        identifierValue:
+        secondaryAddress:
           type: string
-    PractitionerSearchRequest:
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        county:
+          type: string
+        countyFIPS:
+          type: string
+    ContactDto:
       type: object
       properties:
-        identifiers:
-          type: array
-          items:
-            $ref: "#/components/schemas/IdentifierInfo"
-    PractitionerDto:
+        use:
+          type: string
+        address:
+          $ref: "#/components/schemas/AddressDto"
+        telecom:
+          $ref: "#/components/schemas/TelecomDto"
+        person:
+          $ref: "#/components/schemas/PersonDto"
+    CredentialingDto:
       type: object
       properties:
         elementId:
           type: string
-        firstName:
+        credentialingType:
           type: string
-        lastName:
+        geography:
           type: string
-        middleName:
+        fips:
           type: string
-        birthDate:
+        committeeDate:
           type: string
-        gender:
+          format: date
+        endDate:
           type: string
-        altFirstName:
-          type: string
-        altLastName:
-          type: string
-        altMiddleName:
-          type: string
-    PractitionerList:
+          format: date
+    DisorderDto:
       type: object
       properties:
-        practitioners:
+        elementId:
+          type: string
+        disorderType:
+          type: string
+    HealthcareServiceDto:
+      type: object
+      properties:
+        elementId:
+          type: string
+        healthcareServiceType:
+          type: string
+        state:
+          type: string
+        servicePopulation:
           type: array
           items:
-            $ref: "#/components/schemas/PractitionerDto"
-    SapphireAPIResponsePractitionerList:
+            type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+    HospitalPrivilegeDto:
       type: object
       properties:
-        timestamp:
+        orgElementId:
           type: string
-          format: date-time
-        statusCode:
-          type: integer
-          format: int32
-        status:
+        hospitalPrivilegeType:
           type: string
-          enum:
-          - 100 CONTINUE
-          - 101 SWITCHING_PROTOCOLS
-          - 102 PROCESSING
-          - 103 EARLY_HINTS
-          - 103 CHECKPOINT
-          - 200 OK
-          - 201 CREATED
-          - 202 ACCEPTED
-          - 203 NON_AUTHORITATIVE_INFORMATION
-          - 204 NO_CONTENT
-          - 205 RESET_CONTENT
-          - 206 PARTIAL_CONTENT
-          - 207 MULTI_STATUS
-          - 208 ALREADY_REPORTED
-          - 226 IM_USED
-          - 300 MULTIPLE_CHOICES
-          - 301 MOVED_PERMANENTLY
-          - 302 FOUND
-          - 302 MOVED_TEMPORARILY
-          - 303 SEE_OTHER
-          - 304 NOT_MODIFIED
-          - 305 USE_PROXY
-          - 307 TEMPORARY_REDIRECT
-          - 308 PERMANENT_REDIRECT
-          - 400 BAD_REQUEST
-          - 401 UNAUTHORIZED
-          - 402 PAYMENT_REQUIRED
-          - 403 FORBIDDEN
-          - 404 NOT_FOUND
-          - 405 METHOD_NOT_ALLOWED
-          - 406 NOT_ACCEPTABLE
-          - 407 PROXY_AUTHENTICATION_REQUIRED
-          - 408 REQUEST_TIMEOUT
-          - 409 CONFLICT
-          - 410 GONE
-          - 411 LENGTH_REQUIRED
-          - 412 PRECONDITION_FAILED
-          - 413 PAYLOAD_TOO_LARGE
-          - 413 REQUEST_ENTITY_TOO_LARGE
-          - 414 URI_TOO_LONG
-          - 414 REQUEST_URI_TOO_LONG
-          - 415 UNSUPPORTED_MEDIA_TYPE
-          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
-          - 417 EXPECTATION_FAILED
-          - 418 I_AM_A_TEAPOT
-          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
-          - 420 METHOD_FAILURE
-          - 421 DESTINATION_LOCKED
-          - 422 UNPROCESSABLE_ENTITY
-          - 423 LOCKED
-          - 424 FAILED_DEPENDENCY
-          - 425 TOO_EARLY
-          - 426 UPGRADE_REQUIRED
-          - 428 PRECONDITION_REQUIRED
-          - 429 TOO_MANY_REQUESTS
-          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
-          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
-          - 500 INTERNAL_SERVER_ERROR
-          - 501 NOT_IMPLEMENTED
-          - 502 BAD_GATEWAY
-          - 503 SERVICE_UNAVAILABLE
-          - 504 GATEWAY_TIMEOUT
-          - 505 HTTP_VERSION_NOT_SUPPORTED
-          - 506 VARIANT_ALSO_NEGOTIATES
-          - 507 INSUFFICIENT_STORAGE
-          - 508 LOOP_DETECTED
-          - 509 BANDWIDTH_LIMIT_EXCEEDED
-          - 510 NOT_EXTENDED
-          - 511 NETWORK_AUTHENTICATION_REQUIRED
-        reason:
-          type: string
-        message:
-          type: string
-        developerMessage:
-          type: string
-        response:
-          $ref: "#/components/schemas/PractitionerList"
     IdentifierDto:
       type: object
       properties:
@@ -381,10 +699,28 @@ components:
           type: object
           additionalProperties:
             type: object
+    LanguageDto:
+      type: object
+      properties:
+        elementId:
+          type: string
+        value:
+          type: string
+    LineOfBusinessDto:
+      type: object
+      properties:
+        elementId:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
     LocationDto:
       type: object
       properties:
         elementId:
+          type: string
+        code:
           type: string
         name:
           type: string
@@ -402,6 +738,10 @@ components:
           type: string
         countyFIPS:
           type: string
+        specialties:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpecialtyDto"
         locationNetwork:
           $ref: "#/components/schemas/LocationNetworkDto"
     LocationNetworkDto:
@@ -447,6 +787,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ProductDto"
+        partOfLineOfBusinesses:
+          type: array
+          items:
+            $ref: "#/components/schemas/LineOfBusinessDto"
         locations:
           type: array
           items:
@@ -458,7 +802,15 @@ components:
       properties:
         elementId:
           type: string
+          description: Unique identifier for an element within the system
+          example: "123456789"
+        code:
+          type: string
         name:
+          type: string
+          description: Name of the organization
+          example: St. Joseph Hospital
+        description:
           type: string
         aliasName:
           type: string
@@ -474,6 +826,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/IdentifierDto"
+        qualifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/QualificationDto"
         networks:
           type: array
           items:
@@ -482,6 +838,27 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/LocationDto"
+        contacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactDto"
+        specialties:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpecialtyDto"
+        credentials:
+          type: array
+          items:
+            $ref: "#/components/schemas/CredentialingDto"
+        healthcareServices:
+          type: array
+          items:
+            $ref: "#/components/schemas/HealthcareServiceDto"
+        disorders:
+          type: array
+          items:
+            $ref: "#/components/schemas/DisorderDto"
+      description: Represents an organization in the system
     PanelDto:
       type: object
       properties:
@@ -503,6 +880,65 @@ components:
           type: string
         status:
           type: string
+    PersonDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        title:
+          type: string
+    PractitionerDto:
+      type: object
+      properties:
+        elementId:
+          type: string
+        code:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        gender:
+          type: string
+        altFirstName:
+          type: string
+        altLastName:
+          type: string
+        altMiddleName:
+          type: string
+        identifiers:
+          type: array
+          items:
+            $ref: "#/components/schemas/IdentifierDto"
+        qualifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/QualificationDto"
+        contractedOrganizations:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrganizationDto"
+        credentials:
+          type: array
+          items:
+            $ref: "#/components/schemas/CredentialingDto"
+        languages:
+          type: array
+          items:
+            $ref: "#/components/schemas/LanguageDto"
+        hospitalPrivileges:
+          type: array
+          items:
+            $ref: "#/components/schemas/HospitalPrivilegeDto"
     ProductDto:
       type: object
       properties:
@@ -512,6 +948,258 @@ components:
           type: string
         code:
           type: string
+    QualificationDto:
+      type: object
+      properties:
+        elementId:
+          type: string
+        type:
+          type: string
+        issuer:
+          type: string
+        value:
+          type: string
+        specialtyTaxonomy:
+          type: string
+        state:
+          type: string
+        level:
+          type: array
+          items:
+            type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+    SpecialtyDto:
+      type: object
+      properties:
+        elementId:
+          type: string
+        taxonomyCode:
+          type: string
+        specialty:
+          type: string
+        isPrimary:
+          type: boolean
+    TelecomDto:
+      type: object
+      properties:
+        phone:
+          type: string
+        tty:
+          type: string
+        fax:
+          type: string
+        afterHoursNumber:
+          type: string
+        email:
+          type: string
+        secureEmail:
+          type: string
+        website:
+          type: string
+    SapphireAPIResponsePractitionerDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        statusCode:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 CONTENT_TOO_LARGE
+          - 413 PAYLOAD_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 421 MISDIRECTED_REQUEST
+          - 422 UNPROCESSABLE_CONTENT
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        reason:
+          type: string
+        message:
+          type: string
+        developerMessage:
+          type: string
+        response:
+          $ref: "#/components/schemas/PractitionerDto"
+    IdentifierInfo:
+      type: object
+      properties:
+        identifierType:
+          type: string
+        identifierValue:
+          type: string
+    PractitionerSearchRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        identifiers:
+          type: array
+          items:
+            $ref: "#/components/schemas/IdentifierInfo"
+    PractitionerList:
+      type: object
+      properties:
+        practitioners:
+          type: array
+          items:
+            $ref: "#/components/schemas/PractitionerDto"
+    SapphireAPIResponsePractitionerList:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        statusCode:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 CONTENT_TOO_LARGE
+          - 413 PAYLOAD_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 421 MISDIRECTED_REQUEST
+          - 422 UNPROCESSABLE_CONTENT
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        reason:
+          type: string
+        message:
+          type: string
+        developerMessage:
+          type: string
+        response:
+          $ref: "#/components/schemas/PractitionerList"
     SapphireAPIResponseOrganizationDto:
       type: object
       properties:
@@ -528,7 +1216,6 @@ components:
           - 101 SWITCHING_PROTOCOLS
           - 102 PROCESSING
           - 103 EARLY_HINTS
-          - 103 CHECKPOINT
           - 200 OK
           - 201 CREATED
           - 202 ACCEPTED
@@ -542,10 +1229,8 @@ components:
           - 300 MULTIPLE_CHOICES
           - 301 MOVED_PERMANENTLY
           - 302 FOUND
-          - 302 MOVED_TEMPORARILY
           - 303 SEE_OTHER
           - 304 NOT_MODIFIED
-          - 305 USE_PROXY
           - 307 TEMPORARY_REDIRECT
           - 308 PERMANENT_REDIRECT
           - 400 BAD_REQUEST
@@ -561,17 +1246,15 @@ components:
           - 410 GONE
           - 411 LENGTH_REQUIRED
           - 412 PRECONDITION_FAILED
+          - 413 CONTENT_TOO_LARGE
           - 413 PAYLOAD_TOO_LARGE
-          - 413 REQUEST_ENTITY_TOO_LARGE
           - 414 URI_TOO_LONG
-          - 414 REQUEST_URI_TOO_LONG
           - 415 UNSUPPORTED_MEDIA_TYPE
           - 416 REQUESTED_RANGE_NOT_SATISFIABLE
           - 417 EXPECTATION_FAILED
           - 418 I_AM_A_TEAPOT
-          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
-          - 420 METHOD_FAILURE
-          - 421 DESTINATION_LOCKED
+          - 421 MISDIRECTED_REQUEST
+          - 422 UNPROCESSABLE_CONTENT
           - 422 UNPROCESSABLE_ENTITY
           - 423 LOCKED
           - 424 FAILED_DEPENDENCY
@@ -631,7 +1314,6 @@ components:
           - 101 SWITCHING_PROTOCOLS
           - 102 PROCESSING
           - 103 EARLY_HINTS
-          - 103 CHECKPOINT
           - 200 OK
           - 201 CREATED
           - 202 ACCEPTED
@@ -645,10 +1327,8 @@ components:
           - 300 MULTIPLE_CHOICES
           - 301 MOVED_PERMANENTLY
           - 302 FOUND
-          - 302 MOVED_TEMPORARILY
           - 303 SEE_OTHER
           - 304 NOT_MODIFIED
-          - 305 USE_PROXY
           - 307 TEMPORARY_REDIRECT
           - 308 PERMANENT_REDIRECT
           - 400 BAD_REQUEST
@@ -664,17 +1344,15 @@ components:
           - 410 GONE
           - 411 LENGTH_REQUIRED
           - 412 PRECONDITION_FAILED
+          - 413 CONTENT_TOO_LARGE
           - 413 PAYLOAD_TOO_LARGE
-          - 413 REQUEST_ENTITY_TOO_LARGE
           - 414 URI_TOO_LONG
-          - 414 REQUEST_URI_TOO_LONG
           - 415 UNSUPPORTED_MEDIA_TYPE
           - 416 REQUESTED_RANGE_NOT_SATISFIABLE
           - 417 EXPECTATION_FAILED
           - 418 I_AM_A_TEAPOT
-          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
-          - 420 METHOD_FAILURE
-          - 421 DESTINATION_LOCKED
+          - 421 MISDIRECTED_REQUEST
+          - 422 UNPROCESSABLE_CONTENT
           - 422 UNPROCESSABLE_ENTITY
           - 423 LOCKED
           - 424 FAILED_DEPENDENCY
@@ -736,7 +1414,6 @@ components:
           - 101 SWITCHING_PROTOCOLS
           - 102 PROCESSING
           - 103 EARLY_HINTS
-          - 103 CHECKPOINT
           - 200 OK
           - 201 CREATED
           - 202 ACCEPTED
@@ -750,10 +1427,8 @@ components:
           - 300 MULTIPLE_CHOICES
           - 301 MOVED_PERMANENTLY
           - 302 FOUND
-          - 302 MOVED_TEMPORARILY
           - 303 SEE_OTHER
           - 304 NOT_MODIFIED
-          - 305 USE_PROXY
           - 307 TEMPORARY_REDIRECT
           - 308 PERMANENT_REDIRECT
           - 400 BAD_REQUEST
@@ -769,17 +1444,15 @@ components:
           - 410 GONE
           - 411 LENGTH_REQUIRED
           - 412 PRECONDITION_FAILED
+          - 413 CONTENT_TOO_LARGE
           - 413 PAYLOAD_TOO_LARGE
-          - 413 REQUEST_ENTITY_TOO_LARGE
           - 414 URI_TOO_LONG
-          - 414 REQUEST_URI_TOO_LONG
           - 415 UNSUPPORTED_MEDIA_TYPE
           - 416 REQUESTED_RANGE_NOT_SATISFIABLE
           - 417 EXPECTATION_FAILED
           - 418 I_AM_A_TEAPOT
-          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
-          - 420 METHOD_FAILURE
-          - 421 DESTINATION_LOCKED
+          - 421 MISDIRECTED_REQUEST
+          - 422 UNPROCESSABLE_CONTENT
           - 422 UNPROCESSABLE_ENTITY
           - 423 LOCKED
           - 424 FAILED_DEPENDENCY
@@ -809,6 +1482,99 @@ components:
           type: string
         response:
           $ref: "#/components/schemas/NetworkList"
+    LocationCreateRequest:
+      type: object
+      properties:
+        location:
+          $ref: "#/components/schemas/LocationDto"
+        orgElementId:
+          type: string
+        contact:
+          $ref: "#/components/schemas/ContactDto"
+    SapphireAPIResponseLocationDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        statusCode:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 CONTENT_TOO_LARGE
+          - 413 PAYLOAD_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 421 MISDIRECTED_REQUEST
+          - 422 UNPROCESSABLE_CONTENT
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        reason:
+          type: string
+        message:
+          type: string
+        developerMessage:
+          type: string
+        response:
+          $ref: "#/components/schemas/LocationDto"
     LocationSearchRequest:
       type: object
       properties:
@@ -849,7 +1615,6 @@ components:
           - 101 SWITCHING_PROTOCOLS
           - 102 PROCESSING
           - 103 EARLY_HINTS
-          - 103 CHECKPOINT
           - 200 OK
           - 201 CREATED
           - 202 ACCEPTED
@@ -863,10 +1628,8 @@ components:
           - 300 MULTIPLE_CHOICES
           - 301 MOVED_PERMANENTLY
           - 302 FOUND
-          - 302 MOVED_TEMPORARILY
           - 303 SEE_OTHER
           - 304 NOT_MODIFIED
-          - 305 USE_PROXY
           - 307 TEMPORARY_REDIRECT
           - 308 PERMANENT_REDIRECT
           - 400 BAD_REQUEST
@@ -882,17 +1645,15 @@ components:
           - 410 GONE
           - 411 LENGTH_REQUIRED
           - 412 PRECONDITION_FAILED
+          - 413 CONTENT_TOO_LARGE
           - 413 PAYLOAD_TOO_LARGE
-          - 413 REQUEST_ENTITY_TOO_LARGE
           - 414 URI_TOO_LONG
-          - 414 REQUEST_URI_TOO_LONG
           - 415 UNSUPPORTED_MEDIA_TYPE
           - 416 REQUESTED_RANGE_NOT_SATISFIABLE
           - 417 EXPECTATION_FAILED
           - 418 I_AM_A_TEAPOT
-          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
-          - 420 METHOD_FAILURE
-          - 421 DESTINATION_LOCKED
+          - 421 MISDIRECTED_REQUEST
+          - 422 UNPROCESSABLE_CONTENT
           - 422 UNPROCESSABLE_ENTITY
           - 423 LOCKED
           - 424 FAILED_DEPENDENCY
@@ -938,7 +1699,6 @@ components:
           - 101 SWITCHING_PROTOCOLS
           - 102 PROCESSING
           - 103 EARLY_HINTS
-          - 103 CHECKPOINT
           - 200 OK
           - 201 CREATED
           - 202 ACCEPTED
@@ -952,10 +1712,8 @@ components:
           - 300 MULTIPLE_CHOICES
           - 301 MOVED_PERMANENTLY
           - 302 FOUND
-          - 302 MOVED_TEMPORARILY
           - 303 SEE_OTHER
           - 304 NOT_MODIFIED
-          - 305 USE_PROXY
           - 307 TEMPORARY_REDIRECT
           - 308 PERMANENT_REDIRECT
           - 400 BAD_REQUEST
@@ -971,17 +1729,15 @@ components:
           - 410 GONE
           - 411 LENGTH_REQUIRED
           - 412 PRECONDITION_FAILED
+          - 413 CONTENT_TOO_LARGE
           - 413 PAYLOAD_TOO_LARGE
-          - 413 REQUEST_ENTITY_TOO_LARGE
           - 414 URI_TOO_LONG
-          - 414 REQUEST_URI_TOO_LONG
           - 415 UNSUPPORTED_MEDIA_TYPE
           - 416 REQUESTED_RANGE_NOT_SATISFIABLE
           - 417 EXPECTATION_FAILED
           - 418 I_AM_A_TEAPOT
-          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
-          - 420 METHOD_FAILURE
-          - 421 DESTINATION_LOCKED
+          - 421 MISDIRECTED_REQUEST
+          - 422 UNPROCESSABLE_CONTENT
           - 422 UNPROCESSABLE_ENTITY
           - 423 LOCKED
           - 424 FAILED_DEPENDENCY

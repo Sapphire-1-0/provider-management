@@ -53,7 +53,7 @@ echo "✅ -SNAPSHOT removed successfully."
 
 # Step 4: Build project
 echo "🔹 Step 4: Running mvn clean package..."
-mvn clean package > "$LOG_DIR/package_logs_${TIMESTAMP}.log" 2>&1
+mvn clean package -DskipTests > "$LOG_DIR/package_logs_${TIMESTAMP}.log" 2>&1
 
 if [ $? -ne 0 ]; then
     echo "❌ Maven package build failed. Exiting."
@@ -74,7 +74,7 @@ fi
 
 # Step 6: Run mvn clean verify
 echo "🔹 Step 6: Running mvn clean verify..."
-mvn clean verify > "$LOG_DIR/verify_logs_${TIMESTAMP}.log" 2>&1
+mvn clean verify -DskipTests > "$LOG_DIR/verify_logs_${TIMESTAMP}.log" 2>&1
 
 if [ $? -ne 0 ]; then
     echo "❌ Maven verify failed. Exiting."

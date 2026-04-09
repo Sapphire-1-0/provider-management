@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.brihaspathee.template</groupId>
     <artifactId>provider-management</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>provider-management</name>
     <description>spring_template</description>
     <url>http://github.com/Sapphire-1-0/provider-management</url>
